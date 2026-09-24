@@ -1,0 +1,744 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPK x Data Mining — IDX Stock Intelligent Evaluator</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Chart.js CDN -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #0b0f19;
+      color: #f1f5f9;
+    }
+    .font-mono {
+      font-family: 'JetBrains Mono', monospace;
+    }
+    .glass-card {
+      background: rgba(18, 24, 38, 0.7);
+      backdrop-filter: blur(12px);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+    .glass-card-active {
+      background: rgba(28, 38, 58, 0.85);
+      border: 1px solid rgba(99, 102, 241, 0.4);
+    }
+    .gradient-text {
+      background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+    }
+    /* Custom Scrollbars */
+    ::-webkit-scrollbar {
+      width: 6px;
+      height: 6px;
+    }
+    ::-webkit-scrollbar-track {
+      background: #0b0f19;
+    }
+    ::-webkit-scrollbar-thumb {
+      background: #334155;
+      border-radius: 3px;
+    }
+    ::-webkit-scrollbar-thumb:hover {
+      background: #475569;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+
+  <!-- Navigation Header -->
+  <header class="sticky top-0 z-50 glass-card border-b border-slate-800/80 px-6 py-4 flex items-center justify-between">
+    <div class="flex items-center space-x-3">
+      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
+        <i data-lucide="line-chart" class="w-5 h-5 text-white"></i>
+      </div>
+      <div>
+        <div class="flex items-center space-x-2">
+          <h1 class="text-lg font-bold tracking-tight text-white">SPK <span class="text-indigo-400">×</span> Data Mining</h1>
+          <span class="px-2 py-0.5 text-xs font-semibold uppercase tracking-wider rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">IDX LQ45</span>
+        </div>
+        <p class="text-xs text-slate-400">Multi-Criteria Decision Making (TOPSIS) + Unsupervised K-Means & PCA Projections</p>
+      </div>
+    </div>
+
+    <!-- Active Navigation Tabs -->
+    <nav class="flex items-center bg-slate-900/80 p-1 rounded-xl border border-slate-800">
+      <button onclick="switchTab('dashboard')" id="tab-dashboard" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-medium transition-all bg-indigo-600 text-white shadow-md">
+        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
+        <span>Dashboard & SPK</span>
+      </button>
+      <button onclick="switchTab('mining')" id="tab-mining" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all">
+        <i data-lucide="boxes" class="w-4 h-4"></i>
+        <span>K-Means & PCA</span>
+      </button>
+      <button onclick="switchTab('weights')" id="tab-weights" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all">
+        <i data-lucide="sliders" class="w-4 h-4"></i>
+        <span>TOPSIS Weights</span>
+      </button>
+      <button onclick="switchTab('audit')" id="tab-audit" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all">
+        <i data-lucide="calculator" class="w-4 h-4"></i>
+        <span>Matrix Audit</span>
+      </button>
+    </nav>
+  </header>
+
+  <!-- Main Workspace Content -->
+  <main class="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
+
+    <!-- KPI Summary Row -->
+    <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
+      <div class="glass-card p-4 rounded-2xl flex items-center space-x-4 border-l-4 border-indigo-500">
+        <div class="p-3 bg-indigo-500/10 rounded-xl text-indigo-400">
+          <i data-lucide="building-2" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Analyzed Universe</div>
+          <div id="stat-count" class="text-2xl font-extrabold text-white">25 Stocks</div>
+          <div class="text-[11px] text-slate-400">IDX LQ45 & Bluechips</div>
+        </div>
+      </div>
+
+      <div class="glass-card p-4 rounded-2xl flex items-center space-x-4 border-l-4 border-emerald-500">
+        <div class="p-3 bg-emerald-500/10 rounded-xl text-emerald-400">
+          <i data-lucide="trophy" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Top TOPSIS Pick</div>
+          <div id="stat-top-pick" class="text-2xl font-extrabold text-emerald-400">Loading...</div>
+          <div id="stat-top-score" class="text-[11px] text-slate-400">Score: --</div>
+        </div>
+      </div>
+
+      <div class="glass-card p-4 rounded-2xl flex items-center space-x-4 border-l-4 border-purple-500">
+        <div class="p-3 bg-purple-500/10 rounded-xl text-purple-400">
+          <i data-lucide="pie-chart" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Optimal Clusters</div>
+          <div id="stat-clusters" class="text-2xl font-extrabold text-purple-400">k = 4</div>
+          <div id="stat-silhouette" class="text-[11px] text-slate-400">Silhouette: --</div>
+        </div>
+      </div>
+
+      <div class="glass-card p-4 rounded-2xl flex items-center space-x-4 border-l-4 border-amber-500">
+        <div class="p-3 bg-amber-500/10 rounded-xl text-amber-400">
+          <i data-lucide="cpu" class="w-6 h-6"></i>
+        </div>
+        <div>
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Hybrid Engine</div>
+          <div class="text-2xl font-extrabold text-amber-400">Active</div>
+          <div class="text-[11px] text-slate-400">TOPSIS + K-Means Sync</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- VIEW 1: DASHBOARD & SPK RANKINGS -->
+    <div id="view-dashboard" class="space-y-6">
+      <!-- Top Section: 2D PCA Cluster Map & TOPSIS Top 5 -->
+      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <!-- Scatter Chart (PCA 2D Cluster Space) -->
+        <div class="lg:col-span-2 glass-card p-5 rounded-2xl flex flex-col">
+          <div class="flex items-center justify-between mb-4">
+            <div>
+              <h2 class="text-base font-bold text-white flex items-center space-x-2">
+                <i data-lucide="scatter-chart" class="w-4 h-4 text-indigo-400"></i>
+                <span>Fundamental Feature Space (PCA 2D Projection)</span>
+              </h2>
+              <p class="text-xs text-slate-400">Visualizing 8 financial dimensions compressed to Principal Components 1 & 2</p>
+            </div>
+            <div class="flex items-center space-x-2">
+              <span class="text-xs text-slate-400">k:</span>
+              <select id="cluster-select" onchange="runClustering()" class="bg-slate-900 border border-slate-700 text-xs rounded-lg px-2.5 py-1 text-slate-200">
+                <option value="2">2 Clusters</option>
+                <option value="3">3 Clusters</option>
+                <option value="4" selected>4 Clusters</option>
+                <option value="5">5 Clusters</option>
+                <option value="6">6 Clusters</option>
+              </select>
+            </div>
+          </div>
+          <div class="relative flex-1 min-h-[300px]">
+            <canvas id="pcaChart"></canvas>
+          </div>
+        </div>
+
+        <!-- TOPSIS Top Picks Podium -->
+        <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
+          <div>
+            <h2 class="text-base font-bold text-white flex items-center space-x-2 mb-1">
+              <i data-lucide="award" class="w-4 h-4 text-amber-400"></i>
+              <span>TOPSIS Top 5 Ranked</span>
+            </h2>
+            <p class="text-xs text-slate-400 mb-4">Highest relative closeness coefficient ($C_i$)</p>
+            
+            <div id="top-podium" class="space-y-3">
+              <!-- Populated by JS -->
+            </div>
+          </div>
+          <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400 flex justify-between">
+            <span>Method: Vector Norm + Euclidean</span>
+            <span class="text-indigo-400 font-mono">8 Criteria Evaluated</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Full Ranked Table -->
+      <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
+        <div class="p-4 bg-slate-900/60 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
+          <div class="flex items-center space-x-2">
+            <i data-lucide="list-ordered" class="w-5 h-5 text-indigo-400"></i>
+            <h3 class="text-sm font-bold text-white">Comprehensive SPK Stock Leaderboard</h3>
+          </div>
+          <div class="flex items-center space-x-3">
+            <input type="text" id="table-search" placeholder="Search ticker or name..." onkeyup="filterTable()" class="bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 w-48">
+            <select id="sector-filter" onchange="filterTable()" class="bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-lg text-xs text-white">
+              <option value="ALL">All Sectors</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="overflow-x-auto max-h-[500px]">
+          <table class="w-full text-left text-xs text-slate-300">
+            <thead class="bg-slate-950/80 text-slate-400 uppercase tracking-wider text-[10px] sticky top-0 backdrop-blur z-10">
+              <tr>
+                <th class="p-3">Rank</th>
+                <th class="p-3">Ticker / Name</th>
+                <th class="p-3">Sector</th>
+                <th class="p-3">Cluster Persona</th>
+                <th class="p-3 text-right">TOPSIS Score</th>
+                <th class="p-3 text-right">PER (x)</th>
+                <th class="p-3 text-right">PBV (x)</th>
+                <th class="p-3 text-right">ROE (%)</th>
+                <th class="p-3 text-right">Div Yield (%)</th>
+                <th class="p-3 text-right">DER</th>
+                <th class="p-3 text-center">Verdict</th>
+              </tr>
+            </thead>
+            <tbody id="ranked-tbody" class="divide-y divide-slate-800/60 font-mono">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 2: K-MEANS & PCA ANALYSIS -->
+    <div id="view-mining" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Elbow Curve -->
+        <div class="glass-card p-5 rounded-2xl">
+          <h3 class="text-sm font-bold text-white flex items-center space-x-2 mb-1">
+            <i data-lucide="git-commit" class="w-4 h-4 text-indigo-400"></i>
+            <span>Elbow Method (SSE Inertia Curve)</span>
+          </h3>
+          <p class="text-xs text-slate-400 mb-4">Calculates inertia drop-off across cluster counts k=2 to k=8</p>
+          <div class="h-64">
+            <canvas id="elbowChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Silhouette Score Curve -->
+        <div class="glass-card p-5 rounded-2xl">
+          <h3 class="text-sm font-bold text-white flex items-center space-x-2 mb-1">
+            <i data-lucide="check-circle" class="w-4 h-4 text-purple-400"></i>
+            <span>Silhouette Coefficient Analysis</span>
+          </h3>
+          <p class="text-xs text-slate-400 mb-4">Measures cohesion vs separation (Higher score indicates cleaner clusters)</p>
+          <div class="h-64">
+            <canvas id="silhouetteChart"></canvas>
+          </div>
+        </div>
+      </div>
+
+      <!-- Cluster Personas & Summaries -->
+      <div class="glass-card p-5 rounded-2xl">
+        <h3 class="text-sm font-bold text-white flex items-center space-x-2 mb-4">
+          <i data-lucide="layers" class="w-4 h-4 text-emerald-400"></i>
+          <span>Cluster Profiles & Fundamental Signatures</span>
+        </h3>
+        <div id="cluster-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+          <!-- Populated by JS -->
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 3: TOPSIS WEIGHT CONFIGURATOR -->
+    <div id="view-weights" class="hidden space-y-6">
+      <div class="glass-card p-6 rounded-2xl">
+        <div class="flex items-center justify-between mb-4">
+          <div>
+            <h3 class="text-base font-bold text-white">Dynamic Criteria Weight & Strategy Customizer</h3>
+            <p class="text-xs text-slate-400">Adjust the weight importance of fundamental indicators or choose preset investment strategies</p>
+          </div>
+          <div class="flex items-center space-x-2">
+            <button onclick="applyPreset('balanced')" class="px-3 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-200">Balanced</button>
+            <button onclick="applyPreset('value')" class="px-3 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-200">Deep Value</button>
+            <button onclick="applyPreset('dividend')" class="px-3 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-200">High Dividend</button>
+            <button onclick="applyPreset('growth')" class="px-3 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-200">Aggressive Growth</button>
+          </div>
+        </div>
+
+        <div id="criteria-sliders" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-4 border-t border-slate-800">
+          <!-- Populated by JS -->
+        </div>
+
+        <div class="mt-6 flex justify-end space-x-3">
+          <button onclick="resetWeights()" class="px-4 py-2 rounded-xl text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium">Reset Defaults</button>
+          <button onclick="recalculateTopsis()" class="px-5 py-2 rounded-xl text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-bold shadow-lg shadow-indigo-500/20">Re-rank Universe</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- VIEW 4: MATHEMATICAL MATRIX AUDIT -->
+    <div id="view-audit" class="hidden space-y-6">
+      <div class="glass-card p-5 rounded-2xl">
+        <h3 class="text-sm font-bold text-white flex items-center space-x-2 mb-1">
+          <i data-lucide="binary" class="w-4 h-4 text-indigo-400"></i>
+          <span>TOPSIS Ideal Vector Matrix Audit</span>
+        </h3>
+        <p class="text-xs text-slate-400 mb-4">Inspection of Positive Ideal ($A^+$) and Negative Ideal ($A^-$) Solutions across all criteria dimensions</p>
+        
+        <div class="overflow-x-auto">
+          <table class="w-full text-left text-xs text-slate-300 font-mono">
+            <thead class="bg-slate-950 text-slate-400 uppercase text-[10px]">
+              <tr id="audit-thead">
+                <!-- Populated by JS -->
+              </tr>
+            </thead>
+            <tbody id="audit-tbody" class="divide-y divide-slate-800">
+              <!-- Populated by JS -->
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+  </main>
+
+  <footer class="mt-auto border-t border-slate-800/80 px-6 py-4 text-center text-xs text-slate-500">
+    SPK x Data Mining Hybrid Platform &bull; Built in Luna Studio with Mitaz &bull; TOPSIS MCDM + Scikit-Learn Cluster Engine
+  </footer>
+
+  <script>
+    // State management
+    let appState = {
+      stocks: [],
+      clusterData: null,
+      topsisData: null,
+      elbowData: null,
+      criteria: {},
+      weights: {
+        roe: 0.25,
+        npm: 0.15,
+        div_yield: 0.15,
+        rev_growth: 0.10,
+        net_growth: 0.10,
+        per: 0.15,
+        pbv: 0.05,
+        der: 0.05
+      },
+      pcaChart: null,
+      elbowChart: null,
+      silhouetteChart: null
+    };
+
+    // Color palette for clusters
+    const CLUSTER_COLORS = [
+      '#6366f1', '#10b981', '#f59e0b', '#ec4899', '#3b82f6', '#8b5cf6', '#14b8a6', '#f43f5e'
+    ];
+
+    async function init() {
+      try {
+        lucide.createIcons();
+        await loadCriteria();
+        await runClustering();
+        await recalculateTopsis();
+        await loadElbow();
+      } catch (err) {
+        console.error("Initialization error:", err);
+      }
+    }
+
+    function switchTab(tabId) {
+      ['dashboard', 'mining', 'weights', 'audit'].forEach(t => {
+        const viewEl = document.getElementById(`view-${t}`);
+        const tabBtn = document.getElementById(`tab-${t}`);
+        if (t === tabId) {
+          viewEl.classList.remove('hidden');
+          tabBtn.className = 'flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-medium transition-all bg-indigo-600 text-white shadow-md';
+        } else {
+          viewEl.classList.add('hidden');
+          tabBtn.className = 'flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all';
+        }
+      });
+      lucide.createIcons();
+    }
+
+    async function loadCriteria() {
+      const res = await fetch('/api/spk/criteria');
+      appState.criteria = await res.json();
+      renderCriteriaSliders();
+    }
+
+    async function runClustering() {
+      const k = parseInt(document.getElementById('cluster-select').value);
+      const res = await fetch('/api/mining/cluster', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ n_clusters: k })
+      });
+      appState.clusterData = await res.json();
+      document.getElementById('stat-clusters').innerText = `k = ${k}`;
+      document.getElementById('stat-silhouette').innerText = `Silhouette: ${appState.clusterData.overall_silhouette}`;
+      
+      renderPCAChart();
+      renderClusterCards();
+      renderCombinedTable();
+    }
+
+    async function recalculateTopsis() {
+      const res = await fetch('/api/spk/topsis', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ weights: appState.weights })
+      });
+      appState.topsisData = await res.json();
+      
+      const topStock = appState.topsisData.ranked_stocks[0];
+      if (topStock) {
+        document.getElementById('stat-top-pick').innerText = topStock.ticker.replace('.JK', '');
+        document.getElementById('stat-top-score').innerText = `Score: ${topStock.topsis_score} (#1)`;
+      }
+
+      renderTopPodium();
+      renderCombinedTable();
+      renderMatrixAudit();
+    }
+
+    async function loadElbow() {
+      const res = await fetch('/api/mining/elbow');
+      appState.elbowData = await res.json();
+      renderElbowCharts();
+    }
+
+    function renderPCAChart() {
+      if (!appState.clusterData) return;
+      const ctx = document.getElementById('pcaChart').getContext('2d');
+      if (appState.pcaChart) appState.pcaChart.destroy();
+
+      const datasets = appState.clusterData.cluster_profiles.map((cp, idx) => {
+        const points = appState.clusterData.clustered_stocks
+          .filter(s => s.cluster === cp.cluster_id)
+          .map(s => ({ x: s.pca_x, y: s.pca_y, label: s.ticker, name: s.name, sector: s.sector }));
+
+        return {
+          label: `Cluster ${cp.cluster_id}: ${cp.label}`,
+          data: points,
+          backgroundColor: CLUSTER_COLORS[idx % CLUSTER_COLORS.length],
+          borderColor: CLUSTER_COLORS[idx % CLUSTER_COLORS.length],
+          pointRadius: 6,
+          pointHoverRadius: 9
+        };
+      });
+
+      appState.pcaChart = new Chart(ctx, {
+        type: 'scatter',
+        data: { datasets },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
+            tooltip: {
+              callbacks: {
+                label: (ctx) => {
+                  const raw = ctx.raw;
+                  return `${raw.label} (${raw.name}) - [${raw.x}, ${raw.y}]`;
+                }
+              }
+            }
+          },
+          scales: {
+            x: {
+              title: { display: true, text: `PC1 (${appState.clusterData.explained_variance_2d_percent[0]}% Var)`, color: '#64748b' },
+              grid: { color: 'rgba(255,255,255,0.05)' },
+              ticks: { color: '#64748b' }
+            },
+            y: {
+              title: { display: true, text: `PC2 (${appState.clusterData.explained_variance_2d_percent[1]}% Var)`, color: '#64748b' },
+              grid: { color: 'rgba(255,255,255,0.05)' },
+              ticks: { color: '#64748b' }
+            }
+          }
+        }
+      });
+    }
+
+    function renderTopPodium() {
+      if (!appState.topsisData) return;
+      const podiumEl = document.getElementById('top-podium');
+      const top5 = appState.topsisData.ranked_stocks.slice(0, 5);
+
+      podiumEl.innerHTML = top5.map((s, idx) => `
+        <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-indigo-500/40 transition-all">
+          <div class="flex items-center space-x-3">
+            <span class="w-6 h-6 rounded-lg ${idx === 0 ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-slate-800 text-slate-400'} flex items-center justify-center font-bold text-xs">
+              #${s.rank}
+            </span>
+            <div>
+              <div class="font-bold text-white text-xs">${s.ticker.replace('.JK', '')} <span class="font-normal text-[11px] text-slate-400">(${s.name})</span></div>
+              <div class="text-[10px] text-indigo-400">${s.sector}</div>
+            </div>
+          </div>
+          <div class="text-right">
+            <div class="text-xs font-bold text-emerald-400 font-mono">${s.topsis_score}</div>
+            <div class="text-[9px] text-slate-400">${s.recommendation}</div>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function renderCombinedTable() {
+      if (!appState.topsisData || !appState.clusterData) return;
+      const tbody = document.getElementById('ranked-tbody');
+      const clusterMap = {};
+      appState.clusterData.clustered_stocks.forEach(s => {
+        clusterMap[s.ticker] = s;
+      });
+
+      const sectorFilter = document.getElementById('sector-filter');
+      const sectors = new Set(appState.topsisData.ranked_stocks.map(s => s.sector));
+      if (sectorFilter.options.length <= 1) {
+        sectors.forEach(sec => {
+          const opt = document.createElement('option');
+          opt.value = sec;
+          opt.innerText = sec;
+          sectorFilter.appendChild(opt);
+        });
+      }
+
+      tbody.innerHTML = appState.topsisData.ranked_stocks.map(s => {
+        const cInfo = clusterMap[s.ticker] || {};
+        const cProfile = (appState.clusterData.cluster_profiles || []).find(p => p.cluster_id === cInfo.cluster);
+        const clusterLabel = cProfile ? cProfile.label : `Cluster ${cInfo.cluster}`;
+        const color = CLUSTER_COLORS[(cInfo.cluster || 0) % CLUSTER_COLORS.length];
+
+        let badgeClass = 'bg-slate-800 text-slate-300';
+        if (s.topsis_score >= 0.65) badgeClass = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
+        else if (s.topsis_score >= 0.50) badgeClass = 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30';
+        else if (s.topsis_score >= 0.35) badgeClass = 'bg-amber-500/20 text-amber-400 border border-amber-500/30';
+        else badgeClass = 'bg-rose-500/20 text-rose-400 border border-rose-500/30';
+
+        return `
+          <tr class="hover:bg-slate-800/40 transition-colors stock-row" data-ticker="${s.ticker.toLowerCase()}" data-name="${s.name.toLowerCase()}" data-sector="${s.sector}">
+            <td class="p-3 font-bold ${s.rank <= 3 ? 'text-amber-400' : 'text-slate-400'}">#${s.rank}</td>
+            <td class="p-3">
+              <div class="font-bold text-white">${s.ticker.replace('.JK', '')}</div>
+              <div class="text-[10px] text-slate-400 font-sans">${s.name}</div>
+            </td>
+            <td class="p-3 text-slate-400 font-sans">${s.sector}</td>
+            <td class="p-3 font-sans">
+              <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium" style="background: ${color}20; color: ${color}; border: 1px solid ${color}40">
+                ${clusterLabel}
+              </span>
+            </td>
+            <td class="p-3 text-right font-bold text-emerald-400">${s.topsis_score}</td>
+            <td class="p-3 text-right ${s.per < 12 ? 'text-emerald-400' : 'text-slate-300'}">${s.per}x</td>
+            <td class="p-3 text-right ${s.pbv < 1.5 ? 'text-emerald-400' : 'text-slate-300'}">${s.pbv}x</td>
+            <td class="p-3 text-right ${s.roe > 18 ? 'text-emerald-400' : 'text-slate-300'}">${s.roe}%</td>
+            <td class="p-3 text-right ${s.div_yield > 4.0 ? 'text-emerald-400' : 'text-slate-300'}">${s.div_yield}%</td>
+            <td class="p-3 text-right">${s.der}x</td>
+            <td class="p-3 text-center font-sans">
+              <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${badgeClass}">
+                ${s.recommendation}
+              </span>
+            </td>
+          </tr>
+        `;
+      }).join('');
+    }
+
+    function filterTable() {
+      const q = document.getElementById('table-search').value.toLowerCase();
+      const sec = document.getElementById('sector-filter').value;
+      const rows = document.querySelectorAll('.stock-row');
+      rows.forEach(r => {
+        const matchesQ = r.getAttribute('data-ticker').includes(q) || r.getAttribute('data-name').includes(q);
+        const matchesSec = sec === 'ALL' || r.getAttribute('data-sector') === sec;
+        r.style.display = (matchesQ && matchesSec) ? '' : 'none';
+      });
+    }
+
+    function renderClusterCards() {
+      if (!appState.clusterData) return;
+      const el = document.getElementById('cluster-cards');
+      el.innerHTML = appState.clusterData.cluster_profiles.map((cp, idx) => {
+        const color = CLUSTER_COLORS[idx % CLUSTER_COLORS.length];
+        return `
+          <div class="p-4 rounded-xl bg-slate-900/70 border border-slate-800 space-y-3">
+            <div class="flex items-center justify-between">
+              <span class="text-xs font-bold px-2 py-0.5 rounded" style="background: ${color}20; color: ${color}; border: 1px solid ${color}40">
+                Cluster ${cp.cluster_id}
+              </span>
+              <span class="text-xs text-slate-400 font-mono">${cp.count} Stocks</span>
+            </div>
+            <div>
+              <div class="font-bold text-white text-xs">${cp.label}</div>
+              <div class="text-[10px] text-slate-400">Avg Silhouette: ${cp.avg_silhouette}</div>
+            </div>
+            <div class="space-y-1 text-[11px] text-slate-300 border-t border-slate-800 pt-2 font-mono">
+              <div class="flex justify-between"><span>ROE:</span> <span class="font-bold">${cp.mean_metrics.roe}%</span></div>
+              <div class="flex justify-between"><span>PER:</span> <span class="font-bold">${cp.mean_metrics.per}x</span></div>
+              <div class="flex justify-between"><span>Div Yield:</span> <span class="font-bold">${cp.mean_metrics.div_yield}%</span></div>
+            </div>
+            <div class="text-[10px] text-slate-400">
+              <span class="font-semibold text-slate-300">Members:</span> ${cp.tickers.map(t => t.replace('.JK', '')).join(', ')}
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderElbowCharts() {
+      if (!appState.elbowData) return;
+      
+      const ctxE = document.getElementById('elbowChart').getContext('2d');
+      if (appState.elbowChart) appState.elbowChart.destroy();
+      appState.elbowChart = new Chart(ctxE, {
+        type: 'line',
+        data: {
+          labels: appState.elbowData.k_range.map(k => `k=${k}`),
+          datasets: [{
+            label: 'Inertia (SSE)',
+            data: appState.elbowData.inertias,
+            borderColor: '#6366f1',
+            backgroundColor: 'rgba(99, 102, 241, 0.1)',
+            tension: 0.3,
+            fill: true
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#94a3b8' } } },
+          scales: {
+            x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' } },
+            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' } }
+          }
+        }
+      });
+
+      const ctxS = document.getElementById('silhouetteChart').getContext('2d');
+      if (appState.silhouetteChart) appState.silhouetteChart.destroy();
+      appState.silhouetteChart = new Chart(ctxS, {
+        type: 'bar',
+        data: {
+          labels: appState.elbowData.k_range.map(k => `k=${k}`),
+          datasets: [{
+            label: 'Silhouette Score',
+            data: appState.elbowData.silhouette_scores,
+            backgroundColor: '#8b5cf6',
+            borderRadius: 6
+          }]
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: { legend: { labels: { color: '#94a3b8' } } },
+          scales: {
+            x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' } },
+            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' }, min: 0, max: 0.6 }
+          }
+        }
+      });
+    }
+
+    function renderCriteriaSliders() {
+      const el = document.getElementById('criteria-sliders');
+      el.innerHTML = Object.entries(appState.criteria).map(([key, item]) => `
+        <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
+          <div class="flex justify-between items-center">
+            <span class="text-xs font-bold text-white">${item.label}</span>
+            <span class="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase ${item.type === 'benefit' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}">
+              ${item.type}
+            </span>
+          </div>
+          <div class="flex items-center space-x-3">
+            <input type="range" min="0" max="50" step="1" value="${Math.round(appState.weights[key] * 100)}" 
+                   oninput="updateWeight('${key}', this.value)" 
+                   class="w-full accent-indigo-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer">
+            <span id="weight-val-${key}" class="text-xs font-mono text-indigo-400 font-bold w-10 text-right">${Math.round(appState.weights[key] * 100)}%</span>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateWeight(key, val) {
+      appState.weights[key] = parseInt(val) / 100.0;
+      document.getElementById(`weight-val-${key}`).innerText = `${val}%`;
+    }
+
+    function applyPreset(preset) {
+      if (preset === 'value') {
+        appState.weights = { per: 0.35, pbv: 0.25, roe: 0.15, div_yield: 0.15, npm: 0.05, der: 0.05, rev_growth: 0.0, net_growth: 0.0 };
+      } else if (preset === 'dividend') {
+        appState.weights = { div_yield: 0.40, roe: 0.25, npm: 0.15, der: 0.10, per: 0.10, pbv: 0.0, rev_growth: 0.0, net_growth: 0.0 };
+      } else if (preset === 'growth') {
+        appState.weights = { rev_growth: 0.30, net_growth: 0.30, roe: 0.20, npm: 0.10, per: 0.05, pbv: 0.05, div_yield: 0.0, der: 0.0 };
+      } else {
+        appState.weights = { roe: 0.25, npm: 0.15, div_yield: 0.15, rev_growth: 0.10, net_growth: 0.10, per: 0.15, pbv: 0.05, der: 0.05 };
+      }
+      renderCriteriaSliders();
+      recalculateTopsis();
+    }
+
+    function resetWeights() {
+      applyPreset('balanced');
+    }
+
+    function renderMatrixAudit() {
+      if (!appState.topsisData) return;
+      const m = appState.topsisData.step_matrices;
+      const thead = document.getElementById('audit-thead');
+      const tbody = document.getElementById('audit-tbody');
+
+      thead.innerHTML = `
+        <th class="p-3">Matrix Metric</th>
+        ${m.criteria.map(c => `<th class="p-3 text-right">${c.toUpperCase()}</th>`).join('')}
+      `;
+
+      tbody.innerHTML = `
+        <tr>
+          <td class="p-3 font-semibold text-slate-400">Weight ($w_j$)</td>
+          ${m.criteria.map(c => `<td class="p-3 text-right text-indigo-400">${(m.weights[c] * 100).toFixed(1)}%</td>`).join('')}
+        </tr>
+        <tr>
+          <td class="p-3 font-semibold text-slate-400">Criteria Type</td>
+          ${m.criteria.map(c => `<td class="p-3 text-right font-sans font-bold uppercase text-[10px] ${m.criteria_types[c] === 'benefit' ? 'text-emerald-400' : 'text-amber-400'}">${m.criteria_types[c]}</td>`).join('')}
+        </tr>
+        <tr>
+          <td class="p-3 font-semibold text-slate-400">Column Norm (Divisor)</td>
+          ${m.criteria.map(c => `<td class="p-3 text-right text-slate-300">${m.column_norms[c]}</td>`).join('')}
+        </tr>
+        <tr class="bg-emerald-500/5">
+          <td class="p-3 font-semibold text-emerald-400">Ideal Positive ($A^+$)</td>
+          ${m.ideal_positive.map(v => `<td class="p-3 text-right text-emerald-400 font-bold">${v}</td>`).join('')}
+        </tr>
+        <tr class="bg-rose-500/5">
+          <td class="p-3 font-semibold text-rose-400">Ideal Negative ($A^-$)</td>
+          ${m.ideal_negative.map(v => `<td class="p-3 text-right text-rose-400 font-bold">${v}</td>`).join('')}
+        </tr>
+      `;
+    }
+
+    window.addEventListener('DOMContentLoaded', init);
+  </script>
+</body>
+</html>
