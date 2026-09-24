@@ -4,14 +4,19 @@ Exposes REST endpoints for ingestion, K-Means clustering, PCA coordinates,
 and TOPSIS ranking with customizable criteria weights.
 """
 
+import os
+import shutil
+import zipfile
 import logging
 from typing import List, Dict, Optional, Any
-from fastapi import FastAPI, HTTPException, Query
+from fastapi import FastAPI, HTTPException, Query, UploadFile, File, BackgroundTasks
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.staticfiles import StaticFiles
 from pydantic import BaseModel, Field
 
 from backend.data.ingestion import fetch_live_stock_data, DEFAULT_TICKERS, SECTOR_MAP
+from backend.data.idx_scraper import scrape_stock_financial_statements, DEFAULT_30_NON_FINANCIAL_STOCKS
+from backend.data.idx_parser import parse_uploaded_reports_directory, get_30_non_financial_data
 from backend.mining.clustering import run_kmeans_clustering, compute_elbow_and_silhouette
 from backend.spk.topsis import run_topsis, DEFAULT_CRITERIA
 
@@ -31,6 +36,11 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
+class ScrapeRequest(BaseModel):
+    tickers: Optional[List[str]] = Field(default=None, description="List of IDX tickers to scrape")
+    start_year: int = Field(default=2020, ge=2015, le=2025)
+    end_year: int = Field(default=2024, ge=2015, le=2025)
+
 class TopsisWeightRequest(BaseModel):
     tickers: Optional[List[str]] = None
     weights: Optional[Dict[str, float]] = None
@@ -44,6 +54,74 @@ class ClusterRequest(BaseModel):
 @app.get("/api/health")
 async def health_check():
     return {"status": "ok", "service": "SPK x Data Mining Engine"}
+
+@app.post("/api/data/scrape")
+async def trigger_idx_scrape(req: ScrapeRequest):
+    """
+    Directly initiates scraping of audited annual financial statements from IDX.co.id.
+    """
+    try:
+        tickers = req.tickers or DEFAULT_30_NON_FINANCIAL_STOCKS
+        summary = scrape_stock_financial_statements(
+            tickers=tickers,
+            start_year=req.start_year,
+            end_year=req.end_year
+        )
+        # Trigger parsing of newly downloaded reports
+        parsed = parse_uploaded_reports_directory()
+        return {
+            "status": "success",
+            "scrape_summary": summary,
+            "parsed_count": len(parsed)
+        }
+    except Exception as e:
+        logger.exception("Failed to scrape IDX data")
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.post("/api/data/upload")
+async def upload_financial_statements(file: UploadFile = File(...)):
+    """
+    Accepts .xlsx workbook or .zip archive of financial statements,
+    extracts/saves them to data/raw_reports, and parses 5-year CAGR metrics.
+    """
+    upload_dir = "data/raw_reports"
+    os.makedirs(upload_dir, exist_ok=True)
+    filename = file.filename or "uploaded_file"
+
+    try:
+        temp_path = os.path.join(upload_dir, filename)
+        with open(temp_path, "wb") as buffer:
+            shutil.copyfileobj(file.file, buffer)
+
+        extracted_files = []
+        if filename.lower().endswith(".zip"):
+            with zipfile.ZipFile(temp_path, 'r') as zip_ref:
+                for member in zip_ref.namelist():
+                    if not member.startswith("__MACOSX") and (member.lower().endswith(".xlsx") or member.lower().endswith(".xls")):
+                        zip_ref.extract(member, upload_dir)
+                        extracted_files.append(member)
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+        elif filename.lower().endswith(".xlsx") or filename.lower().endswith(".xls"):
+            extracted_files.append(filename)
+        else:
+            if os.path.exists(temp_path):
+                os.remove(temp_path)
+            raise HTTPException(status_code=400, detail="Invalid file format. Only .xlsx, .xls, and .zip are supported.")
+
+        # Re-parse raw directory
+        parsed_data = parse_uploaded_reports_directory(upload_dir)
+        return {
+            "status": "success",
+            "message": f"Successfully processed {len(extracted_files)} report files.",
+            "extracted_files": extracted_files,
+            "total_parsed_stocks": len(parsed_data)
+        }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception("Failed to upload/parse statements")
+        raise HTTPException(status_code=500, detail=str(e))
 
 @app.get("/api/stocks")
 async def get_stocks(refresh: bool = False):

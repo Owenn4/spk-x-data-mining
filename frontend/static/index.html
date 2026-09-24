@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SPK x Data Mining — IDX Stock Intelligent Evaluator</title>
+  <title>SPK x Data Mining — IDX 30 Non-Financial 5-Year Audited Growth Analysis</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js CDN -->
@@ -62,9 +62,9 @@
       <div>
         <div class="flex items-center space-x-2">
           <h1 class="text-lg font-bold tracking-tight text-white">SPK <span class="text-indigo-400">×</span> Data Mining</h1>
-          <span class="px-2 py-0.5 text-xs font-semibold uppercase tracking-wider rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">IDX LQ45</span>
+          <span class="px-2 py-0.5 text-xs font-semibold uppercase tracking-wider rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">30 IDX Non-Financials</span>
         </div>
-        <p class="text-xs text-slate-400">Multi-Criteria Decision Making (TOPSIS) + Unsupervised K-Means & PCA Projections</p>
+        <p class="text-xs text-slate-400">2020–2024 Audited Growth Analysis: K-Means Segmentation &amp; TOPSIS Decision Support</p>
       </div>
     </div>
 
@@ -72,11 +72,11 @@
     <nav class="flex items-center bg-slate-900/80 p-1 rounded-xl border border-slate-800">
       <button onclick="switchTab('dashboard')" id="tab-dashboard" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-medium transition-all bg-indigo-600 text-white shadow-md">
         <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-        <span>Dashboard & SPK</span>
+        <span>Dashboard &amp; SPK</span>
       </button>
       <button onclick="switchTab('mining')" id="tab-mining" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all">
         <i data-lucide="boxes" class="w-4 h-4"></i>
-        <span>K-Means & PCA</span>
+        <span>K-Means &amp; PCA</span>
       </button>
       <button onclick="switchTab('weights')" id="tab-weights" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all">
         <i data-lucide="sliders" class="w-4 h-4"></i>
@@ -85,6 +85,10 @@
       <button onclick="switchTab('audit')" id="tab-audit" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all">
         <i data-lucide="calculator" class="w-4 h-4"></i>
         <span>Matrix Audit</span>
+      </button>
+      <button onclick="switchTab('ingest')" id="tab-ingest" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all">
+        <i data-lucide="cloud-download" class="w-4 h-4"></i>
+        <span>Data Ingestion</span>
       </button>
     </nav>
   </header>
@@ -100,8 +104,8 @@
         </div>
         <div>
           <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Analyzed Universe</div>
-          <div id="stat-count" class="text-2xl font-extrabold text-white">25 Stocks</div>
-          <div class="text-[11px] text-slate-400">IDX LQ45 & Bluechips</div>
+          <div id="stat-count" class="text-2xl font-extrabold text-white">30 Stocks</div>
+          <div class="text-[11px] text-slate-400">IDX Non-Financial Cohort</div>
         </div>
       </div>
 
@@ -132,9 +136,9 @@
           <i data-lucide="cpu" class="w-6 h-6"></i>
         </div>
         <div>
-          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Hybrid Engine</div>
-          <div class="text-2xl font-extrabold text-amber-400">Active</div>
-          <div class="text-[11px] text-slate-400">TOPSIS + K-Means Sync</div>
+          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Growth Framework</div>
+          <div class="text-2xl font-extrabold text-amber-400">2020–2024</div>
+          <div class="text-[11px] text-slate-400">5-Yr Audited CAGR Engine</div>
         </div>
       </div>
     </section>
@@ -149,9 +153,9 @@
             <div>
               <h2 class="text-base font-bold text-white flex items-center space-x-2">
                 <i data-lucide="scatter-chart" class="w-4 h-4 text-indigo-400"></i>
-                <span>Fundamental Feature Space (PCA 2D Projection)</span>
+                <span>Audited Growth Feature Space (PCA 2D Projection)</span>
               </h2>
-              <p class="text-xs text-slate-400">Visualizing 8 financial dimensions compressed to Principal Components 1 & 2</p>
+              <p class="text-xs text-slate-400">Visualizing 4 Audited 5-Year CAGR Dimensions (Revenue, Net Income, Total Assets, Total Equity) in 2D</p>
             </div>
             <div class="flex items-center space-x-2">
               <span class="text-xs text-slate-400">k:</span>
@@ -184,7 +188,7 @@
           </div>
           <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400 flex justify-between">
             <span>Method: Vector Norm + Euclidean</span>
-            <span class="text-indigo-400 font-mono">8 Criteria Evaluated</span>
+            <span class="text-indigo-400 font-mono">4 Growth Criteria Evaluated</span>
           </div>
         </div>
       </div>
@@ -194,7 +198,7 @@
         <div class="p-4 bg-slate-900/60 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
           <div class="flex items-center space-x-2">
             <i data-lucide="list-ordered" class="w-5 h-5 text-indigo-400"></i>
-            <h3 class="text-sm font-bold text-white">Comprehensive SPK Stock Leaderboard</h3>
+            <h3 class="text-sm font-bold text-white">Comprehensive 5-Year Audited Growth SPK Leaderboard</h3>
           </div>
           <div class="flex items-center space-x-3">
             <input type="text" id="table-search" placeholder="Search ticker or name..." onkeyup="filterTable()" class="bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 w-48">
@@ -213,11 +217,10 @@
                 <th class="p-3">Sector</th>
                 <th class="p-3">Cluster Persona</th>
                 <th class="p-3 text-right">TOPSIS Score</th>
-                <th class="p-3 text-right">PER (x)</th>
-                <th class="p-3 text-right">PBV (x)</th>
-                <th class="p-3 text-right">ROE (%)</th>
-                <th class="p-3 text-right">Div Yield (%)</th>
-                <th class="p-3 text-right">DER</th>
+                <th class="p-3 text-right">Rev CAGR (%)</th>
+                <th class="p-3 text-right">Net Inc CAGR (%)</th>
+                <th class="p-3 text-right">Asset CAGR (%)</th>
+                <th class="p-3 text-right">Equity CAGR (%)</th>
                 <th class="p-3 text-center">Verdict</th>
               </tr>
             </thead>
@@ -261,7 +264,7 @@
       <div class="glass-card p-5 rounded-2xl">
         <h3 class="text-sm font-bold text-white flex items-center space-x-2 mb-4">
           <i data-lucide="layers" class="w-4 h-4 text-emerald-400"></i>
-          <span>Cluster Profiles & Fundamental Signatures</span>
+          <span>Cluster Profiles &amp; Growth Trajectories</span>
         </h3>
         <div id="cluster-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           <!-- Populated by JS -->
@@ -274,14 +277,14 @@
       <div class="glass-card p-6 rounded-2xl">
         <div class="flex items-center justify-between mb-4">
           <div>
-            <h3 class="text-base font-bold text-white">Dynamic Criteria Weight & Strategy Customizer</h3>
-            <p class="text-xs text-slate-400">Adjust the weight importance of fundamental indicators or choose preset investment strategies</p>
+            <h3 class="text-base font-bold text-white">Dynamic Criteria Weight &amp; Strategy Customizer</h3>
+            <p class="text-xs text-slate-400">Adjust the weight importance of 5-year audited CAGR metrics or select strategy presets</p>
           </div>
           <div class="flex items-center space-x-2">
-            <button onclick="applyPreset('balanced')" class="px-3 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-200">Balanced</button>
-            <button onclick="applyPreset('value')" class="px-3 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-200">Deep Value</button>
-            <button onclick="applyPreset('dividend')" class="px-3 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-200">High Dividend</button>
-            <button onclick="applyPreset('growth')" class="px-3 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-200">Aggressive Growth</button>
+            <button onclick="applyPreset('balanced')" class="px-3 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-200">Balanced Growth</button>
+            <button onclick="applyPreset('profitability')" class="px-3 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-200">Profit-Driven</button>
+            <button onclick="applyPreset('topline')" class="px-3 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-200">Top-Line Expansion</button>
+            <button onclick="applyPreset('asset_scale')" class="px-3 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-200">Asset &amp; Equity Scale</button>
           </div>
         </div>
 
@@ -303,7 +306,7 @@
           <i data-lucide="binary" class="w-4 h-4 text-indigo-400"></i>
           <span>TOPSIS Ideal Vector Matrix Audit</span>
         </h3>
-        <p class="text-xs text-slate-400 mb-4">Inspection of Positive Ideal ($A^+$) and Negative Ideal ($A^-$) Solutions across all criteria dimensions</p>
+        <p class="text-xs text-slate-400 mb-4">Inspection of Positive Ideal ($A^+$) and Negative Ideal ($A^-$) Solutions across the 4 audited growth dimensions</p>
         
         <div class="overflow-x-auto">
           <table class="w-full text-left text-xs text-slate-300 font-mono">
@@ -320,10 +323,93 @@
       </div>
     </div>
 
+    <!-- VIEW 5: DATA INGESTION & PIPELINE TRIGGER -->
+    <div id="view-ingest" class="hidden space-y-6">
+      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        <!-- Live IDX Report Scraper Card -->
+        <div class="glass-card p-6 rounded-2xl space-y-4">
+          <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 border border-indigo-500/20">
+              <i data-lucide="bot" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-white">Live IDX Report Scraper</h3>
+              <p class="text-xs text-slate-400">Query and download audited financial statements directly from IDX</p>
+            </div>
+          </div>
+
+          <div class="space-y-3 pt-2">
+            <div>
+              <label class="text-xs text-slate-300 font-medium">Tickers (comma separated)</label>
+              <input type="text" id="scrape-tickers" placeholder="ASII, ICBP, TLKM, UNVR" class="w-full mt-1 bg-slate-950 border border-slate-800 px-3 py-2 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500">
+            </div>
+            <div class="grid grid-cols-2 gap-3">
+              <div>
+                <label class="text-xs text-slate-300 font-medium">Start Year</label>
+                <input type="number" id="scrape-start-year" value="2020" class="w-full mt-1 bg-slate-950 border border-slate-800 px-3 py-2 rounded-xl text-xs text-white focus:outline-none focus:border-indigo-500 font-mono">
+              </div>
+              <div>
+                <label class="text-xs text-slate-300 font-medium">End Year</label>
+                <input type="number" id="scrape-end-year" value="2024" class="w-full mt-1 bg-slate-950 border border-slate-800 px-3 py-2 rounded-xl text-xs text-white focus:outline-none focus:border-indigo-500 font-mono">
+              </div>
+            </div>
+
+            <button onclick="triggerScrape()" id="btn-scrape" class="w-full py-2.5 rounded-xl text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition-all shadow-lg shadow-indigo-500/20 flex items-center justify-center space-x-2">
+              <i data-lucide="play" class="w-4 h-4"></i>
+              <span>Launch Scraper Job</span>
+            </button>
+          </div>
+        </div>
+
+        <!-- Manual Batch XLSX / ZIP Upload Card -->
+        <div class="glass-card p-6 rounded-2xl space-y-4">
+          <div class="flex items-center space-x-3">
+            <div class="w-9 h-9 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20">
+              <i data-lucide="file-up" class="w-5 h-5"></i>
+            </div>
+            <div>
+              <h3 class="text-base font-bold text-white">Batch Financial Statement Upload</h3>
+              <p class="text-xs text-slate-400">Upload standalone XLSX workbooks or ZIP archives of annual reports</p>
+            </div>
+          </div>
+
+          <div class="space-y-3 pt-2">
+            <div id="dropzone" class="border-2 border-dashed border-slate-700 hover:border-emerald-500/50 rounded-xl p-6 text-center cursor-pointer transition-all bg-slate-950/40">
+              <input type="file" id="file-input" accept=".xlsx,.zip" class="hidden" onchange="handleFileSelect(event)">
+              <div class="space-y-2">
+                <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-400 mx-auto"></i>
+                <div class="text-xs text-slate-300 font-medium" id="dropzone-text">Click or drag &amp; drop .xlsx or .zip report file</div>
+                <div class="text-[10px] text-slate-500">Supports audited IDX financial statement formats</div>
+              </div>
+            </div>
+
+            <button onclick="triggerUpload()" id="btn-upload" class="w-full py-2.5 rounded-xl text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2">
+              <i data-lucide="upload" class="w-4 h-4"></i>
+              <span>Upload &amp; Extract Data</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ingestion Activity Console Log -->
+      <div class="glass-card p-5 rounded-2xl">
+        <div class="flex items-center justify-between mb-2">
+          <h4 class="text-xs font-bold text-white uppercase tracking-wider flex items-center space-x-2">
+            <i data-lucide="terminal" class="w-4 h-4 text-slate-400"></i>
+            <span>Ingestion Pipeline Console Output</span>
+          </h4>
+          <span id="ingest-status-tag" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">Idle</span>
+        </div>
+        <div id="ingest-console" class="bg-slate-950 p-4 rounded-xl font-mono text-xs text-slate-400 h-40 overflow-y-auto border border-slate-800/80 space-y-1">
+          <div class="text-slate-600">[system] Ready for scraper or manual statement file upload.</div>
+        </div>
+      </div>
+    </div>
+
   </main>
 
   <footer class="mt-auto border-t border-slate-800/80 px-6 py-4 text-center text-xs text-slate-500">
-    SPK x Data Mining Hybrid Platform &bull; Built in Luna Studio with Mitaz &bull; TOPSIS MCDM + Scikit-Learn Cluster Engine
+    SPK x Data Mining Hybrid Platform &bull; IDX 30 Non-Financial Universe (2020–2024 Audited Financial Statements) &bull; TOPSIS MCDM + Scikit-Learn Cluster Engine
   </footer>
 
   <script>
@@ -335,14 +421,10 @@
       elbowData: null,
       criteria: {},
       weights: {
-        roe: 0.25,
-        npm: 0.15,
-        div_yield: 0.15,
-        rev_growth: 0.10,
-        net_growth: 0.10,
-        per: 0.15,
-        pbv: 0.05,
-        der: 0.05
+        rev_growth: 0.35,
+        net_growth: 0.35,
+        asset_growth: 0.15,
+        equity_growth: 0.15
       },
       pcaChart: null,
       elbowChart: null,
@@ -367,7 +449,7 @@
     }
 
     function switchTab(tabId) {
-      ['dashboard', 'mining', 'weights', 'audit'].forEach(t => {
+      ['dashboard', 'mining', 'weights', 'audit', 'ingest'].forEach(t => {
         const viewEl = document.getElementById(`view-${t}`);
         const tabBtn = document.getElementById(`tab-${t}`);
         if (t === tabId) {
@@ -379,6 +461,132 @@
         }
       });
       lucide.createIcons();
+    }
+
+    let selectedUploadFile = null;
+
+    function handleFileSelect(event) {
+      const file = event.target.files[0];
+      if (file) {
+        selectedUploadFile = file;
+        document.getElementById('dropzone-text').innerText = `Selected: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+      }
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      const dropzone = document.getElementById('dropzone');
+      if (dropzone) {
+        dropzone.addEventListener('click', () => document.getElementById('file-input').click());
+        dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('border-emerald-500'); });
+        dropzone.addEventListener('dragleave', () => dropzone.classList.remove('border-emerald-500'));
+        dropzone.addEventListener('drop', (e) => {
+          e.preventDefault();
+          dropzone.classList.remove('border-emerald-500');
+          if (e.dataTransfer.files.length) {
+            selectedUploadFile = e.dataTransfer.files[0];
+            document.getElementById('dropzone-text').innerText = `Selected: ${selectedUploadFile.name} (${(selectedUploadFile.size / 1024).toFixed(1)} KB)`;
+          }
+        });
+      }
+    });
+
+    function logIngest(msg, type = 'info') {
+      const con = document.getElementById('ingest-console');
+      const time = new Date().toLocaleTimeString();
+      let colorClass = 'text-slate-300';
+      if (type === 'error') colorClass = 'text-rose-400';
+      else if (type === 'success') colorClass = 'text-emerald-400 font-bold';
+      else if (type === 'warn') colorClass = 'text-amber-400';
+
+      const line = document.createElement('div');
+      line.className = colorClass;
+      line.innerText = `[${time}] ${msg}`;
+      con.appendChild(line);
+      con.scrollTop = con.scrollHeight;
+    }
+
+    async function triggerScrape() {
+      const tickersRaw = document.getElementById('scrape-tickers').value.trim();
+      const startYear = parseInt(document.getElementById('scrape-start-year').value) || 2020;
+      const endYear = parseInt(document.getElementById('scrape-end-year').value) || 2024;
+      const tickers = tickersRaw ? tickersRaw.split(',').map(t => t.trim().toUpperCase()).filter(Boolean) : [];
+
+      const btn = document.getElementById('btn-scrape');
+      const statusTag = document.getElementById('ingest-status-tag');
+      btn.disabled = true;
+      btn.classList.add('opacity-50');
+      statusTag.innerText = 'Scraping IDX...';
+      statusTag.className = 'text-[10px] px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 font-mono animate-pulse';
+
+      logIngest(`Initiating IDX financial report scraper (Years: ${startYear}–${endYear}, Target Tickers: ${tickers.length ? tickers.join(', ') : 'Default Non-Financial Universe'})...`);
+
+      try {
+        const res = await fetch('/api/data/scrape', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ tickers, start_year: startYear, end_year: endYear })
+        });
+        const data = await res.json();
+        if (res.ok && data.status === 'success') {
+          logIngest(`Scrape complete! Found ${data.total_downloaded_files || 0} reports across ${data.scraped_tickers.length} tickers.`, 'success');
+          logIngest(`Auto-running clustering & TOPSIS recalculation...`);
+          await runClustering();
+          await recalculateTopsis();
+          logIngest(`Workspace models successfully updated with fresh dataset.`, 'success');
+        } else {
+          logIngest(`Scrape job failed: ${data.detail || JSON.stringify(data)}`, 'error');
+        }
+      } catch (err) {
+        logIngest(`Scrape network error: ${err.message}`, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.classList.remove('opacity-50');
+        statusTag.innerText = 'Idle';
+        statusTag.className = 'text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono';
+      }
+    }
+
+    async function triggerUpload() {
+      if (!selectedUploadFile) {
+        alert("Please select or drop an .xlsx or .zip file first!");
+        return;
+      }
+
+      const btn = document.getElementById('btn-upload');
+      const statusTag = document.getElementById('ingest-status-tag');
+      btn.disabled = true;
+      btn.classList.add('opacity-50');
+      statusTag.innerText = 'Uploading & Parsing...';
+      statusTag.className = 'text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono animate-pulse';
+
+      logIngest(`Uploading financial statements workbook: ${selectedUploadFile.name}...`);
+
+      const formData = new FormData();
+      formData.append('file', selectedUploadFile);
+
+      try {
+        const res = await fetch('/api/data/upload', {
+          method: 'POST',
+          body: formData
+        });
+        const data = await res.json();
+        if (res.ok && data.status === 'success') {
+          logIngest(`Upload & extraction successful! Saved to ${data.saved_path}`, 'success');
+          logIngest(`Extracted metrics for ${data.extracted_records || 0} financial records. Updating pipeline...`);
+          await runClustering();
+          await recalculateTopsis();
+          logIngest(`Pipeline refreshed with newly uploaded financial data.`, 'success');
+        } else {
+          logIngest(`Upload processing failed: ${data.detail || JSON.stringify(data)}`, 'error');
+        }
+      } catch (err) {
+        logIngest(`Upload error: ${err.message}`, 'error');
+      } finally {
+        btn.disabled = false;
+        btn.classList.remove('opacity-50');
+        statusTag.innerText = 'Idle';
+        statusTag.className = 'text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono';
+      }
     }
 
     async function loadCriteria() {
@@ -536,6 +744,13 @@
         else if (s.topsis_score >= 0.35) badgeClass = 'bg-amber-500/20 text-amber-400 border border-amber-500/30';
         else badgeClass = 'bg-rose-500/20 text-rose-400 border border-rose-500/30';
 
+        const fmtPct = (val) => {
+          if (val === undefined || val === null) return '--';
+          const sign = val > 0 ? '+' : '';
+          const colorClass = val >= 10.0 ? 'text-emerald-400 font-bold' : (val >= 0 ? 'text-slate-300' : 'text-rose-400');
+          return `<span class="${colorClass}">${sign}${val.toFixed(1)}%</span>`;
+        };
+
         return `
           <tr class="hover:bg-slate-800/40 transition-colors stock-row" data-ticker="${s.ticker.toLowerCase()}" data-name="${s.name.toLowerCase()}" data-sector="${s.sector}">
             <td class="p-3 font-bold ${s.rank <= 3 ? 'text-amber-400' : 'text-slate-400'}">#${s.rank}</td>
@@ -550,11 +765,10 @@
               </span>
             </td>
             <td class="p-3 text-right font-bold text-emerald-400">${s.topsis_score}</td>
-            <td class="p-3 text-right ${s.per < 12 ? 'text-emerald-400' : 'text-slate-300'}">${s.per}x</td>
-            <td class="p-3 text-right ${s.pbv < 1.5 ? 'text-emerald-400' : 'text-slate-300'}">${s.pbv}x</td>
-            <td class="p-3 text-right ${s.roe > 18 ? 'text-emerald-400' : 'text-slate-300'}">${s.roe}%</td>
-            <td class="p-3 text-right ${s.div_yield > 4.0 ? 'text-emerald-400' : 'text-slate-300'}">${s.div_yield}%</td>
-            <td class="p-3 text-right">${s.der}x</td>
+            <td class="p-3 text-right">${fmtPct(s.rev_growth)}</td>
+            <td class="p-3 text-right">${fmtPct(s.net_growth)}</td>
+            <td class="p-3 text-right">${fmtPct(s.asset_growth)}</td>
+            <td class="p-3 text-right">${fmtPct(s.equity_growth)}</td>
             <td class="p-3 text-center font-sans">
               <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${badgeClass}">
                 ${s.recommendation}
@@ -581,6 +795,12 @@
       const el = document.getElementById('cluster-cards');
       el.innerHTML = appState.clusterData.cluster_profiles.map((cp, idx) => {
         const color = CLUSTER_COLORS[idx % CLUSTER_COLORS.length];
+        const m = cp.mean_metrics || {};
+        const rev = m.rev_growth !== undefined ? `${m.rev_growth > 0 ? '+' : ''}${m.rev_growth}%` : '--';
+        const net = m.net_growth !== undefined ? `${m.net_growth > 0 ? '+' : ''}${m.net_growth}%` : '--';
+        const asset = m.asset_growth !== undefined ? `${m.asset_growth > 0 ? '+' : ''}${m.asset_growth}%` : '--';
+        const eq = m.equity_growth !== undefined ? `${m.equity_growth > 0 ? '+' : ''}${m.equity_growth}%` : '--';
+
         return `
           <div class="p-4 rounded-xl bg-slate-900/70 border border-slate-800 space-y-3">
             <div class="flex items-center justify-between">
@@ -594,9 +814,10 @@
               <div class="text-[10px] text-slate-400">Avg Silhouette: ${cp.avg_silhouette}</div>
             </div>
             <div class="space-y-1 text-[11px] text-slate-300 border-t border-slate-800 pt-2 font-mono">
-              <div class="flex justify-between"><span>ROE:</span> <span class="font-bold">${cp.mean_metrics.roe}%</span></div>
-              <div class="flex justify-between"><span>PER:</span> <span class="font-bold">${cp.mean_metrics.per}x</span></div>
-              <div class="flex justify-between"><span>Div Yield:</span> <span class="font-bold">${cp.mean_metrics.div_yield}%</span></div>
+              <div class="flex justify-between"><span>Rev CAGR:</span> <span class="font-bold text-indigo-300">${rev}</span></div>
+              <div class="flex justify-between"><span>Net Inc CAGR:</span> <span class="font-bold text-emerald-300">${net}</span></div>
+              <div class="flex justify-between"><span>Asset CAGR:</span> <span class="font-bold text-amber-300">${asset}</span></div>
+              <div class="flex justify-between"><span>Equity CAGR:</span> <span class="font-bold text-purple-300">${eq}</span></div>
             </div>
             <div class="text-[10px] text-slate-400">
               <span class="font-semibold text-slate-300">Members:</span> ${cp.tickers.map(t => t.replace('.JK', '')).join(', ')}
@@ -671,10 +892,10 @@
             </span>
           </div>
           <div class="flex items-center space-x-3">
-            <input type="range" min="0" max="50" step="1" value="${Math.round(appState.weights[key] * 100)}" 
+            <input type="range" min="0" max="60" step="1" value="${Math.round((appState.weights[key] || 0) * 100)}" 
                    oninput="updateWeight('${key}', this.value)" 
                    class="w-full accent-indigo-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer">
-            <span id="weight-val-${key}" class="text-xs font-mono text-indigo-400 font-bold w-10 text-right">${Math.round(appState.weights[key] * 100)}%</span>
+            <span id="weight-val-${key}" class="text-xs font-mono text-indigo-400 font-bold w-10 text-right">${Math.round((appState.weights[key] || 0) * 100)}%</span>
           </div>
         </div>
       `).join('');
@@ -686,14 +907,14 @@
     }
 
     function applyPreset(preset) {
-      if (preset === 'value') {
-        appState.weights = { per: 0.35, pbv: 0.25, roe: 0.15, div_yield: 0.15, npm: 0.05, der: 0.05, rev_growth: 0.0, net_growth: 0.0 };
-      } else if (preset === 'dividend') {
-        appState.weights = { div_yield: 0.40, roe: 0.25, npm: 0.15, der: 0.10, per: 0.10, pbv: 0.0, rev_growth: 0.0, net_growth: 0.0 };
-      } else if (preset === 'growth') {
-        appState.weights = { rev_growth: 0.30, net_growth: 0.30, roe: 0.20, npm: 0.10, per: 0.05, pbv: 0.05, div_yield: 0.0, der: 0.0 };
+      if (preset === 'profitability') {
+        appState.weights = { rev_growth: 0.20, net_growth: 0.60, asset_growth: 0.10, equity_growth: 0.10 };
+      } else if (preset === 'topline') {
+        appState.weights = { rev_growth: 0.60, net_growth: 0.20, asset_growth: 0.10, equity_growth: 0.10 };
+      } else if (preset === 'asset_scale') {
+        appState.weights = { rev_growth: 0.20, net_growth: 0.20, asset_growth: 0.30, equity_growth: 0.30 };
       } else {
-        appState.weights = { roe: 0.25, npm: 0.15, div_yield: 0.15, rev_growth: 0.10, net_growth: 0.10, per: 0.15, pbv: 0.05, der: 0.05 };
+        appState.weights = { rev_growth: 0.35, net_growth: 0.35, asset_growth: 0.15, equity_growth: 0.15 };
       }
       renderCriteriaSliders();
       recalculateTopsis();

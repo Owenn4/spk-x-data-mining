@@ -15,7 +15,7 @@ from sklearn.metrics import silhouette_score, silhouette_samples
 
 logger = logging.getLogger("spk_mining.clustering")
 
-CLUSTER_FEATURES = ["per", "pbv", "roe", "der", "npm", "div_yield", "rev_growth", "net_growth"]
+CLUSTER_FEATURES = ["rev_growth", "net_growth", "asset_growth", "equity_growth"]
 
 def compute_elbow_and_silhouette(
     df: pd.DataFrame,
@@ -52,28 +52,21 @@ def compute_elbow_and_silhouette(
     }
 
 def label_cluster_profile(mean_metrics: Dict[str, float]) -> str:
-    roe = mean_metrics.get("roe", 0)
-    div_yield = mean_metrics.get("div_yield", 0)
-    rev_growth = mean_metrics.get("rev_growth", 0)
-    per = mean_metrics.get("per", 0)
-    der = mean_metrics.get("der", 0)
+    rev = mean_metrics.get("rev_growth", 0.0)
+    net = mean_metrics.get("net_growth", 0.0)
+    asset = mean_metrics.get("asset_growth", 0.0)
+    equity = mean_metrics.get("equity_growth", 0.0)
 
-    if roe > 20 and div_yield > 4.5:
-        return "High Yield & Quality Blue Chip"
-    elif rev_growth > 12 and roe > 15:
-        return "High Growth Compounder"
-    elif per < 10 and roe > 12:
-        return "Deep Value / Undervalued"
-    elif div_yield > 6.0:
-        return "High Dividend Aristocrat"
-    elif rev_growth > 15 and roe < 8:
-        return "Emerging Growth / Turnaround"
-    elif der > 4.0:
-        return "Leveraged Financial Institution"
-    elif per > 25:
-        return "High Valuation Premium"
+    if rev > 15.0 and net > 20.0:
+        return "Aggressive High-Growth Expansion"
+    elif rev > 10.0 and net > 10.0 and equity > 10.0:
+        return "Steady Compounder & Value Creator"
+    elif asset > 10.0 and equity > 12.0 and net < 10.0:
+        return "Capital & Asset Accumulator"
+    elif rev < 5.0 or net < 5.0:
+        return "Mature / Defensive Low-Growth"
     else:
-        return "Moderate Core Stable"
+        return "Moderate Balanced Compounder"
 
 def run_kmeans_clustering(
     df: pd.DataFrame,

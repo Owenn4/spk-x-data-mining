@@ -10,17 +10,13 @@ import pandas as pd
 
 logger = logging.getLogger("spk_mining.topsis")
 
-# Default criteria definitions:
+# Default criteria definitions based on 5-Year Audited CAGR Metrics (2020-2024):
 # type: 'benefit' (higher is better) or 'cost' (lower is better)
 DEFAULT_CRITERIA = {
-    "roe": {"type": "benefit", "weight": 0.25, "label": "Return on Equity (%)"},
-    "npm": {"type": "benefit", "weight": 0.15, "label": "Net Profit Margin (%)"},
-    "div_yield": {"type": "benefit", "weight": 0.15, "label": "Dividend Yield (%)"},
-    "rev_growth": {"type": "benefit", "weight": 0.10, "label": "Revenue Growth (%)"},
-    "net_growth": {"type": "benefit", "weight": 0.10, "label": "Earnings Growth (%)"},
-    "per": {"type": "cost", "weight": 0.15, "label": "Price-to-Earnings Ratio"},
-    "pbv": {"type": "cost", "weight": 0.05, "label": "Price-to-Book Value"},
-    "der": {"type": "cost", "weight": 0.05, "label": "Debt-to-Equity Ratio"}
+    "rev_growth": {"type": "benefit", "weight": 0.30, "label": "5-Yr Revenue CAGR (%)"},
+    "net_growth": {"type": "benefit", "weight": 0.35, "label": "5-Yr Net Income CAGR (%)"},
+    "asset_growth": {"type": "benefit", "weight": 0.15, "label": "5-Yr Total Asset CAGR (%)"},
+    "equity_growth": {"type": "benefit", "weight": 0.20, "label": "5-Yr Total Equity CAGR (%)"}
 }
 
 def run_topsis(

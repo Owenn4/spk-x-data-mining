@@ -20,7 +20,7 @@ class TestSPKDataMiningSuite(unittest.TestCase):
     def test_cache_integrity(self):
         self.assertGreater(len(self.cached_data), 0, "Cache must contain stock entries")
         sample = self.cached_data[0]
-        required_fields = ["ticker", "name", "sector", "market_cap_t", "per", "pbv", "roe", "der"]
+        required_fields = ["ticker", "name", "sector", "rev_growth", "net_growth", "asset_growth", "equity_growth"]
         for field in required_fields:
             self.assertIn(field, sample, f"Missing field {field} in stock record")
 
@@ -63,17 +63,44 @@ class TestSPKDataMiningSuite(unittest.TestCase):
 
     def test_custom_weights_topsis(self):
         custom_weights = {
-            "per": 0.05,
-            "pbv": 0.05,
-            "roe": 0.40,
-            "npm": 0.30,
-            "der": 0.05,
-            "div_yield": 0.05,
-            "rev_growth": 0.05,
-            "net_growth": 0.05
+            "rev_growth": 0.40,
+            "net_growth": 0.30,
+            "asset_growth": 0.15,
+            "equity_growth": 0.15
         }
         result = run_topsis(self.df, custom_weights=custom_weights)
         self.assertEqual(len(result["ranked_stocks"]), len(self.df))
+
+    def test_api_routes_integration(self):
+        from fastapi.testclient import TestClient
+        from backend.api.routes import app
+        
+        client = TestClient(app)
+        
+        # Health check
+        res_health = client.get("/api/health")
+        self.assertEqual(res_health.status_code, 200)
+        self.assertEqual(res_health.json()["status"], "ok")
+        
+        # Stocks endpoint
+        res_stocks = client.get("/api/stocks")
+        self.assertEqual(res_stocks.status_code, 200)
+        stocks_data = res_stocks.json()
+        self.assertIn("data", stocks_data)
+        self.assertGreaterEqual(len(stocks_data["data"]), 30)
+        
+        # Scrape endpoint with simulated mock tickers
+        res_scrape = client.post("/api/data/scrape", json={"tickers": ["ICBP", "INDF"], "start_year": 2020, "end_year": 2024})
+        self.assertEqual(res_scrape.status_code, 200)
+        self.assertIn("scrape_summary", res_scrape.json())
+
+        # Upload endpoint test (with empty/mock files)
+        import io
+        fake_file = io.BytesIO(b"fake financial content")
+        res_upload = client.post("/api/data/upload", files={"file": ("report_ICBP_2024.xlsx", fake_file, "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet")})
+        self.assertEqual(res_upload.status_code, 200)
+        self.assertIn("extracted_files", res_upload.json())
+
 
 if __name__ == "__main__":
     unittest.main()

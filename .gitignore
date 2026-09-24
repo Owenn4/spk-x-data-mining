@@ -35,3 +35,5 @@ ENV/
 
 # Project internal cache/checkpoints
 .luna/checkpoints/
+data/migration_checkpoints/
+data/raw_reports/
