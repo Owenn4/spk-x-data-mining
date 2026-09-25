@@ -1,419 +1,591 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="en" class="dark">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SPK x Data Mining — IDX 30 Non-Financial 5-Year Audited Growth Analysis</title>
+  <title>SPK × DATA MINING — Quantitative Intelligence Terminal</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js CDN -->
   <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
   <!-- Lucide Icons -->
   <script src="https://unpkg.com/lucide@latest"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            obsidian: {
+              950: '#06080c',
+              900: '#0b0e14',
+              850: '#10141d',
+              800: '#151b27',
+              700: '#1e2638',
+              600: '#2b364e'
+            },
+            accent: {
+              cyan: '#06b6d4',
+              indigo: '#6366f1',
+              violet: '#8b5cf6',
+              emerald: '#10b981',
+              amber: '#f59e0b',
+              rose: '#f43f5e'
+            }
+          },
+          fontFamily: {
+            sans: ['Plus Jakarta Sans', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Menlo', 'Monaco', 'monospace']
+          }
+        }
+      }
+    }
+  </script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+    
+    * {
+      box-sizing: border-box;
+    }
+
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #0b0f19;
+      background-color: #06080c;
       color: #f1f5f9;
+      letter-spacing: -0.015em;
     }
+    
     .font-mono {
       font-family: 'JetBrains Mono', monospace;
     }
-    .glass-card {
-      background: rgba(18, 24, 38, 0.7);
+
+    /* Ambient glass panel */
+    .glass-panel {
+      background: linear-gradient(180deg, rgba(16, 20, 29, 0.85) 0%, rgba(11, 14, 20, 0.95) 100%);
       backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.07);
     }
-    .glass-card-active {
-      background: rgba(28, 38, 58, 0.85);
-      border: 1px solid rgba(99, 102, 241, 0.4);
+
+    .glass-card {
+      background: rgba(21, 27, 39, 0.6);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255, 255, 255, 0.06);
     }
-    .gradient-text {
-      background: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+
+    .glass-card:hover {
+      border-color: rgba(99, 102, 241, 0.4);
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), 0 0 15px -3px rgba(99, 102, 241, 0.15);
     }
-    /* Custom Scrollbars */
+
+    /* Table row interactions */
+    .stock-row {
+      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .stock-row:hover {
+      background: rgba(30, 38, 56, 0.5);
+    }
+
+    .stock-row.active {
+      background: linear-gradient(90deg, rgba(99, 102, 241, 0.18) 0%, rgba(21, 27, 39, 0.6) 100%);
+      border-left: 2px solid #818cf8;
+    }
+
+    /* Ultra slim custom scrollbar */
     ::-webkit-scrollbar {
-      width: 6px;
-      height: 6px;
+      width: 4px;
+      height: 4px;
     }
     ::-webkit-scrollbar-track {
-      background: #0b0f19;
+      background: #06080c;
     }
     ::-webkit-scrollbar-thumb {
-      background: #334155;
-      border-radius: 3px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 4px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: #475569;
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    /* Glow pulse & live dots */
+    .glow-dot {
+      box-shadow: 0 0 8px currentColor;
+    }
+
+    .glow-border {
+      box-shadow: 0 0 15px -3px rgba(99, 102, 241, 0.3);
+    }
+
+    /* Modern range slider */
+    input[type=range] {
+      -webkit-appearance: none;
+      background: rgba(255, 255, 255, 0.08);
+      height: 4px;
+      border-radius: 9999px;
+    }
+    input[type=range]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      height: 14px;
+      width: 14px;
+      border-radius: 50%;
+      background: #818cf8;
+      cursor: pointer;
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
+      transition: transform 0.1s ease;
+    }
+    input[type=range]::-webkit-slider-thumb:hover {
+      transform: scale(1.15);
+    }
+
+    /* Segmented pill control */
+    .segmented-btn.active {
+      background: #4f46e5;
+      color: #ffffff;
+      box-shadow: 0 2px 10px rgba(79, 70, 229, 0.4);
+    }
+
+    /* Badge glow effect */
+    .badge-rank-1 {
+      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.05) 100%);
+      border: 1px solid rgba(245, 158, 11, 0.4);
+      color: #fbbf24;
+    }
+    .badge-rank-2 {
+      background: linear-gradient(135deg, rgba(148, 163, 184, 0.2) 0%, rgba(100, 116, 139, 0.05) 100%);
+      border: 1px solid rgba(148, 163, 184, 0.3);
+      color: #e2e8f0;
+    }
+    .badge-rank-3 {
+      background: linear-gradient(135deg, rgba(217, 119, 6, 0.2) 0%, rgba(180, 83, 9, 0.05) 100%);
+      border: 1px solid rgba(217, 119, 6, 0.3);
+      color: #f59e0b;
     }
   </style>
 </head>
-<body class="min-h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white">
+<body class="h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white bg-[#06080c] text-slate-100 overflow-hidden">
 
-  <!-- Navigation Header -->
-  <header class="sticky top-0 z-50 glass-card border-b border-slate-800/80 px-6 py-4 flex items-center justify-between">
-    <div class="flex items-center space-x-3">
-      <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-indigo-600 via-indigo-500 to-purple-500 flex items-center justify-center shadow-lg shadow-indigo-500/20">
-        <i data-lucide="line-chart" class="w-5 h-5 text-white"></i>
-      </div>
-      <div>
-        <div class="flex items-center space-x-2">
-          <h1 class="text-lg font-bold tracking-tight text-white">SPK <span class="text-indigo-400">×</span> Data Mining</h1>
-          <span class="px-2 py-0.5 text-xs font-semibold uppercase tracking-wider rounded-full bg-indigo-500/10 text-indigo-400 border border-indigo-500/20">30 IDX Non-Financials</span>
+  <!-- ========================================== -->
+  <!-- TOP HIGH-FREQUENCY TELEMETRY RIBBON        -->
+  <!-- ========================================== -->
+  <header class="h-12 bg-[#0a0d14]/90 backdrop-blur-md border-b border-white/[0.08] px-4 flex items-center justify-between shrink-0 z-30 select-none">
+    
+    <!-- Brand / Engine Identity -->
+    <div class="flex items-center space-x-4">
+      <div class="flex items-center space-x-2.5">
+        <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-indigo-600 to-cyan-500 p-[1px] shadow-lg shadow-indigo-500/20 flex items-center justify-center">
+          <div class="w-full h-full bg-[#0b0e14] rounded-[7px] flex items-center justify-center">
+            <i data-lucide="activity" class="w-3.5 h-3.5 text-cyan-400"></i>
+          </div>
         </div>
-        <p class="text-xs text-slate-400">2020–2024 Audited Growth Analysis: K-Means Segmentation &amp; TOPSIS Decision Support</p>
+        <div>
+          <span class="font-mono font-extrabold text-xs tracking-wider text-white">IDX<span class="text-indigo-400">::</span>QUANT<span class="text-slate-500 font-normal">_TERMINAL</span></span>
+          <span class="ml-1.5 px-1.5 py-0.2 rounded text-[9px] font-mono uppercase bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">v2.4 Core</span>
+        </div>
+      </div>
+
+      <div class="h-4 w-[1px] bg-white/[0.08]"></div>
+
+      <!-- Live Pipeline Telemetry Feed -->
+      <div class="flex items-center space-x-3 text-[11px] font-mono">
+        <div class="flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400">
+          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 glow-dot"></span>
+          <span class="font-semibold tracking-tight">30 UNIVERSE ASSETS</span>
+        </div>
+        <div class="hidden sm:flex items-center space-x-1.5 text-slate-400 text-[11px]">
+          <span class="text-slate-600">•</span>
+          <span>REGIME: <strong class="text-slate-200">2020–2024 AUDITED</strong></span>
+        </div>
+        <div class="hidden md:flex items-center space-x-1.5 text-slate-400 text-[11px]">
+          <span class="text-slate-600">•</span>
+          <span>ALPHA #1: <strong class="text-indigo-300" id="ribbon-top-pick">CALCULATING...</strong></span>
+        </div>
+        <div class="hidden lg:flex items-center space-x-1.5 text-slate-400 text-[11px]">
+          <span class="text-slate-600">•</span>
+          <span>TOPOLOGY: <strong class="text-purple-300" id="ribbon-cluster-info">K-MEANS (k=4)</strong></span>
+        </div>
       </div>
     </div>
 
-    <!-- Active Navigation Tabs -->
-    <nav class="flex items-center bg-slate-900/80 p-1 rounded-xl border border-slate-800">
-      <button onclick="switchTab('dashboard')" id="tab-dashboard" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-medium transition-all bg-indigo-600 text-white shadow-md">
-        <i data-lucide="layout-dashboard" class="w-4 h-4"></i>
-        <span>Dashboard &amp; SPK</span>
+    <!-- Right Cockpit Actions -->
+    <div class="flex items-center space-x-2">
+      <button onclick="openIngestModal()" class="flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-mono bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.08] hover:border-white/[0.18] text-slate-300 hover:text-white transition-all shadow-sm">
+        <i data-lucide="cloud-download" class="w-3.5 h-3.5 text-indigo-400"></i>
+        <span>Ingest Data</span>
       </button>
-      <button onclick="switchTab('mining')" id="tab-mining" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all">
-        <i data-lucide="boxes" class="w-4 h-4"></i>
-        <span>K-Means &amp; PCA</span>
-      </button>
-      <button onclick="switchTab('weights')" id="tab-weights" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all">
-        <i data-lucide="sliders" class="w-4 h-4"></i>
-        <span>TOPSIS Weights</span>
-      </button>
-      <button onclick="switchTab('audit')" id="tab-audit" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all">
-        <i data-lucide="calculator" class="w-4 h-4"></i>
+      <button onclick="openAuditModal()" class="flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-mono bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.08] hover:border-white/[0.18] text-slate-300 hover:text-white transition-all shadow-sm">
+        <i data-lucide="binary" class="w-3.5 h-3.5 text-cyan-400"></i>
         <span>Matrix Audit</span>
       </button>
-      <button onclick="switchTab('ingest')" id="tab-ingest" class="flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all">
-        <i data-lucide="cloud-download" class="w-4 h-4"></i>
-        <span>Data Ingestion</span>
+      <div class="h-4 w-[1px] bg-white/[0.08]"></div>
+      <button onclick="exportUniverseJSON()" title="Export Analytical Universe (JSON)" class="p-1.5 rounded-md text-slate-400 hover:text-white hover:bg-white/[0.08] border border-transparent hover:border-white/[0.1] transition-all">
+        <i data-lucide="download" class="w-3.5 h-3.5"></i>
       </button>
-    </nav>
+    </div>
+
   </header>
 
-  <!-- Main Workspace Content -->
-  <main class="flex-1 max-w-7xl w-full mx-auto p-6 space-y-6">
+  <!-- ========================================== -->
+  <!-- MAIN WORKSPACE SPLIT-PANE                  -->
+  <!-- ========================================== -->
+  <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
 
-    <!-- KPI Summary Row -->
-    <section class="grid grid-cols-1 md:grid-cols-4 gap-4">
-      <div class="glass-card p-4 rounded-2xl flex items-center space-x-4 border-l-4 border-indigo-500">
-        <div class="p-3 bg-indigo-500/10 rounded-xl text-indigo-400">
-          <i data-lucide="building-2" class="w-6 h-6"></i>
-        </div>
-        <div>
-          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Analyzed Universe</div>
-          <div id="stat-count" class="text-2xl font-extrabold text-white">30 Stocks</div>
-          <div class="text-[11px] text-slate-400">IDX Non-Financial Cohort</div>
-        </div>
-      </div>
-
-      <div class="glass-card p-4 rounded-2xl flex items-center space-x-4 border-l-4 border-emerald-500">
-        <div class="p-3 bg-emerald-500/10 rounded-xl text-emerald-400">
-          <i data-lucide="trophy" class="w-6 h-6"></i>
-        </div>
-        <div>
-          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Top TOPSIS Pick</div>
-          <div id="stat-top-pick" class="text-2xl font-extrabold text-emerald-400">Loading...</div>
-          <div id="stat-top-score" class="text-[11px] text-slate-400">Score: --</div>
-        </div>
-      </div>
-
-      <div class="glass-card p-4 rounded-2xl flex items-center space-x-4 border-l-4 border-purple-500">
-        <div class="p-3 bg-purple-500/10 rounded-xl text-purple-400">
-          <i data-lucide="pie-chart" class="w-6 h-6"></i>
-        </div>
-        <div>
-          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Optimal Clusters</div>
-          <div id="stat-clusters" class="text-2xl font-extrabold text-purple-400">k = 4</div>
-          <div id="stat-silhouette" class="text-[11px] text-slate-400">Silhouette: --</div>
-        </div>
-      </div>
-
-      <div class="glass-card p-4 rounded-2xl flex items-center space-x-4 border-l-4 border-amber-500">
-        <div class="p-3 bg-amber-500/10 rounded-xl text-amber-400">
-          <i data-lucide="cpu" class="w-6 h-6"></i>
-        </div>
-        <div>
-          <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Growth Framework</div>
-          <div class="text-2xl font-extrabold text-amber-400">2020–2024</div>
-          <div class="text-[11px] text-slate-400">5-Yr Audited CAGR Engine</div>
-        </div>
-      </div>
-    </section>
-
-    <!-- VIEW 1: DASHBOARD & SPK RANKINGS -->
-    <div id="view-dashboard" class="space-y-6">
-      <!-- Top Section: 2D PCA Cluster Map & TOPSIS Top 5 -->
-      <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-        <!-- Scatter Chart (PCA 2D Cluster Space) -->
-        <div class="lg:col-span-2 glass-card p-5 rounded-2xl flex flex-col">
-          <div class="flex items-center justify-between mb-4">
-            <div>
-              <h2 class="text-base font-bold text-white flex items-center space-x-2">
-                <i data-lucide="scatter-chart" class="w-4 h-4 text-indigo-400"></i>
-                <span>Audited Growth Feature Space (PCA 2D Projection)</span>
-              </h2>
-              <p class="text-xs text-slate-400">Visualizing 4 Audited 5-Year CAGR Dimensions (Revenue, Net Income, Total Assets, Total Equity) in 2D</p>
-            </div>
-            <div class="flex items-center space-x-2">
-              <span class="text-xs text-slate-400">k:</span>
-              <select id="cluster-select" onchange="runClustering()" class="bg-slate-900 border border-slate-700 text-xs rounded-lg px-2.5 py-1 text-slate-200">
-                <option value="2">2 Clusters</option>
-                <option value="3">3 Clusters</option>
-                <option value="4" selected>4 Clusters</option>
-                <option value="5">5 Clusters</option>
-                <option value="6">6 Clusters</option>
-              </select>
-            </div>
-          </div>
-          <div class="relative flex-1 min-h-[300px]">
-            <canvas id="pcaChart"></canvas>
-          </div>
-        </div>
-
-        <!-- TOPSIS Top Picks Podium -->
-        <div class="glass-card p-5 rounded-2xl flex flex-col justify-between">
-          <div>
-            <h2 class="text-base font-bold text-white flex items-center space-x-2 mb-1">
-              <i data-lucide="award" class="w-4 h-4 text-amber-400"></i>
-              <span>TOPSIS Top 5 Ranked</span>
-            </h2>
-            <p class="text-xs text-slate-400 mb-4">Highest relative closeness coefficient ($C_i$)</p>
-            
-            <div id="top-podium" class="space-y-3">
-              <!-- Populated by JS -->
-            </div>
-          </div>
-          <div class="mt-4 pt-3 border-t border-slate-800 text-[11px] text-slate-400 flex justify-between">
-            <span>Method: Vector Norm + Euclidean</span>
-            <span class="text-indigo-400 font-mono">4 Growth Criteria Evaluated</span>
-          </div>
-        </div>
-      </div>
-
-      <!-- Full Ranked Table -->
-      <div class="glass-card rounded-2xl overflow-hidden border border-slate-800">
-        <div class="p-4 bg-slate-900/60 border-b border-slate-800 flex flex-wrap items-center justify-between gap-3">
+    <!-- LEFT SCREENER PANE (42% Width on Desktop) -->
+    <section class="w-full md:w-[42%] lg:w-[40%] flex flex-col border-r border-white/[0.08] bg-[#090c13] shrink-0">
+      
+      <!-- Screener Search & Sector Filter Ribbon -->
+      <div class="p-3 bg-[#0c0f17] border-b border-white/[0.08] space-y-2.5">
+        <div class="flex items-center justify-between">
           <div class="flex items-center space-x-2">
-            <i data-lucide="list-ordered" class="w-5 h-5 text-indigo-400"></i>
-            <h3 class="text-sm font-bold text-white">Comprehensive 5-Year Audited Growth SPK Leaderboard</h3>
+            <i data-lucide="layers" class="w-3.5 h-3.5 text-indigo-400"></i>
+            <span class="text-xs font-bold uppercase tracking-wider font-mono text-slate-200">Equity Screener &amp; Leaderboard</span>
           </div>
-          <div class="flex items-center space-x-3">
-            <input type="text" id="table-search" placeholder="Search ticker or name..." onkeyup="filterTable()" class="bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-lg text-xs text-white placeholder-slate-500 focus:outline-none focus:border-indigo-500 w-48">
-            <select id="sector-filter" onchange="filterTable()" class="bg-slate-950 border border-slate-800 px-3 py-1.5 rounded-lg text-xs text-white">
+          <span id="screener-count" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-slate-400">
+            30 / 30 STOCKS
+          </span>
+        </div>
+
+        <div class="grid grid-cols-12 gap-2">
+          <div class="col-span-7 relative">
+            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2"></i>
+            <input type="text" id="table-search" onkeyup="filterTable()" placeholder="Search ticker or name..." 
+                   class="w-full bg-[#06080c] border border-white/[0.08] hover:border-white/[0.16] focus:border-indigo-500 pl-8 pr-2.5 py-1.5 rounded-md text-xs font-mono text-slate-200 placeholder-slate-600 focus:outline-none transition-colors">
+          </div>
+          <div class="col-span-5">
+            <select id="sector-filter" onchange="filterTable()" class="w-full bg-[#06080c] border border-white/[0.08] hover:border-white/[0.16] focus:border-indigo-500 px-2.5 py-1.5 rounded-md text-xs font-mono text-slate-300 focus:outline-none transition-colors cursor-pointer">
               <option value="ALL">All Sectors</option>
             </select>
           </div>
         </div>
-
-        <div class="overflow-x-auto max-h-[500px]">
-          <table class="w-full text-left text-xs text-slate-300">
-            <thead class="bg-slate-950/80 text-slate-400 uppercase tracking-wider text-[10px] sticky top-0 backdrop-blur z-10">
-              <tr>
-                <th class="p-3">Rank</th>
-                <th class="p-3">Ticker / Name</th>
-                <th class="p-3">Sector</th>
-                <th class="p-3">Cluster Persona</th>
-                <th class="p-3 text-right">TOPSIS Score</th>
-                <th class="p-3 text-right">Rev CAGR (%)</th>
-                <th class="p-3 text-right">Net Inc CAGR (%)</th>
-                <th class="p-3 text-right">Asset CAGR (%)</th>
-                <th class="p-3 text-right">Equity CAGR (%)</th>
-                <th class="p-3 text-center">Verdict</th>
-              </tr>
-            </thead>
-            <tbody id="ranked-tbody" class="divide-y divide-slate-800/60 font-mono">
-              <!-- Populated by JS -->
-            </tbody>
-          </table>
-        </div>
       </div>
-    </div>
 
-    <!-- VIEW 2: K-MEANS & PCA ANALYSIS -->
-    <div id="view-mining" class="hidden space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Elbow Curve -->
-        <div class="glass-card p-5 rounded-2xl">
-          <h3 class="text-sm font-bold text-white flex items-center space-x-2 mb-1">
-            <i data-lucide="git-commit" class="w-4 h-4 text-indigo-400"></i>
-            <span>Elbow Method (SSE Inertia Curve)</span>
-          </h3>
-          <p class="text-xs text-slate-400 mb-4">Calculates inertia drop-off across cluster counts k=2 to k=8</p>
-          <div class="h-64">
-            <canvas id="elbowChart"></canvas>
-          </div>
+      <!-- High-Density Stock List Table -->
+      <div class="flex-1 overflow-y-auto">
+        <table class="w-full text-left text-xs border-collapse">
+          <thead class="bg-[#080a10]/95 backdrop-blur text-slate-400 uppercase tracking-wider text-[9px] font-mono sticky top-0 border-b border-white/[0.08] z-10 select-none">
+            <tr>
+              <th class="py-2 pl-3.5 pr-1 w-12 text-center">Rank</th>
+              <th class="py-2 px-2.5">Asset / Sector</th>
+              <th class="py-2 px-2 text-center">Cluster</th>
+              <th class="py-2 px-3 text-right">TOPSIS Alpha</th>
+              <th class="py-2 pr-3.5 text-right">CAGR Performance</th>
+            </tr>
+          </thead>
+          <tbody id="ranked-tbody" class="divide-y divide-white/[0.04]">
+            <!-- Populated dynamically via JS -->
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Strategy Quick Presets Footer -->
+      <div class="p-2.5 bg-[#0a0d14] border-t border-white/[0.08] flex items-center justify-between text-[11px] font-mono select-none">
+        <div class="flex items-center space-x-1.5 text-slate-400 text-[10px]">
+          <i data-lucide="sparkles" class="w-3 h-3 text-amber-400"></i>
+          <span class="uppercase">Presets:</span>
         </div>
-
-        <!-- Silhouette Score Curve -->
-        <div class="glass-card p-5 rounded-2xl">
-          <h3 class="text-sm font-bold text-white flex items-center space-x-2 mb-1">
-            <i data-lucide="check-circle" class="w-4 h-4 text-purple-400"></i>
-            <span>Silhouette Coefficient Analysis</span>
-          </h3>
-          <p class="text-xs text-slate-400 mb-4">Measures cohesion vs separation (Higher score indicates cleaner clusters)</p>
-          <div class="h-64">
-            <canvas id="silhouetteChart"></canvas>
-          </div>
+        <div class="flex space-x-1">
+          <button onclick="applyPreset('balanced')" id="preset-balanced" class="px-2 py-0.5 rounded text-[10px] bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white transition-all">Balanced</button>
+          <button onclick="applyPreset('profitability')" id="preset-profitability" class="px-2 py-0.5 rounded text-[10px] bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white transition-all">Profit-Max</button>
+          <button onclick="applyPreset('topline')" id="preset-topline" class="px-2 py-0.5 rounded text-[10px] bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white transition-all">Top-Line</button>
+          <button onclick="applyPreset('asset_scale')" id="preset-asset_scale" class="px-2 py-0.5 rounded text-[10px] bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white transition-all">Asset Scale</button>
         </div>
       </div>
 
-      <!-- Cluster Personas & Summaries -->
-      <div class="glass-card p-5 rounded-2xl">
-        <h3 class="text-sm font-bold text-white flex items-center space-x-2 mb-4">
-          <i data-lucide="layers" class="w-4 h-4 text-emerald-400"></i>
-          <span>Cluster Profiles &amp; Growth Trajectories</span>
-        </h3>
-        <div id="cluster-cards" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          <!-- Populated by JS -->
+    </section>
+
+    <!-- RIGHT ANALYTICS COCKPIT (58% Width on Desktop) -->
+    <section class="flex-1 flex flex-col bg-[#06080c] overflow-hidden">
+      
+      <!-- Cockpit View Switcher Nav -->
+      <div class="h-11 bg-[#0a0d14] border-b border-white/[0.08] px-4 flex items-center justify-between shrink-0 select-none">
+        <div class="flex space-x-1.5 p-0.5 rounded-lg bg-black/40 border border-white/[0.06]">
+          <button onclick="switchCockpitView('pca')" id="tab-btn-pca" class="segmented-btn active flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-mono font-semibold transition-all">
+            <i data-lucide="scatter-chart" class="w-3.5 h-3.5"></i>
+            <span>2D Cluster Topology</span>
+          </button>
+          <button onclick="switchCockpitView('weights')" id="tab-btn-weights" class="segmented-btn flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-mono text-slate-400 hover:text-white transition-all">
+            <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
+            <span>MCDM Weights</span>
+          </button>
+          <button onclick="switchCockpitView('diagnostics')" id="tab-btn-diagnostics" class="segmented-btn flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-mono text-slate-400 hover:text-white transition-all">
+            <i data-lucide="line-chart" class="w-3.5 h-3.5"></i>
+            <span>Diagnostics</span>
+          </button>
+        </div>
+
+        <div class="flex items-center space-x-2.5">
+          <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">K-Partitions:</span>
+          <select id="cluster-select" onchange="runClustering()" class="bg-[#0b0e14] border border-white/[0.12] hover:border-indigo-500 text-xs font-mono rounded-md px-2.5 py-1 text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors cursor-pointer">
+            <option value="2">k = 2</option>
+            <option value="3">k = 3</option>
+            <option value="4" selected>k = 4 (Optimal)</option>
+            <option value="5">k = 5</option>
+            <option value="6">k = 6</option>
+          </select>
         </div>
       </div>
-    </div>
 
-    <!-- VIEW 3: TOPSIS WEIGHT CONFIGURATOR -->
-    <div id="view-weights" class="hidden space-y-6">
-      <div class="glass-card p-6 rounded-2xl">
-        <div class="flex items-center justify-between mb-4">
-          <div>
-            <h3 class="text-base font-bold text-white">Dynamic Criteria Weight &amp; Strategy Customizer</h3>
-            <p class="text-xs text-slate-400">Adjust the weight importance of 5-year audited CAGR metrics or select strategy presets</p>
+      <!-- Cockpit Dynamic Viewports -->
+      <div class="flex-1 overflow-y-auto p-4 space-y-4">
+
+        <!-- VIEWPORT 1: PCA 2D SCATTER & CLUSTER PROFILES -->
+        <div id="view-pca" class="space-y-4">
+          <div class="glass-panel rounded-xl p-4 border border-white/[0.08] shadow-xl flex flex-col">
+            <div class="flex items-center justify-between mb-2.5">
+              <div class="flex items-center space-x-2">
+                <div class="w-2 h-2 rounded-full bg-cyan-400 glow-dot"></div>
+                <span class="text-xs font-bold font-mono text-slate-200 uppercase tracking-wider">PCA Dimensionality Space (PC1 vs PC2 • 4 Audited CAGR Vectors)</span>
+              </div>
+              <div class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-slate-300" id="pca-variance-badge">
+                Var: PC1 91.64% | PC2 6.40%
+              </div>
+            </div>
+            
+            <div class="h-[285px] w-full relative">
+              <canvas id="pcaChart"></canvas>
+            </div>
           </div>
-          <div class="flex items-center space-x-2">
-            <button onclick="applyPreset('balanced')" class="px-3 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-200">Balanced Growth</button>
-            <button onclick="applyPreset('profitability')" class="px-3 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-200">Profit-Driven</button>
-            <button onclick="applyPreset('topline')" class="px-3 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-200">Top-Line Expansion</button>
-            <button onclick="applyPreset('asset_scale')" class="px-3 py-1.5 rounded-lg text-xs bg-slate-800 hover:bg-slate-700 text-slate-200">Asset &amp; Equity Scale</button>
+
+          <!-- Cluster Archetype Cards Grid -->
+          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="cluster-cards-grid">
+            <!-- Rendered dynamically -->
           </div>
         </div>
 
-        <div id="criteria-sliders" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 pt-4 border-t border-slate-800">
-          <!-- Populated by JS -->
+        <!-- VIEWPORT 2: WEIGHT REBALANCER & MCDM CONFIG -->
+        <div id="view-weights" class="hidden space-y-4">
+          <div class="glass-panel rounded-xl p-5 border border-white/[0.08] shadow-xl space-y-5">
+            <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
+              <div>
+                <h3 class="text-xs font-bold font-mono text-white uppercase tracking-wider flex items-center space-x-2">
+                  <i data-lucide="sliders" class="w-4 h-4 text-indigo-400"></i>
+                  <span>Dynamic Criteria Weight &amp; Normalization Matrix</span>
+                </h3>
+                <p class="text-[11px] text-slate-400 mt-0.5">Tune the multi-criteria decision weights across the 5-year audited financial dimensions</p>
+              </div>
+              <span id="weight-sum-badge" class="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-3 py-1 rounded-md">
+                Sum: 100%
+              </span>
+            </div>
+
+            <div id="criteria-sliders" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
+              <!-- Dynamic Sliders -->
+            </div>
+
+            <div class="flex items-center justify-between pt-2 border-t border-white/[0.08]">
+              <div class="text-[11px] text-slate-500 font-mono">
+                *Normalized vector lengths recalculate in real-time across ideal solutions ($A^+$ and $A^-$)
+              </div>
+              <button onclick="recalculateTopsis()" class="px-5 py-2 rounded-lg text-xs font-mono bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-bold flex items-center space-x-2 shadow-lg shadow-indigo-500/25 transition-all">
+                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
+                <span>Re-rank Universe Matrix</span>
+              </button>
+            </div>
+          </div>
         </div>
 
-        <div class="mt-6 flex justify-end space-x-3">
-          <button onclick="resetWeights()" class="px-4 py-2 rounded-xl text-xs bg-slate-800 hover:bg-slate-700 text-slate-300 font-medium">Reset Defaults</button>
-          <button onclick="recalculateTopsis()" class="px-5 py-2 rounded-xl text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-bold shadow-lg shadow-indigo-500/20">Re-rank Universe</button>
+        <!-- VIEWPORT 3: MODEL DIAGNOSTICS (ELBOW & SILHOUETTE) -->
+        <div id="view-diagnostics" class="hidden space-y-4">
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
+            <div class="glass-panel rounded-xl p-4 border border-white/[0.08] shadow-xl">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center space-x-2">
+                  <div class="w-2 h-2 rounded-full bg-indigo-400"></div>
+                  <span class="text-xs font-bold font-mono text-white">Elbow Curve (Inertia SSE)</span>
+                </div>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">k=2..8 Range</span>
+              </div>
+              <div class="h-60">
+                <canvas id="elbowChart"></canvas>
+              </div>
+            </div>
+
+            <div class="glass-panel rounded-xl p-4 border border-white/[0.08] shadow-xl">
+              <div class="flex items-center justify-between mb-3">
+                <div class="flex items-center space-x-2">
+                  <div class="w-2 h-2 rounded-full bg-purple-400"></div>
+                  <span class="text-xs font-bold font-mono text-white">Silhouette Score Profile</span>
+                </div>
+                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/10 text-purple-300 border border-purple-500/20">Cluster Quality Metric</span>
+              </div>
+              <div class="h-60">
+                <canvas id="silhouetteChart"></canvas>
+              </div>
+            </div>
+          </div>
         </div>
+
       </div>
-    </div>
 
-    <!-- VIEW 4: MATHEMATICAL MATRIX AUDIT -->
-    <div id="view-audit" class="hidden space-y-6">
-      <div class="glass-card p-5 rounded-2xl">
-        <h3 class="text-sm font-bold text-white flex items-center space-x-2 mb-1">
-          <i data-lucide="binary" class="w-4 h-4 text-indigo-400"></i>
-          <span>TOPSIS Ideal Vector Matrix Audit</span>
-        </h3>
-        <p class="text-xs text-slate-400 mb-4">Inspection of Positive Ideal ($A^+$) and Negative Ideal ($A^-$) Solutions across the 4 audited growth dimensions</p>
+      <!-- ACTIVE TICKER HUD (STICKY FROSTED DOCK) -->
+      <div id="active-ticker-dock" class="border-t border-white/[0.08] bg-[#090d16]/95 backdrop-blur-md p-3.5 shrink-0 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 select-none">
         
-        <div class="overflow-x-auto">
-          <table class="w-full text-left text-xs text-slate-300 font-mono">
-            <thead class="bg-slate-950 text-slate-400 uppercase text-[10px]">
-              <tr id="audit-thead">
-                <!-- Populated by JS -->
-              </tr>
-            </thead>
-            <tbody id="audit-tbody" class="divide-y divide-slate-800">
+        <!-- Left: Ticker Symbol & Metadata -->
+        <div class="flex items-center space-x-3.5">
+          <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-indigo-500/20 to-cyan-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-300 font-mono font-extrabold text-base shadow-inner" id="dock-ticker-badge">
+            --
+          </div>
+          <div>
+            <div class="flex items-center space-x-2.5">
+              <span class="font-extrabold text-white text-base font-mono tracking-tight" id="dock-ticker-title">SELECT ASSET</span>
+              <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/[0.06] text-slate-300 border border-white/[0.08]" id="dock-ticker-rank">Rank #--</span>
+            </div>
+            <div class="text-[11px] text-slate-400 font-sans mt-0.5" id="dock-ticker-name">Click any row in the screener table or scatter plot coordinate</div>
+          </div>
+        </div>
+
+        <!-- Center: 4 Key CAGR Ratios -->
+        <div class="grid grid-cols-4 gap-2.5 text-xs font-mono">
+          <div class="bg-black/40 px-3 py-1.5 rounded-lg border border-white/[0.06] flex flex-col justify-center">
+            <div class="text-[9px] uppercase tracking-wider text-slate-400">REV CAGR</div>
+            <div class="font-bold text-slate-200 mt-0.5 text-xs" id="dock-rev">--</div>
+          </div>
+          <div class="bg-black/40 px-3 py-1.5 rounded-lg border border-white/[0.06] flex flex-col justify-center">
+            <div class="text-[9px] uppercase tracking-wider text-slate-400">NET CAGR</div>
+            <div class="font-bold text-slate-200 mt-0.5 text-xs" id="dock-net">--</div>
+          </div>
+          <div class="bg-black/40 px-3 py-1.5 rounded-lg border border-white/[0.06] flex flex-col justify-center">
+            <div class="text-[9px] uppercase tracking-wider text-slate-400">ASSET CAGR</div>
+            <div class="font-bold text-slate-200 mt-0.5 text-xs" id="dock-asset">--</div>
+          </div>
+          <div class="bg-black/40 px-3 py-1.5 rounded-lg border border-white/[0.06] flex flex-col justify-center">
+            <div class="text-[9px] uppercase tracking-wider text-slate-400">EQUITY CAGR</div>
+            <div class="font-bold text-slate-200 mt-0.5 text-xs" id="dock-equity">--</div>
+          </div>
+        </div>
+
+        <!-- Right: TOPSIS Composite & Recommendation Grade -->
+        <div class="flex items-center space-x-3.5">
+          <div class="text-right font-mono">
+            <div class="text-[9px] text-slate-400 uppercase tracking-wider">TOPSIS Score</div>
+            <div class="text-base font-extrabold text-emerald-400" id="dock-score">--</div>
+          </div>
+          <span id="dock-recommendation-badge" class="px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-white/[0.05] text-slate-400 border border-white/[0.08]">
+            --
+          </span>
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+  <!-- ========================================== -->
+  <!-- MODALS                                     -->
+  <!-- ========================================== -->
+
+  <!-- MODAL 1: VECTOR MATRIX AUDIT -->
+  <div id="modal-audit" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="glass-panel max-w-2xl w-full rounded-2xl overflow-hidden border border-white/[0.12] shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+      <div class="p-4 bg-[#0a0d14] border-b border-white/[0.08] flex items-center justify-between">
+        <div class="flex items-center space-x-2 text-xs font-mono font-bold text-white uppercase">
+          <i data-lucide="binary" class="w-4 h-4 text-cyan-400"></i>
+          <span>TOPSIS Ideal Vector &amp; Column Norm Matrix Audit</span>
+        </div>
+        <button onclick="closeAuditModal()" class="text-slate-400 hover:text-white p-1 rounded-md hover:bg-white/[0.08] transition-colors">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div class="p-4 overflow-x-auto">
+        <table class="w-full text-left text-xs font-mono text-slate-300 border-collapse">
+          <thead class="bg-black/50 text-slate-400 uppercase text-[10px] border-b border-white/[0.08]">
+            <tr id="audit-thead">
               <!-- Populated by JS -->
-            </tbody>
-          </table>
-        </div>
+            </tr>
+          </thead>
+          <tbody id="audit-tbody" class="divide-y divide-white/[0.06]">
+            <!-- Populated by JS -->
+          </tbody>
+        </table>
+      </div>
+      <div class="p-3 bg-[#0a0d14] border-t border-white/[0.08] flex justify-end">
+        <button onclick="closeAuditModal()" class="px-4 py-1.5 rounded-md text-xs font-mono bg-white/[0.06] hover:bg-white/[0.1] text-slate-200 transition-colors">Close</button>
       </div>
     </div>
+  </div>
 
-    <!-- VIEW 5: DATA INGESTION & PIPELINE TRIGGER -->
-    <div id="view-ingest" class="hidden space-y-6">
-      <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        <!-- Live IDX Report Scraper Card -->
-        <div class="glass-card p-6 rounded-2xl space-y-4">
-          <div class="flex items-center space-x-3">
-            <div class="w-9 h-9 rounded-xl bg-indigo-500/10 flex items-center justify-center text-indigo-400 border border-indigo-500/20">
-              <i data-lucide="bot" class="w-5 h-5"></i>
+  <!-- MODAL 2: INGESTION & SCRAPER WORKBENCH -->
+  <div id="modal-ingest" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
+    <div class="glass-panel max-w-3xl w-full rounded-2xl overflow-hidden border border-white/[0.12] shadow-2xl animate-in fade-in zoom-in-95 duration-150">
+      <div class="p-4 bg-[#0a0d14] border-b border-white/[0.08] flex items-center justify-between">
+        <div class="flex items-center space-x-2 text-xs font-mono font-bold text-white uppercase">
+          <i data-lucide="database" class="w-4 h-4 text-indigo-400"></i>
+          <span>Data Ingestion &amp; IDX Automated Pipeline</span>
+        </div>
+        <button onclick="closeIngestModal()" class="text-slate-400 hover:text-white p-1 rounded-md hover:bg-white/[0.08] transition-colors">
+          <i data-lucide="x" class="w-4 h-4"></i>
+        </button>
+      </div>
+      <div class="p-5 space-y-4 max-h-[80vh] overflow-y-auto">
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <!-- IDX Web Scraper Form -->
+          <div class="glass-card p-4 rounded-xl space-y-3">
+            <div class="flex items-center space-x-2 text-xs font-mono font-bold text-white">
+              <i data-lucide="cloud-download" class="w-4 h-4 text-indigo-400"></i>
+              <span>Automated IDX Scraper</span>
             </div>
             <div>
-              <h3 class="text-base font-bold text-white">Live IDX Report Scraper</h3>
-              <p class="text-xs text-slate-400">Query and download audited financial statements directly from IDX</p>
+              <label class="text-[10px] text-slate-400 font-mono">Target Tickers (Comma-separated or blank for all)</label>
+              <input type="text" id="scrape-tickers" placeholder="ASII, ICBP, TLKM, UNVR" class="w-full mt-1 bg-[#06080c] border border-white/[0.1] px-3 py-1.5 rounded-md text-xs font-mono text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-colors">
             </div>
-          </div>
-
-          <div class="space-y-3 pt-2">
-            <div>
-              <label class="text-xs text-slate-300 font-medium">Tickers (comma separated)</label>
-              <input type="text" id="scrape-tickers" placeholder="ASII, ICBP, TLKM, UNVR" class="w-full mt-1 bg-slate-950 border border-slate-800 px-3 py-2 rounded-xl text-xs text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500">
-            </div>
-            <div class="grid grid-cols-2 gap-3">
+            <div class="grid grid-cols-2 gap-2">
               <div>
-                <label class="text-xs text-slate-300 font-medium">Start Year</label>
-                <input type="number" id="scrape-start-year" value="2020" class="w-full mt-1 bg-slate-950 border border-slate-800 px-3 py-2 rounded-xl text-xs text-white focus:outline-none focus:border-indigo-500 font-mono">
+                <label class="text-[10px] text-slate-400 font-mono">Start Year</label>
+                <input type="number" id="scrape-start-year" value="2020" class="w-full mt-1 bg-[#06080c] border border-white/[0.1] px-2.5 py-1.5 rounded-md text-xs text-white font-mono">
               </div>
               <div>
-                <label class="text-xs text-slate-300 font-medium">End Year</label>
-                <input type="number" id="scrape-end-year" value="2024" class="w-full mt-1 bg-slate-950 border border-slate-800 px-3 py-2 rounded-xl text-xs text-white focus:outline-none focus:border-indigo-500 font-mono">
+                <label class="text-[10px] text-slate-400 font-mono">End Year</label>
+                <input type="number" id="scrape-end-year" value="2024" class="w-full mt-1 bg-[#06080c] border border-white/[0.1] px-2.5 py-1.5 rounded-md text-xs text-white font-mono">
               </div>
             </div>
-
-            <button onclick="triggerScrape()" id="btn-scrape" class="w-full py-2.5 rounded-xl text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-bold transition-all shadow-lg shadow-indigo-500/20 flex items-center justify-center space-x-2">
-              <i data-lucide="play" class="w-4 h-4"></i>
-              <span>Launch Scraper Job</span>
+            <button onclick="triggerScrape()" id="btn-scrape" class="w-full py-2 rounded-lg text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-mono font-bold flex items-center justify-center space-x-1.5 shadow-lg shadow-indigo-600/25 transition-all">
+              <i data-lucide="play" class="w-3.5 h-3.5"></i>
+              <span>Run Scraper Pipeline</span>
             </button>
           </div>
-        </div>
 
-        <!-- Manual Batch XLSX / ZIP Upload Card -->
-        <div class="glass-card p-6 rounded-2xl space-y-4">
-          <div class="flex items-center space-x-3">
-            <div class="w-9 h-9 rounded-xl bg-emerald-500/10 flex items-center justify-center text-emerald-400 border border-emerald-500/20">
-              <i data-lucide="file-up" class="w-5 h-5"></i>
+          <!-- Batch XLSX Upload -->
+          <div class="glass-card p-4 rounded-xl space-y-3">
+            <div class="flex items-center space-x-2 text-xs font-mono font-bold text-white">
+              <i data-lucide="file-up" class="w-4 h-4 text-emerald-400"></i>
+              <span>Batch Workbook Upload</span>
             </div>
-            <div>
-              <h3 class="text-base font-bold text-white">Batch Financial Statement Upload</h3>
-              <p class="text-xs text-slate-400">Upload standalone XLSX workbooks or ZIP archives of annual reports</p>
-            </div>
-          </div>
-
-          <div class="space-y-3 pt-2">
-            <div id="dropzone" class="border-2 border-dashed border-slate-700 hover:border-emerald-500/50 rounded-xl p-6 text-center cursor-pointer transition-all bg-slate-950/40">
+            <div id="dropzone" class="border border-dashed border-white/[0.15] hover:border-emerald-500/60 rounded-xl p-5 text-center cursor-pointer transition-all bg-[#06080c]/50">
               <input type="file" id="file-input" accept=".xlsx,.zip" class="hidden" onchange="handleFileSelect(event)">
-              <div class="space-y-2">
-                <i data-lucide="upload-cloud" class="w-8 h-8 text-slate-400 mx-auto"></i>
-                <div class="text-xs text-slate-300 font-medium" id="dropzone-text">Click or drag &amp; drop .xlsx or .zip report file</div>
-                <div class="text-[10px] text-slate-500">Supports audited IDX financial statement formats</div>
+              <div class="space-y-1.5">
+                <i data-lucide="upload-cloud" class="w-6 h-6 text-slate-400 mx-auto"></i>
+                <div class="text-xs text-slate-200 font-mono font-semibold" id="dropzone-text">Click or drop .xlsx/.zip file</div>
+                <div class="text-[10px] text-slate-500 font-mono">Audited Statement Schemas</div>
               </div>
             </div>
-
-            <button onclick="triggerUpload()" id="btn-upload" class="w-full py-2.5 rounded-xl text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-bold transition-all shadow-lg shadow-emerald-500/20 flex items-center justify-center space-x-2">
-              <i data-lucide="upload" class="w-4 h-4"></i>
-              <span>Upload &amp; Extract Data</span>
+            <button onclick="triggerUpload()" id="btn-upload" class="w-full py-2 rounded-lg text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-mono font-bold flex items-center justify-center space-x-1.5 shadow-lg shadow-emerald-600/25 transition-all">
+              <i data-lucide="upload" class="w-3.5 h-3.5"></i>
+              <span>Ingest &amp; Extract Ratios</span>
             </button>
           </div>
         </div>
-      </div>
 
-      <!-- Ingestion Activity Console Log -->
-      <div class="glass-card p-5 rounded-2xl">
-        <div class="flex items-center justify-between mb-2">
-          <h4 class="text-xs font-bold text-white uppercase tracking-wider flex items-center space-x-2">
-            <i data-lucide="terminal" class="w-4 h-4 text-slate-400"></i>
-            <span>Ingestion Pipeline Console Output</span>
-          </h4>
-          <span id="ingest-status-tag" class="text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono">Idle</span>
+        <!-- Ingestion Logs Console -->
+        <div class="glass-card p-3.5 rounded-xl space-y-2">
+          <div class="flex items-center justify-between">
+            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Activity Console</span>
+            <span id="ingest-status-tag" class="text-[9px] font-mono px-2 py-0.5 rounded bg-white/[0.06] text-slate-400 border border-white/[0.08]">IDLE</span>
+          </div>
+          <div id="ingest-console" class="bg-[#06080c] p-3 rounded-lg font-mono text-xs text-slate-400 h-32 overflow-y-auto border border-white/[0.06] space-y-1">
+            <div class="text-slate-500">[system] Pipeline standby. Awaiting scraper job or batch XLSX upload.</div>
+          </div>
         </div>
-        <div id="ingest-console" class="bg-slate-950 p-4 rounded-xl font-mono text-xs text-slate-400 h-40 overflow-y-auto border border-slate-800/80 space-y-1">
-          <div class="text-slate-600">[system] Ready for scraper or manual statement file upload.</div>
-        </div>
+
       </div>
     </div>
+  </div>
 
-  </main>
-
-  <footer class="mt-auto border-t border-slate-800/80 px-6 py-4 text-center text-xs text-slate-500">
-    SPK x Data Mining Hybrid Platform &bull; IDX 30 Non-Financial Universe (2020–2024 Audited Financial Statements) &bull; TOPSIS MCDM + Scikit-Learn Cluster Engine
-  </footer>
-
+  <!-- ========================================== -->
+  <!-- APPLICATION SCRIPT LOGIC                   -->
+  <!-- ========================================== -->
   <script>
-    // State management
     let appState = {
       stocks: [],
       clusterData: null,
@@ -426,14 +598,23 @@
         asset_growth: 0.15,
         equity_growth: 0.15
       },
+      selectedTicker: null,
+      activeCockpitView: 'pca',
       pcaChart: null,
       elbowChart: null,
       silhouetteChart: null
     };
 
-    // Color palette for clusters
+    // Modern neon & pastel cluster palette
     const CLUSTER_COLORS = [
-      '#6366f1', '#10b981', '#f59e0b', '#ec4899', '#3b82f6', '#8b5cf6', '#14b8a6', '#f43f5e'
+      '#6366f1', // Indigo
+      '#06b6d4', // Cyan
+      '#f59e0b', // Amber
+      '#ec4899', // Pink
+      '#10b981', // Emerald
+      '#8b5cf6', // Violet
+      '#14b8a6', // Teal
+      '#f43f5e'  // Rose
     ];
 
     async function init() {
@@ -448,28 +629,44 @@
       }
     }
 
-    function switchTab(tabId) {
-      ['dashboard', 'mining', 'weights', 'audit', 'ingest'].forEach(t => {
-        const viewEl = document.getElementById(`view-${t}`);
-        const tabBtn = document.getElementById(`tab-${t}`);
-        if (t === tabId) {
+    function switchCockpitView(viewId) {
+      appState.activeCockpitView = viewId;
+      ['pca', 'weights', 'diagnostics'].forEach(v => {
+        const viewEl = document.getElementById(`view-${v}`);
+        const btnEl = document.getElementById(`tab-btn-${v}`);
+        if (v === viewId) {
           viewEl.classList.remove('hidden');
-          tabBtn.className = 'flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-medium transition-all bg-indigo-600 text-white shadow-md';
+          btnEl.className = 'segmented-btn active flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-mono font-semibold transition-all';
         } else {
           viewEl.classList.add('hidden');
-          tabBtn.className = 'flex items-center space-x-2 px-4 py-2 rounded-lg text-xs font-medium text-slate-400 hover:text-white transition-all';
+          btnEl.className = 'segmented-btn flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-mono text-slate-400 hover:text-white transition-all';
         }
       });
       lucide.createIcons();
     }
 
-    let selectedUploadFile = null;
+    function openAuditModal() {
+      document.getElementById('modal-audit').classList.remove('hidden');
+      lucide.createIcons();
+    }
+    function closeAuditModal() {
+      document.getElementById('modal-audit').classList.add('hidden');
+    }
 
+    function openIngestModal() {
+      document.getElementById('modal-ingest').classList.remove('hidden');
+      lucide.createIcons();
+    }
+    function closeIngestModal() {
+      document.getElementById('modal-ingest').classList.add('hidden');
+    }
+
+    let selectedUploadFile = null;
     function handleFileSelect(event) {
       const file = event.target.files[0];
       if (file) {
         selectedUploadFile = file;
-        document.getElementById('dropzone-text').innerText = `Selected: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
+        document.getElementById('dropzone-text').innerText = `File: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
       }
     }
 
@@ -484,7 +681,7 @@
           dropzone.classList.remove('border-emerald-500');
           if (e.dataTransfer.files.length) {
             selectedUploadFile = e.dataTransfer.files[0];
-            document.getElementById('dropzone-text').innerText = `Selected: ${selectedUploadFile.name} (${(selectedUploadFile.size / 1024).toFixed(1)} KB)`;
+            document.getElementById('dropzone-text').innerText = `File: ${selectedUploadFile.name} (${(selectedUploadFile.size / 1024).toFixed(1)} KB)`;
           }
         });
       }
@@ -494,7 +691,7 @@
       const con = document.getElementById('ingest-console');
       const time = new Date().toLocaleTimeString();
       let colorClass = 'text-slate-300';
-      if (type === 'error') colorClass = 'text-rose-400';
+      if (type === 'error') colorClass = 'text-rose-400 font-bold';
       else if (type === 'success') colorClass = 'text-emerald-400 font-bold';
       else if (type === 'warn') colorClass = 'text-amber-400';
 
@@ -515,10 +712,10 @@
       const statusTag = document.getElementById('ingest-status-tag');
       btn.disabled = true;
       btn.classList.add('opacity-50');
-      statusTag.innerText = 'Scraping IDX...';
-      statusTag.className = 'text-[10px] px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 font-mono animate-pulse';
+      statusTag.innerText = 'SCRAPING...';
+      statusTag.className = 'text-[9px] font-mono px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 animate-pulse border border-indigo-500/30';
 
-      logIngest(`Initiating IDX financial report scraper (Years: ${startYear}–${endYear}, Target Tickers: ${tickers.length ? tickers.join(', ') : 'Default Non-Financial Universe'})...`);
+      logIngest(`Triggering IDX financial report scraper (Range: ${startYear}–${endYear}, Target: ${tickers.length ? tickers.join(', ') : 'Default Universe'})...`);
 
       try {
         const res = await fetch('/api/data/scrape', {
@@ -528,27 +725,26 @@
         });
         const data = await res.json();
         if (res.ok && data.status === 'success') {
-          logIngest(`Scrape complete! Found ${data.total_downloaded_files || 0} reports across ${data.scraped_tickers.length} tickers.`, 'success');
-          logIngest(`Auto-running clustering & TOPSIS recalculation...`);
+          logIngest(`Scrape finished! Downloaded ${data.total_downloaded_files || 0} reports across ${data.scraped_tickers.length} tickers.`, 'success');
           await runClustering();
           await recalculateTopsis();
-          logIngest(`Workspace models successfully updated with fresh dataset.`, 'success');
+          logIngest(`Workspace models re-computed and synced with fresh filings.`, 'success');
         } else {
-          logIngest(`Scrape job failed: ${data.detail || JSON.stringify(data)}`, 'error');
+          logIngest(`Scrape failed: ${data.detail || JSON.stringify(data)}`, 'error');
         }
       } catch (err) {
-        logIngest(`Scrape network error: ${err.message}`, 'error');
+        logIngest(`Network fault during scrape: ${err.message}`, 'error');
       } finally {
         btn.disabled = false;
         btn.classList.remove('opacity-50');
-        statusTag.innerText = 'Idle';
-        statusTag.className = 'text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono';
+        statusTag.innerText = 'IDLE';
+        statusTag.className = 'text-[9px] font-mono px-2 py-0.5 rounded bg-white/[0.06] text-slate-400 border border-white/[0.08]';
       }
     }
 
     async function triggerUpload() {
       if (!selectedUploadFile) {
-        alert("Please select or drop an .xlsx or .zip file first!");
+        alert("Select or drop a financial statement .xlsx/.zip file first.");
         return;
       }
 
@@ -556,11 +752,10 @@
       const statusTag = document.getElementById('ingest-status-tag');
       btn.disabled = true;
       btn.classList.add('opacity-50');
-      statusTag.innerText = 'Uploading & Parsing...';
-      statusTag.className = 'text-[10px] px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono animate-pulse';
+      statusTag.innerText = 'UPLOADING...';
+      statusTag.className = 'text-[9px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 animate-pulse border border-emerald-500/30';
 
-      logIngest(`Uploading financial statements workbook: ${selectedUploadFile.name}...`);
-
+      logIngest(`Uploading workbook bundle: ${selectedUploadFile.name}...`);
       const formData = new FormData();
       formData.append('file', selectedUploadFile);
 
@@ -571,21 +766,20 @@
         });
         const data = await res.json();
         if (res.ok && data.status === 'success') {
-          logIngest(`Upload & extraction successful! Saved to ${data.saved_path}`, 'success');
-          logIngest(`Extracted metrics for ${data.extracted_records || 0} financial records. Updating pipeline...`);
+          logIngest(`Upload extracted ${data.extracted_records || 0} financial records into pipeline cache.`, 'success');
           await runClustering();
           await recalculateTopsis();
-          logIngest(`Pipeline refreshed with newly uploaded financial data.`, 'success');
+          logIngest(`Models refreshed with uploaded figures.`, 'success');
         } else {
-          logIngest(`Upload processing failed: ${data.detail || JSON.stringify(data)}`, 'error');
+          logIngest(`Extraction failed: ${data.detail || JSON.stringify(data)}`, 'error');
         }
       } catch (err) {
-        logIngest(`Upload error: ${err.message}`, 'error');
+        logIngest(`Upload network error: ${err.message}`, 'error');
       } finally {
         btn.disabled = false;
         btn.classList.remove('opacity-50');
-        statusTag.innerText = 'Idle';
-        statusTag.className = 'text-[10px] px-2 py-0.5 rounded bg-slate-800 text-slate-400 font-mono';
+        statusTag.innerText = 'IDLE';
+        statusTag.className = 'text-[9px] font-mono px-2 py-0.5 rounded bg-white/[0.06] text-slate-400 border border-white/[0.08]';
       }
     }
 
@@ -603,9 +797,11 @@
         body: JSON.stringify({ n_clusters: k })
       });
       appState.clusterData = await res.json();
-      document.getElementById('stat-clusters').innerText = `k = ${k}`;
-      document.getElementById('stat-silhouette').innerText = `Silhouette: ${appState.clusterData.overall_silhouette}`;
+      document.getElementById('ribbon-cluster-info').innerText = `K-MEANS (k=${k}, SIL=${appState.clusterData.overall_silhouette})`;
       
+      const v = appState.clusterData.explained_variance_2d_percent || [91.64, 6.40];
+      document.getElementById('pca-variance-badge').innerText = `Var: PC1 ${v[0]}% | PC2 ${v[1]}%`;
+
       renderPCAChart();
       renderClusterCards();
       renderCombinedTable();
@@ -621,13 +817,18 @@
       
       const topStock = appState.topsisData.ranked_stocks[0];
       if (topStock) {
-        document.getElementById('stat-top-pick').innerText = topStock.ticker.replace('.JK', '');
-        document.getElementById('stat-top-score').innerText = `Score: ${topStock.topsis_score} (#1)`;
+        document.getElementById('ribbon-top-pick').innerText = `${topStock.ticker.replace('.JK', '')} (#1, ${topStock.topsis_score})`;
       }
 
-      renderTopPodium();
       renderCombinedTable();
       renderMatrixAudit();
+
+      // Maintain or set default selection
+      if (!appState.selectedTicker && topStock) {
+        selectStock(topStock.ticker);
+      } else if (appState.selectedTicker) {
+        selectStock(appState.selectedTicker);
+      }
     }
 
     async function loadElbow() {
@@ -646,13 +847,18 @@
           .filter(s => s.cluster === cp.cluster_id)
           .map(s => ({ x: s.pca_x, y: s.pca_y, label: s.ticker, name: s.name, sector: s.sector }));
 
+        const color = CLUSTER_COLORS[idx % CLUSTER_COLORS.length];
+
         return {
-          label: `Cluster ${cp.cluster_id}: ${cp.label}`,
+          label: `C${cp.cluster_id}: ${cp.label}`,
           data: points,
-          backgroundColor: CLUSTER_COLORS[idx % CLUSTER_COLORS.length],
-          borderColor: CLUSTER_COLORS[idx % CLUSTER_COLORS.length],
+          backgroundColor: color,
+          borderColor: color,
           pointRadius: 6,
-          pointHoverRadius: 9
+          pointHoverRadius: 9,
+          pointHoverBorderColor: '#ffffff',
+          pointHoverBorderWidth: 2,
+          borderWidth: 1
         };
       });
 
@@ -662,64 +868,64 @@
         options: {
           responsive: true,
           maintainAspectRatio: false,
+          onClick: (e, elements) => {
+            if (elements.length > 0) {
+              const el = elements[0];
+              const item = datasets[el.datasetIndex].data[el.index];
+              if (item && item.label) {
+                selectStock(item.label);
+              }
+            }
+          },
           plugins: {
-            legend: { labels: { color: '#94a3b8', font: { size: 11 } } },
+            legend: { 
+              position: 'top',
+              labels: { 
+                color: '#94a3b8', 
+                font: { family: 'JetBrains Mono', size: 10 },
+                boxWidth: 8,
+                padding: 12,
+                usePointStyle: true,
+                pointStyle: 'circle'
+              } 
+            },
             tooltip: {
+              backgroundColor: 'rgba(11, 14, 20, 0.95)',
+              borderColor: 'rgba(255, 255, 255, 0.15)',
+              borderWidth: 1,
+              titleFont: { family: 'JetBrains Mono', size: 12, weight: 'bold' },
+              bodyFont: { family: 'JetBrains Mono', size: 10 },
+              padding: 10,
+              displayColors: true,
               callbacks: {
                 label: (ctx) => {
                   const raw = ctx.raw;
-                  return `${raw.label} (${raw.name}) - [${raw.x}, ${raw.y}]`;
+                  return `${raw.label.replace('.JK', '')} — ${raw.name} (${raw.sector}) • [${raw.x.toFixed(2)}, ${raw.y.toFixed(2)}]`;
                 }
               }
             }
           },
           scales: {
             x: {
-              title: { display: true, text: `PC1 (${appState.clusterData.explained_variance_2d_percent[0]}% Var)`, color: '#64748b' },
-              grid: { color: 'rgba(255,255,255,0.05)' },
-              ticks: { color: '#64748b' }
+              title: { display: true, text: `PC1 Projection (Topline & Asset Growth Dimension)`, color: '#64748b', font: { family: 'JetBrains Mono', size: 10 } },
+              grid: { color: 'rgba(255, 255, 255, 0.04)', drawBorder: false },
+              ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 9 } }
             },
             y: {
-              title: { display: true, text: `PC2 (${appState.clusterData.explained_variance_2d_percent[1]}% Var)`, color: '#64748b' },
-              grid: { color: 'rgba(255,255,255,0.05)' },
-              ticks: { color: '#64748b' }
+              title: { display: true, text: `PC2 Projection (Profitability & Margin Alpha)`, color: '#64748b', font: { family: 'JetBrains Mono', size: 10 } },
+              grid: { color: 'rgba(255, 255, 255, 0.04)', drawBorder: false },
+              ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 9 } }
             }
           }
         }
       });
     }
 
-    function renderTopPodium() {
-      if (!appState.topsisData) return;
-      const podiumEl = document.getElementById('top-podium');
-      const top5 = appState.topsisData.ranked_stocks.slice(0, 5);
-
-      podiumEl.innerHTML = top5.map((s, idx) => `
-        <div class="flex items-center justify-between p-3 rounded-xl bg-slate-900/60 border border-slate-800 hover:border-indigo-500/40 transition-all">
-          <div class="flex items-center space-x-3">
-            <span class="w-6 h-6 rounded-lg ${idx === 0 ? 'bg-amber-500/20 text-amber-400 border border-amber-500/30' : 'bg-slate-800 text-slate-400'} flex items-center justify-center font-bold text-xs">
-              #${s.rank}
-            </span>
-            <div>
-              <div class="font-bold text-white text-xs">${s.ticker.replace('.JK', '')} <span class="font-normal text-[11px] text-slate-400">(${s.name})</span></div>
-              <div class="text-[10px] text-indigo-400">${s.sector}</div>
-            </div>
-          </div>
-          <div class="text-right">
-            <div class="text-xs font-bold text-emerald-400 font-mono">${s.topsis_score}</div>
-            <div class="text-[9px] text-slate-400">${s.recommendation}</div>
-          </div>
-        </div>
-      `).join('');
-    }
-
     function renderCombinedTable() {
       if (!appState.topsisData || !appState.clusterData) return;
       const tbody = document.getElementById('ranked-tbody');
       const clusterMap = {};
-      appState.clusterData.clustered_stocks.forEach(s => {
-        clusterMap[s.ticker] = s;
-      });
+      appState.clusterData.clustered_stocks.forEach(s => { clusterMap[s.ticker] = s; });
 
       const sectorFilter = document.getElementById('sector-filter');
       const sectors = new Set(appState.topsisData.ranked_stocks.map(s => s.sector));
@@ -734,93 +940,140 @@
 
       tbody.innerHTML = appState.topsisData.ranked_stocks.map(s => {
         const cInfo = clusterMap[s.ticker] || {};
-        const cProfile = (appState.clusterData.cluster_profiles || []).find(p => p.cluster_id === cInfo.cluster);
-        const clusterLabel = cProfile ? cProfile.label : `Cluster ${cInfo.cluster}`;
         const color = CLUSTER_COLORS[(cInfo.cluster || 0) % CLUSTER_COLORS.length];
+        const isActive = appState.selectedTicker === s.ticker ? 'active' : '';
 
-        let badgeClass = 'bg-slate-800 text-slate-300';
-        if (s.topsis_score >= 0.65) badgeClass = 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/30';
-        else if (s.topsis_score >= 0.50) badgeClass = 'bg-indigo-500/20 text-indigo-400 border border-indigo-500/30';
-        else if (s.topsis_score >= 0.35) badgeClass = 'bg-amber-500/20 text-amber-400 border border-amber-500/30';
-        else badgeClass = 'bg-rose-500/20 text-rose-400 border border-rose-500/30';
+        // Rank Badge
+        let rankBadgeClass = 'text-slate-500 font-mono';
+        if (s.rank === 1) rankBadgeClass = 'badge-rank-1 font-mono font-extrabold px-1.5 py-0.5 rounded';
+        else if (s.rank === 2) rankBadgeClass = 'badge-rank-2 font-mono font-bold px-1.5 py-0.5 rounded';
+        else if (s.rank === 3) rankBadgeClass = 'badge-rank-3 font-mono font-bold px-1.5 py-0.5 rounded';
 
         const fmtPct = (val) => {
           if (val === undefined || val === null) return '--';
           const sign = val > 0 ? '+' : '';
-          const colorClass = val >= 10.0 ? 'text-emerald-400 font-bold' : (val >= 0 ? 'text-slate-300' : 'text-rose-400');
-          return `<span class="${colorClass}">${sign}${val.toFixed(1)}%</span>`;
+          const c = val >= 15.0 ? 'text-emerald-400 font-semibold' : (val >= 0 ? 'text-slate-300' : 'text-rose-400 font-semibold');
+          return `<span class="${c}">${sign}${val.toFixed(1)}%</span>`;
         };
 
+        const scorePercent = Math.min(100, Math.max(0, s.topsis_score * 100));
+
         return `
-          <tr class="hover:bg-slate-800/40 transition-colors stock-row" data-ticker="${s.ticker.toLowerCase()}" data-name="${s.name.toLowerCase()}" data-sector="${s.sector}">
-            <td class="p-3 font-bold ${s.rank <= 3 ? 'text-amber-400' : 'text-slate-400'}">#${s.rank}</td>
-            <td class="p-3">
-              <div class="font-bold text-white">${s.ticker.replace('.JK', '')}</div>
-              <div class="text-[10px] text-slate-400 font-sans">${s.name}</div>
+          <tr onclick="selectStock('${s.ticker}')" class="stock-row ${isActive} cursor-pointer select-none" id="row-${s.ticker}" data-ticker="${s.ticker.toLowerCase()}" data-name="${s.name.toLowerCase()}" data-sector="${s.sector}">
+            <td class="py-2.5 pl-3.5 pr-1 text-center font-mono">
+              <span class="${rankBadgeClass}">#${s.rank}</span>
             </td>
-            <td class="p-3 text-slate-400 font-sans">${s.sector}</td>
-            <td class="p-3 font-sans">
-              <span class="inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium" style="background: ${color}20; color: ${color}; border: 1px solid ${color}40">
-                ${clusterLabel}
+            <td class="py-2.5 px-2.5">
+              <div class="font-extrabold text-white font-mono tracking-tight text-xs">${s.ticker.replace('.JK', '')}</div>
+              <div class="text-[10px] text-slate-400 truncate max-w-[130px]">${s.sector}</div>
+            </td>
+            <td class="py-2.5 px-2 text-center">
+              <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-bold" style="background: ${color}15; color: ${color}; border: 1px solid ${color}35">
+                C${cInfo.cluster}
               </span>
             </td>
-            <td class="p-3 text-right font-bold text-emerald-400">${s.topsis_score}</td>
-            <td class="p-3 text-right">${fmtPct(s.rev_growth)}</td>
-            <td class="p-3 text-right">${fmtPct(s.net_growth)}</td>
-            <td class="p-3 text-right">${fmtPct(s.asset_growth)}</td>
-            <td class="p-3 text-right">${fmtPct(s.equity_growth)}</td>
-            <td class="p-3 text-center font-sans">
-              <span class="px-2 py-0.5 rounded text-[10px] font-semibold ${badgeClass}">
-                ${s.recommendation}
-              </span>
+            <td class="py-2.5 px-3 text-right">
+              <div class="font-mono font-bold text-emerald-400 text-xs">${s.topsis_score}</div>
+              <div class="w-full bg-white/[0.08] h-1.5 rounded-full mt-1 overflow-hidden">
+                <div class="bg-gradient-to-r from-cyan-500 to-emerald-400 h-full rounded-full" style="width: ${scorePercent}%"></div>
+              </div>
+            </td>
+            <td class="py-2.5 pr-3.5 text-right font-mono text-[11px] leading-snug">
+              <div class="flex items-center justify-end space-x-1">
+                <span class="text-[9px] text-slate-400 uppercase">R</span>
+                <span>${fmtPct(s.rev_growth)}</span>
+              </div>
+              <div class="flex items-center justify-end space-x-1">
+                <span class="text-[9px] text-slate-400 uppercase">N</span>
+                <span>${fmtPct(s.net_growth)}</span>
+              </div>
             </td>
           </tr>
         `;
       }).join('');
     }
 
+    function selectStock(ticker) {
+      if (!appState.topsisData) return;
+      const stock = appState.topsisData.ranked_stocks.find(s => s.ticker === ticker);
+      if (!stock) return;
+
+      appState.selectedTicker = ticker;
+
+      // Update active state in table rows
+      document.querySelectorAll('.stock-row').forEach(r => r.classList.remove('active'));
+      const activeRow = document.getElementById(`row-${ticker}`);
+      if (activeRow) activeRow.classList.add('active');
+
+      // Update Bottom Dock HUD
+      document.getElementById('dock-ticker-badge').innerText = stock.ticker.substring(0, 2);
+      document.getElementById('dock-ticker-title').innerText = stock.ticker.replace('.JK', '');
+      document.getElementById('dock-ticker-rank').innerText = `Rank #${stock.rank} of 30`;
+      document.getElementById('dock-ticker-name').innerText = `${stock.name} • Sector: ${stock.sector}`;
+
+      const fmtMetric = (val) => {
+        if (val === undefined || val === null) return '--';
+        const sign = val > 0 ? '+' : '';
+        const c = val >= 10.0 ? 'text-emerald-400 font-bold' : (val >= 0 ? 'text-slate-200' : 'text-rose-400 font-bold');
+        return `<span class="${c}">${sign}${val.toFixed(2)}%</span>`;
+      };
+
+      document.getElementById('dock-rev').innerHTML = fmtMetric(stock.rev_growth);
+      document.getElementById('dock-net').innerHTML = fmtMetric(stock.net_growth);
+      document.getElementById('dock-asset').innerHTML = fmtMetric(stock.asset_growth);
+      document.getElementById('dock-equity').innerHTML = fmtMetric(stock.equity_growth);
+      document.getElementById('dock-score').innerText = stock.topsis_score;
+
+      const badgeEl = document.getElementById('dock-recommendation-badge');
+      badgeEl.innerText = stock.recommendation;
+      if (stock.topsis_score >= 0.65) {
+        badgeEl.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-lg shadow-emerald-500/10';
+      } else if (stock.topsis_score >= 0.50) {
+        badgeEl.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 shadow-lg shadow-indigo-500/10';
+      } else {
+        badgeEl.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 shadow-lg shadow-amber-500/10';
+      }
+    }
+
     function filterTable() {
       const q = document.getElementById('table-search').value.toLowerCase();
       const sec = document.getElementById('sector-filter').value;
       const rows = document.querySelectorAll('.stock-row');
+      let visible = 0;
       rows.forEach(r => {
         const matchesQ = r.getAttribute('data-ticker').includes(q) || r.getAttribute('data-name').includes(q);
         const matchesSec = sec === 'ALL' || r.getAttribute('data-sector') === sec;
-        r.style.display = (matchesQ && matchesSec) ? '' : 'none';
+        if (matchesQ && matchesSec) {
+          r.style.display = '';
+          visible++;
+        } else {
+          r.style.display = 'none';
+        }
       });
+      document.getElementById('screener-count').innerText = `${visible} / 30 STOCKS`;
     }
 
     function renderClusterCards() {
       if (!appState.clusterData) return;
-      const el = document.getElementById('cluster-cards');
+      const el = document.getElementById('cluster-cards-grid');
       el.innerHTML = appState.clusterData.cluster_profiles.map((cp, idx) => {
         const color = CLUSTER_COLORS[idx % CLUSTER_COLORS.length];
         const m = cp.mean_metrics || {};
         const rev = m.rev_growth !== undefined ? `${m.rev_growth > 0 ? '+' : ''}${m.rev_growth}%` : '--';
         const net = m.net_growth !== undefined ? `${m.net_growth > 0 ? '+' : ''}${m.net_growth}%` : '--';
-        const asset = m.asset_growth !== undefined ? `${m.asset_growth > 0 ? '+' : ''}${m.asset_growth}%` : '--';
-        const eq = m.equity_growth !== undefined ? `${m.equity_growth > 0 ? '+' : ''}${m.equity_growth}%` : '--';
 
         return `
-          <div class="p-4 rounded-xl bg-slate-900/70 border border-slate-800 space-y-3">
+          <div class="glass-card rounded-xl p-3.5 border border-white/[0.08] space-y-2 text-xs font-mono transition-all">
             <div class="flex items-center justify-between">
-              <span class="text-xs font-bold px-2 py-0.5 rounded" style="background: ${color}20; color: ${color}; border: 1px solid ${color}40">
+              <span class="font-bold px-2 py-0.5 rounded text-[10px]" style="background: ${color}15; color: ${color}; border: 1px solid ${color}35">
                 Cluster ${cp.cluster_id}
               </span>
-              <span class="text-xs text-slate-400 font-mono">${cp.count} Stocks</span>
+              <span class="text-slate-400 text-[10px] font-sans font-medium">${cp.count} Stocks</span>
             </div>
-            <div>
-              <div class="font-bold text-white text-xs">${cp.label}</div>
-              <div class="text-[10px] text-slate-400">Avg Silhouette: ${cp.avg_silhouette}</div>
-            </div>
-            <div class="space-y-1 text-[11px] text-slate-300 border-t border-slate-800 pt-2 font-mono">
-              <div class="flex justify-between"><span>Rev CAGR:</span> <span class="font-bold text-indigo-300">${rev}</span></div>
-              <div class="flex justify-between"><span>Net Inc CAGR:</span> <span class="font-bold text-emerald-300">${net}</span></div>
-              <div class="flex justify-between"><span>Asset CAGR:</span> <span class="font-bold text-amber-300">${asset}</span></div>
-              <div class="flex justify-between"><span>Equity CAGR:</span> <span class="font-bold text-purple-300">${eq}</span></div>
-            </div>
-            <div class="text-[10px] text-slate-400">
-              <span class="font-semibold text-slate-300">Members:</span> ${cp.tickers.map(t => t.replace('.JK', '')).join(', ')}
+            <div class="font-bold text-white text-xs leading-snug truncate" title="${cp.label}">${cp.label}</div>
+            <div class="text-[11px] text-slate-400 border-t border-white/[0.06] pt-1.5 flex justify-between">
+              <span>Rev: <strong class="text-cyan-300 font-semibold">${rev}</strong></span>
+              <span>Net: <strong class="text-emerald-300 font-semibold">${net}</strong></span>
             </div>
           </div>
         `;
@@ -841,17 +1094,24 @@
             data: appState.elbowData.inertias,
             borderColor: '#6366f1',
             backgroundColor: 'rgba(99, 102, 241, 0.1)',
-            tension: 0.3,
+            borderWidth: 2.5,
+            pointBackgroundColor: '#818cf8',
+            pointRadius: 4,
+            pointHoverRadius: 6,
+            tension: 0.25,
             fill: true
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { labels: { color: '#94a3b8' } } },
+          plugins: { 
+            legend: { labels: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 10 } } },
+            tooltip: { backgroundColor: 'rgba(11, 14, 20, 0.95)', borderColor: 'rgba(255, 255, 255, 0.15)', borderWidth: 1, bodyFont: { family: 'JetBrains Mono', size: 10 } }
+          },
           scales: {
-            x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' } },
-            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' } }
+            x: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 9 } } },
+            y: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 9 } } }
           }
         }
       });
@@ -866,16 +1126,19 @@
             label: 'Silhouette Score',
             data: appState.elbowData.silhouette_scores,
             backgroundColor: '#8b5cf6',
-            borderRadius: 6
+            borderRadius: 4
           }]
         },
         options: {
           responsive: true,
           maintainAspectRatio: false,
-          plugins: { legend: { labels: { color: '#94a3b8' } } },
+          plugins: { 
+            legend: { labels: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 10 } } },
+            tooltip: { backgroundColor: 'rgba(11, 14, 20, 0.95)', borderColor: 'rgba(255, 255, 255, 0.15)', borderWidth: 1, bodyFont: { family: 'JetBrains Mono', size: 10 } }
+          },
           scales: {
-            x: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' } },
-            y: { grid: { color: 'rgba(255,255,255,0.05)' }, ticks: { color: '#64748b' }, min: 0, max: 0.6 }
+            x: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 9 } } },
+            y: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 9 } }, min: 0, max: 0.6 }
           }
         }
       });
@@ -884,18 +1147,18 @@
     function renderCriteriaSliders() {
       const el = document.getElementById('criteria-sliders');
       el.innerHTML = Object.entries(appState.criteria).map(([key, item]) => `
-        <div class="p-4 rounded-xl bg-slate-900/60 border border-slate-800 space-y-2">
-          <div class="flex justify-between items-center">
-            <span class="text-xs font-bold text-white">${item.label}</span>
-            <span class="text-[10px] px-1.5 py-0.5 rounded font-bold uppercase ${item.type === 'benefit' ? 'bg-emerald-500/20 text-emerald-400' : 'bg-amber-500/20 text-amber-400'}">
+        <div class="p-3.5 rounded-xl bg-black/40 border border-white/[0.08] space-y-2">
+          <div class="flex justify-between items-center text-xs font-mono">
+            <span class="font-bold text-white">${item.label}</span>
+            <span class="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase ${item.type === 'benefit' ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25' : 'bg-amber-500/15 text-amber-400 border border-amber-500/25'}">
               ${item.type}
             </span>
           </div>
           <div class="flex items-center space-x-3">
             <input type="range" min="0" max="60" step="1" value="${Math.round((appState.weights[key] || 0) * 100)}" 
                    oninput="updateWeight('${key}', this.value)" 
-                   class="w-full accent-indigo-500 h-1.5 bg-slate-800 rounded-lg cursor-pointer">
-            <span id="weight-val-${key}" class="text-xs font-mono text-indigo-400 font-bold w-10 text-right">${Math.round((appState.weights[key] || 0) * 100)}%</span>
+                   class="w-full cursor-pointer">
+            <span id="weight-val-${key}" class="text-xs font-mono text-cyan-400 font-bold w-10 text-right">${Math.round((appState.weights[key] || 0) * 100)}%</span>
           </div>
         </div>
       `).join('');
@@ -904,6 +1167,9 @@
     function updateWeight(key, val) {
       appState.weights[key] = parseInt(val) / 100.0;
       document.getElementById(`weight-val-${key}`).innerText = `${val}%`;
+      const sum = Math.round(Object.values(appState.weights).reduce((a, b) => a + b, 0) * 100);
+      const sumEl = document.getElementById('weight-sum-badge');
+      if (sumEl) sumEl.innerText = `Sum: ${sum}%`;
     }
 
     function applyPreset(preset) {
@@ -920,10 +1186,6 @@
       recalculateTopsis();
     }
 
-    function resetWeights() {
-      applyPreset('balanced');
-    }
-
     function renderMatrixAudit() {
       if (!appState.topsisData) return;
       const m = appState.topsisData.step_matrices;
@@ -932,31 +1194,40 @@
 
       thead.innerHTML = `
         <th class="p-3">Matrix Metric</th>
-        ${m.criteria.map(c => `<th class="p-3 text-right">${c.toUpperCase()}</th>`).join('')}
+        ${m.criteria.map(c => `<th class="p-3 text-right font-mono">${c.toUpperCase()}</th>`).join('')}
       `;
 
       tbody.innerHTML = `
         <tr>
           <td class="p-3 font-semibold text-slate-400">Weight ($w_j$)</td>
-          ${m.criteria.map(c => `<td class="p-3 text-right text-indigo-400">${(m.weights[c] * 100).toFixed(1)}%</td>`).join('')}
+          ${m.criteria.map(c => `<td class="p-3 text-right text-cyan-400 font-mono font-bold">${(m.weights[c] * 100).toFixed(1)}%</td>`).join('')}
         </tr>
         <tr>
           <td class="p-3 font-semibold text-slate-400">Criteria Type</td>
-          ${m.criteria.map(c => `<td class="p-3 text-right font-sans font-bold uppercase text-[10px] ${m.criteria_types[c] === 'benefit' ? 'text-emerald-400' : 'text-amber-400'}">${m.criteria_types[c]}</td>`).join('')}
+          ${m.criteria.map(c => `<td class="p-3 text-right font-mono font-bold uppercase text-[9px] ${m.criteria_types[c] === 'benefit' ? 'text-emerald-400' : 'text-amber-400'}">${m.criteria_types[c]}</td>`).join('')}
         </tr>
         <tr>
-          <td class="p-3 font-semibold text-slate-400">Column Norm (Divisor)</td>
-          ${m.criteria.map(c => `<td class="p-3 text-right text-slate-300">${m.column_norms[c]}</td>`).join('')}
+          <td class="p-3 font-semibold text-slate-400">Column Norm</td>
+          ${m.criteria.map(c => `<td class="p-3 text-right text-slate-300 font-mono">${m.column_norms[c]}</td>`).join('')}
         </tr>
         <tr class="bg-emerald-500/5">
           <td class="p-3 font-semibold text-emerald-400">Ideal Positive ($A^+$)</td>
-          ${m.ideal_positive.map(v => `<td class="p-3 text-right text-emerald-400 font-bold">${v}</td>`).join('')}
+          ${m.ideal_positive.map(v => `<td class="p-3 text-right text-emerald-400 font-mono font-bold">${v}</td>`).join('')}
         </tr>
         <tr class="bg-rose-500/5">
           <td class="p-3 font-semibold text-rose-400">Ideal Negative ($A^-$)</td>
-          ${m.ideal_negative.map(v => `<td class="p-3 text-right text-rose-400 font-bold">${v}</td>`).join('')}
+          ${m.ideal_negative.map(v => `<td class="p-3 text-right text-rose-400 font-mono font-bold">${v}</td>`).join('')}
         </tr>
       `;
+    }
+
+    function exportUniverseJSON() {
+      if (!appState.topsisData) return;
+      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState.topsisData, null, 2));
+      const dlAnchorElem = document.createElement('a');
+      dlAnchorElem.setAttribute("href", dataStr);
+      dlAnchorElem.setAttribute("download", "spk_mining_universe_audit.json");
+      dlAnchorElem.click();
     }
 
     window.addEventListener('DOMContentLoaded', init);
