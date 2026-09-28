@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SPK × DATA MINING — Quantitative Intelligence Terminal</title>
+  <title>SPK x DATA MINING :: Institutional Quantitative Terminal</title>
   <!-- Tailwind CSS CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
   <!-- Chart.js CDN -->
@@ -17,78 +17,87 @@
         extend: {
           colors: {
             obsidian: {
-              950: '#06080c',
-              900: '#0b0e14',
-              850: '#10141d',
-              800: '#151b27',
-              700: '#1e2638',
-              600: '#2b364e'
+              950: '#080a0f',
+              900: '#0d1117',
+              850: '#121820',
+              800: '#171f2c',
+              700: '#1e293b',
+              600: '#2b394e'
             },
-            accent: {
-              cyan: '#06b6d4',
-              indigo: '#6366f1',
-              violet: '#8b5cf6',
+            surface: {
+              base: '#090b10',
+              raised: '#0f131a',
+              card: '#141a24',
+              hover: '#1a2230',
+              border: 'rgba(255, 255, 255, 0.08)',
+              borderStrong: 'rgba(255, 255, 255, 0.16)'
+            },
+            terminal: {
               emerald: '#10b981',
               amber: '#f59e0b',
-              rose: '#f43f5e'
+              cyan: '#06b6d4',
+              blue: '#3b82f6',
+              rose: '#f43f5e',
+              muted: '#64748b'
             }
           },
           fontFamily: {
-            sans: ['Plus Jakarta Sans', '-apple-system', 'BlinkMacSystemFont', 'sans-serif'],
-            mono: ['JetBrains Mono', 'Menlo', 'Monaco', 'monospace']
+            sans: ['Space Grotesk', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
+            mono: ['JetBrains Mono', 'Fira Code', 'monospace']
           }
         }
       }
     }
   </script>
   <style>
-    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
     
     * {
       box-sizing: border-box;
     }
 
     body {
-      font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: #06080c;
-      color: #f1f5f9;
-      letter-spacing: -0.015em;
+      font-family: 'Space Grotesk', sans-serif;
+      background-color: #080a0f;
+      color: #e2e8f0;
+      letter-spacing: -0.012em;
     }
     
-    .font-mono {
+    .font-mono, td, th.num, .tabular-nums {
       font-family: 'JetBrains Mono', monospace;
+      font-feature-settings: "tnum" 1, "zero" 1;
     }
 
-    /* Ambient glass panel */
+    /* Architectural terminal surfaces - anti-slop matte hierarchy */
     .glass-panel {
-      background: linear-gradient(180deg, rgba(16, 20, 29, 0.85) 0%, rgba(11, 14, 20, 0.95) 100%);
-      backdrop-filter: blur(12px);
-      border: 1px solid rgba(255, 255, 255, 0.07);
+      background: #0d1117;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.6);
     }
 
     .glass-card {
-      background: rgba(21, 27, 39, 0.6);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(255, 255, 255, 0.06);
+      background: #121820;
+      border: 1px solid rgba(255, 255, 255, 0.07);
+      transition: border-color 0.15s ease, background-color 0.15s ease;
     }
 
     .glass-card:hover {
-      border-color: rgba(99, 102, 241, 0.4);
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.5), 0 0 15px -3px rgba(99, 102, 241, 0.15);
+      border-color: rgba(59, 130, 246, 0.4);
+      background: #161e29;
     }
 
-    /* Table row interactions */
+    /* Table row interactions - tactile crisp line hover */
     .stock-row {
-      transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+      transition: background-color 0.12s ease, border-color 0.12s ease;
     }
 
     .stock-row:hover {
-      background: rgba(30, 38, 56, 0.5);
+      background: rgba(30, 41, 59, 0.55);
     }
 
     .stock-row.active {
-      background: linear-gradient(90deg, rgba(99, 102, 241, 0.18) 0%, rgba(21, 27, 39, 0.6) 100%);
-      border-left: 2px solid #818cf8;
+      background: rgba(30, 58, 95, 0.35);
+      border-left: 3px solid #3b82f6;
     }
 
     /* Ultra slim custom scrollbar */
@@ -97,69 +106,73 @@
       height: 4px;
     }
     ::-webkit-scrollbar-track {
-      background: #06080c;
+      background: #080a0f;
     }
     ::-webkit-scrollbar-thumb {
       background: rgba(255, 255, 255, 0.12);
-      border-radius: 4px;
+      border-radius: 2px;
     }
     ::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.25);
+      background: rgba(255, 255, 255, 0.28);
     }
 
-    /* Glow pulse & live dots */
+    /* Crisp live status dot - precise, zero artificial blur bloom */
     .glow-dot {
-      box-shadow: 0 0 8px currentColor;
+      box-shadow: 0 0 6px currentColor;
     }
 
     .glow-border {
-      box-shadow: 0 0 15px -3px rgba(99, 102, 241, 0.3);
+      border-color: #3b82f6;
     }
 
-    /* Modern range slider */
+    /* Precision quantitative range slider */
     input[type=range] {
       -webkit-appearance: none;
-      background: rgba(255, 255, 255, 0.08);
+      appearance: none;
+      background: rgba(255, 255, 255, 0.1);
       height: 4px;
-      border-radius: 9999px;
+      border-radius: 2px;
     }
     input[type=range]::-webkit-slider-thumb {
       -webkit-appearance: none;
+      appearance: none;
       height: 14px;
       width: 14px;
-      border-radius: 50%;
-      background: #818cf8;
+      border-radius: 2px;
+      background: #3b82f6;
       cursor: pointer;
-      border: 2px solid #ffffff;
-      box-shadow: 0 0 10px rgba(99, 102, 241, 0.6);
+      border: 1px solid #ffffff;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
       transition: transform 0.1s ease;
     }
     input[type=range]::-webkit-slider-thumb:hover {
       transform: scale(1.15);
+      background: #60a5fa;
     }
 
-    /* Segmented pill control */
+    /* Segmented institutional button control */
     .segmented-btn.active {
-      background: #4f46e5;
-      color: #ffffff;
-      box-shadow: 0 2px 10px rgba(79, 70, 229, 0.4);
+      background: #1e293b;
+      color: #38bdf8;
+      border-color: rgba(56, 189, 248, 0.4);
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
     }
 
-    /* Badge glow effect */
+    /* Badge rank indicators - distinct precision metallics */
     .badge-rank-1 {
-      background: linear-gradient(135deg, rgba(245, 158, 11, 0.2) 0%, rgba(217, 119, 6, 0.05) 100%);
+      background: rgba(245, 158, 11, 0.12);
       border: 1px solid rgba(245, 158, 11, 0.4);
       color: #fbbf24;
     }
     .badge-rank-2 {
-      background: linear-gradient(135deg, rgba(148, 163, 184, 0.2) 0%, rgba(100, 116, 139, 0.05) 100%);
-      border: 1px solid rgba(148, 163, 184, 0.3);
-      color: #e2e8f0;
+      background: rgba(148, 163, 184, 0.12);
+      border: 1px solid rgba(148, 163, 184, 0.35);
+      color: #cbd5e1;
     }
     .badge-rank-3 {
-      background: linear-gradient(135deg, rgba(217, 119, 6, 0.2) 0%, rgba(180, 83, 9, 0.05) 100%);
-      border: 1px solid rgba(217, 119, 6, 0.3);
-      color: #f59e0b;
+      background: rgba(217, 119, 6, 0.12);
+      border: 1px solid rgba(217, 119, 6, 0.35);
+      color: #d97706;
     }
   </style>
 </head>
@@ -280,14 +293,15 @@
       <!-- Strategy Quick Presets Footer -->
       <div class="p-2.5 bg-[#0a0d14] border-t border-white/[0.08] flex items-center justify-between text-[11px] font-mono select-none">
         <div class="flex items-center space-x-1.5 text-slate-400 text-[10px]">
-          <i data-lucide="sparkles" class="w-3 h-3 text-amber-400"></i>
-          <span class="uppercase">Presets:</span>
+          <i data-lucide="sliders" class="w-3 h-3 text-cyan-400"></i>
+          <span class="uppercase font-semibold tracking-wider">Presets:</span>
         </div>
-        <div class="flex space-x-1">
+        <div class="flex flex-wrap gap-1">
           <button onclick="applyPreset('balanced')" id="preset-balanced" class="px-2 py-0.5 rounded text-[10px] bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white transition-all">Balanced</button>
           <button onclick="applyPreset('profitability')" id="preset-profitability" class="px-2 py-0.5 rounded text-[10px] bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white transition-all">Profit-Max</button>
-          <button onclick="applyPreset('topline')" id="preset-topline" class="px-2 py-0.5 rounded text-[10px] bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white transition-all">Top-Line</button>
-          <button onclick="applyPreset('asset_scale')" id="preset-asset_scale" class="px-2 py-0.5 rounded text-[10px] bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white transition-all">Asset Scale</button>
+          <button onclick="applyPreset('topline')" id="preset-topline" class="px-2 py-0.5 rounded text-[10px] bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white transition-all">Topline</button>
+          <button onclick="applyPreset('asset_scale')" id="preset-asset_scale" class="px-2 py-0.5 rounded text-[10px] bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white transition-all">Scale</button>
+          <button onclick="applyPreset('defensive')" id="preset-defensive" class="px-2 py-0.5 rounded text-[10px] bg-cyan-950/30 hover:bg-cyan-900/40 border border-cyan-500/30 text-cyan-300 hover:text-cyan-100 transition-all font-semibold">Defensive</button>
         </div>
       </div>
 
@@ -605,16 +619,16 @@
       silhouetteChart: null
     };
 
-    // Modern neon & pastel cluster palette
+    // Institutional high-contrast cluster palette (terminal grade)
     const CLUSTER_COLORS = [
-      '#6366f1', // Indigo
-      '#06b6d4', // Cyan
-      '#f59e0b', // Amber
-      '#ec4899', // Pink
-      '#10b981', // Emerald
-      '#8b5cf6', // Violet
-      '#14b8a6', // Teal
-      '#f43f5e'  // Rose
+      '#00f2fe', // Tier 1: Alpha Cyan
+      '#10b981', // Tier 2: Emerald Core
+      '#f59e0b', // Tier 3: Amber Sentinel
+      '#a78bfa', // Tier 4: Lavender Yield
+      '#38bdf8', // Tier 5: Sky Liquidity
+      '#f43f5e', // Tier 6: High Risk Rose
+      '#e2e8f0', // Tier 7: Platinum Defensive
+      '#64748b'  // Tier 8: Neutral Slate
     ];
 
     async function init() {
@@ -1179,6 +1193,8 @@
         appState.weights = { rev_growth: 0.60, net_growth: 0.20, asset_growth: 0.10, equity_growth: 0.10 };
       } else if (preset === 'asset_scale') {
         appState.weights = { rev_growth: 0.20, net_growth: 0.20, asset_growth: 0.30, equity_growth: 0.30 };
+      } else if (preset === 'defensive') {
+        appState.weights = { rev_growth: 0.15, net_growth: 0.35, asset_growth: 0.15, equity_growth: 0.35 };
       } else {
         appState.weights = { rev_growth: 0.35, net_growth: 0.35, asset_growth: 0.15, equity_growth: 0.15 };
       }
@@ -1229,6 +1245,41 @@
       dlAnchorElem.setAttribute("download", "spk_mining_universe_audit.json");
       dlAnchorElem.click();
     }
+
+    // Terminal Keyboard Ergonomics & Hotkeys
+    window.addEventListener('keydown', (e) => {
+      // If typing in input or select, only intercept Escape
+      const tag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
+      const isInput = tag === 'input' || tag === 'select' || tag === 'textarea';
+
+      if (e.key === 'Escape') {
+        closeAuditModal();
+        closeIngestModal();
+        if (isInput) document.activeElement.blur();
+        return;
+      }
+
+      if (isInput) return;
+
+      if (e.key === '/' || e.key === 's') {
+        e.preventDefault();
+        const searchInput = document.getElementById('table-search');
+        if (searchInput) {
+          searchInput.focus();
+          searchInput.select();
+        }
+      } else if (e.key === '1') {
+        switchCockpitView('pca');
+      } else if (e.key === '2') {
+        switchCockpitView('weights');
+      } else if (e.key === '3') {
+        switchCockpitView('diagnostics');
+      } else if (e.key === 'm' || e.key === 'M') {
+        openAuditModal();
+      } else if (e.key === 'e' || e.key === 'E') {
+        exportUniverseJSON();
+      }
+    });
 
     window.addEventListener('DOMContentLoaded', init);
   </script>
