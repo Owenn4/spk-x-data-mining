@@ -1,0 +1,151 @@
+ticker,company,data_year,report_year,revenue,net_income,total_assets,total_equity,unit,source_file
+ACES,Ace Hardware Indonesia Tbk,2021,2022,6543362698900,690770530338.0,7171138470214,5578980277554.0,IDR,FinancialStatement-2022-Tahunan-ACES.xlsx
+ACES,Ace Hardware Indonesia Tbk,2022,2022,6762803342146,664342863394.0,7249254612049,5933988630611.0,IDR,FinancialStatement-2022-Tahunan-ACES.xlsx
+ACES,Ace Hardware Indonesia Tbk,2023,2023,7611866067268,763507487621.0,7753269368751,6186397789088.0,IDR,FinancialStatement-2023-Tahunan-ACES.xlsx
+ACES,Ace Hardware Indonesia Tbk,2024,2024,8582510248665,892043887177.0,8191411810234,6512333867568.0,IDR,FinancialStatement-2024-Tahunan-ACES.xlsx
+ACES,Ace Hardware Indonesia Tbk,2025,2025,8638654030708,668726413112.0,8521586931225,6597263423587.0,IDR,FinancialStatement-2025-Tahunan-ACES.xlsx
+ADRO,Adaro Energy Indonesia Tbk,2021,2022,3992718,933492.0,7586936,4458315.0,USD thousand,FinancialStatement-2022-Tahunan-ADRO.xlsx
+ADRO,Adaro Energy Indonesia Tbk,2022,2022,8102399,2493080.0,10782307,6527338.0,USD thousand,FinancialStatement-2022-Tahunan-ADRO.xlsx
+ADRO,Adaro Energy Indonesia Tbk,2023,2023,6517556,1641437.0,10472711,7408750.0,USD thousand,FinancialStatement-2023-Tahunan-ADRO.xlsx
+ADRO,Adaro Energy Indonesia Tbk,2024,2024,2078689,1380013.0,6702127,5370832.0,USD thousand,FinancialStatement-2024-Tahunan-ADRO.xlsx
+ADRO,Adaro Energy Indonesia Tbk,2025,2025,1873528,447694.0,6816993,5003953.0,USD thousand,FinancialStatement-2025-Tahunan-ADRO.xlsx
+AKRA,PT AKR Corporindo Tbk.,2021,2022,25707068900,1111613585.0,23508585736,11298965113.0,IDR thousand,FinancialStatement-2022-Tahunan-AKRA.xlsx
+AKRA,PT AKR Corporindo Tbk.,2022,2022,47539986604,2403334889.0,27187608036,13154810775.0,IDR thousand,FinancialStatement-2022-Tahunan-AKRA.xlsx
+AKRA,PT AKR Corporindo Tbk.,2023,2023,42086952436,2780349511.0,30254623117,14042957513.0,IDR thousand,FinancialStatement-2023-Tahunan-AKRA.xlsx
+AKRA,PT AKR Corporindo Tbk.,2024,2024,38729493298,2225117975.0,33108684368,14623992474.0,IDR thousand,FinancialStatement-2024-Tahunan-AKRA.xlsx
+AKRA,PT AKR Corporindo Tbk.,2025,2025,46018468072,2472616076.0,36562281257,15609949469.0,IDR thousand,FinancialStatement-2025-Tahunan-AKRA.xlsx
+AMRT,PT Sumber Alfaria Trijaya Tbk.,2021,2022,84904301,1925874.0,27370210,9427783.0,IDR million,FinancialStatement-2022-Tahunan-AMRT.xlsx
+AMRT,PT Sumber Alfaria Trijaya Tbk.,2022,2022,96924686,2855284.0,30746266,11470692.0,IDR million,FinancialStatement-2022-Tahunan-AMRT.xlsx
+AMRT,PT Sumber Alfaria Trijaya Tbk.,2023,2023,106944683,3403657.0,34246183,15705200.0,IDR million,FinancialStatement-2023-Tahunan-AMRT.xlsx
+AMRT,PT Sumber Alfaria Trijaya Tbk.,2024,2024,118227031,3148107.0,38798382,17695943.0,IDR million,FinancialStatement-2024-Tahunan-AMRT.xlsx
+AMRT,PT Sumber Alfaria Trijaya Tbk.,2025,2025,126737251,3410889.0,42579101,19382897.0,IDR million,FinancialStatement-2025-Tahunan-AMRT.xlsx
+ANTM,Aneka Tambang Tbk.,2021,2022,38445595,1861743.0,32916154,20837098.0,IDR million,FinancialStatement-2022-Tahunan-ANTM.xlsx
+ANTM,Aneka Tambang Tbk.,2022,2022,45930356,3820965.0,33637271,23712060.0,IDR million,FinancialStatement-2022-Tahunan-ANTM.xlsx
+ANTM,Aneka Tambang Tbk.,2023,2023,41047693,3077646.0,42851329,31165670.0,IDR million,FinancialStatement-2023-Tahunan-ANTM.xlsx
+ANTM,Aneka Tambang Tbk.,2024,2025,69192440,3647210.0,44522645,32199506.0,IDR million,FinancialStatement-2025-Tahunan-ANTM.xlsx
+ANTM,Aneka Tambang Tbk.,2025,2025,84642439,7208834.0,52530405,36599886.0,IDR million,FinancialStatement-2025-Tahunan-ANTM.xlsx
+ASII,Astra International Tbk,2021,2022,233485,20196.0,367311,215615.0,IDR billion,FinancialStatement-2022-Tahunan-ASII.xlsx
+ASII,Astra International Tbk,2022,2022,301379,28944.0,413297,243720.0,IDR billion,FinancialStatement-2022-Tahunan-ASII.xlsx
+ASII,Astra International Tbk,2023,2023,316565,33839.0,445679,250418.0,IDR billion,FinancialStatement-2023-Tahunan-ASII.xlsx
+ASII,Astra International Tbk,2024,2024,330920,34051.0,472925,271496.0,IDR billion,FinancialStatement-2024-Tahunan-ASII.xlsx
+ASII,Astra International Tbk,2025,2025,323392,32769.0,507366,290812.0,IDR billion,FinancialStatement-2025-Tahunan-ASII.xlsx
+BRPT,Barito Pacific Tbk,2021,2022,3155656,109115.0,9241551,4271882.0,USD thousand,FinancialStatement-2022-Tahunan-BRPT.xlsx
+BRPT,Barito Pacific Tbk,2022,2022,2961532,1759.0,9248254,3721897.0,USD thousand,FinancialStatement-2022-Tahunan-BRPT.xlsx
+BRPT,Barito Pacific Tbk,2023,2023,2760359,26116.0,10149666,4111929.0,USD thousand,FinancialStatement-2023-Tahunan-BRPT.xlsx
+BRPT,Barito Pacific Tbk,2024,2024,2386995,56484.0,10532564,4187985.0,USD thousand,FinancialStatement-2024-Tahunan-BRPT.xlsx
+BRPT,Barito Pacific Tbk,2025,2025,7630662,489807.0,17353211,6045632.0,USD thousand,FinancialStatement-2025-Tahunan-BRPT.xlsx
+CPIN,Charoen Pokphand Indonesia Tbk,2021,2022,51698249,3620961.0,35446051,25149999.0,IDR million,FinancialStatement-2022-Tahunan-CPIN.xlsx
+CPIN,Charoen Pokphand Indonesia Tbk,2022,2022,56867544,2928342.0,39847545,26327214.0,IDR million,FinancialStatement-2022-Tahunan-CPIN.xlsx
+CPIN,Charoen Pokphand Indonesia Tbk,2023,2023,61615850,2318584.0,40970800,27028758.0,IDR million,FinancialStatement-2023-Tahunan-CPIN.xlsx
+CPIN,Charoen Pokphand Indonesia Tbk,2024,2024,67477992,3712926.0,42791000,30288922.0,IDR million,FinancialStatement-2024-Tahunan-CPIN.xlsx
+CPIN,Charoen Pokphand Indonesia Tbk,2025,2025,70704988,5643863.0,45857963,34151094.0,IDR million,FinancialStatement-2025-Tahunan-CPIN.xlsx
+ERAA,Erajaya Swasembada Tbk,2021,2022,43466976696,1012375634.0,11372225256,6462361670.0,IDR thousand,FinancialStatement-2022-Tahunan-ERAA.xlsx
+ERAA,Erajaya Swasembada Tbk,2022,2022,49471483883,1012872953.0,17058217814,7202862872.0,IDR thousand,FinancialStatement-2022-Tahunan-ERAA.xlsx
+ERAA,Erajaya Swasembada Tbk,2023,2023,60139405675,826049833.0,20447451702,8130773615.0,IDR thousand,FinancialStatement-2023-Tahunan-ERAA.xlsx
+ERAA,Erajaya Swasembada Tbk,2024,2024,65279684667,1032546782.0,21774390259,9057394273.0,IDR thousand,FinancialStatement-2024-Tahunan-ERAA.xlsx
+ERAA,Erajaya Swasembada Tbk,2025,2025,76606896012,1195971727.0,28856532135,10177297005.0,IDR thousand,FinancialStatement-2025-Tahunan-ERAA.xlsx
+EXCL,PT XL Axiata Tbk,2021,2022,26754050,1287807.0,72753282,20088745.0,IDR million,FinancialStatement-2022-Tahunan-EXCL.xlsx
+EXCL,PT XL Axiata Tbk,2022,2022,29141994,1109440.0,87277780,25774226.0,IDR million,FinancialStatement-2022-Tahunan-EXCL.xlsx
+EXCL,PT XL Axiata Tbk,2023,2023,32322651,1271113.0,87688084,26504776.0,IDR million,FinancialStatement-2023-Tahunan-EXCL.xlsx
+EXCL,PT XL Axiata Tbk,2024,2024,34391597,1819019.0,86178565,26222372.0,IDR million,FinancialStatement-2024-Tahunan-EXCL.xlsx
+EXCL,PT XL Axiata Tbk,2025,2025,42445960,-4426618.0,115318438,30008708.0,IDR million,FinancialStatement-2025-Tahunan-EXCL.xlsx
+HMSP,HM Sampoerna Tbk,2021,2022,98874784,7137097.0,53090428,29191406.0,IDR million,FinancialStatement-2022-Tahunan-HMSP.xlsx
+HMSP,HM Sampoerna Tbk,2022,2022,111211321,6323744.0,54786992,28170168.0,IDR million,FinancialStatement-2022-Tahunan-HMSP.xlsx
+HMSP,HM Sampoerna Tbk,2023,2023,115983384,8096811.0,55316264,29869853.0,IDR million,FinancialStatement-2023-Tahunan-HMSP.xlsx
+HMSP,HM Sampoerna Tbk,2024,2024,117880017,6645774.0,54290706,28356427.0,IDR million,FinancialStatement-2024-Tahunan-HMSP.xlsx
+HMSP,HM Sampoerna Tbk,2025,2025,112171993,6609456.0,51562512,28350764.0,IDR million,FinancialStatement-2025-Tahunan-HMSP.xlsx
+ICBP,Indofood CBP Sukses Makmur Tbk,2021,2022,56803733,6399431.0,118015311,54940607.0,IDR million,FinancialStatement-2022-Tahunan-ICBP.xlsx
+ICBP,Indofood CBP Sukses Makmur Tbk,2022,2022,64797516,4587367.0,115305536,57473007.0,IDR million,FinancialStatement-2022-Tahunan-ICBP.xlsx
+ICBP,Indofood CBP Sukses Makmur Tbk,2023,2023,67909901,6990572.0,119267076,62104033.0,IDR million,FinancialStatement-2023-Tahunan-ICBP.xlsx
+ICBP,Indofood CBP Sukses Makmur Tbk,2024,2024,72597188,7079369.0,126040905,67043885.0,IDR million,FinancialStatement-2024-Tahunan-ICBP.xlsx
+ICBP,Indofood CBP Sukses Makmur Tbk,2025,2025,74850923,9224927.0,135544351,73683004.0,IDR million,FinancialStatement-2025-Tahunan-ICBP.xlsx
+INDF,Indofood Sukses Makmur Tbk,2021,2022,99345618,7662254.0,179271840,86986509.0,IDR million,FinancialStatement-2022-Tahunan-INDF.xlsx
+INDF,Indofood Sukses Makmur Tbk,2022,2022,110830272,6359094.0,180433300,93623038.0,IDR million,FinancialStatement-2022-Tahunan-INDF.xlsx
+INDF,Indofood Sukses Makmur Tbk,2023,2023,111703611,8147019.0,186587957,100464891.0,IDR million,FinancialStatement-2023-Tahunan-INDF.xlsx
+INDF,Indofood Sukses Makmur Tbk,2024,2024,115786525,8641612.0,201713313,108991283.0,IDR million,FinancialStatement-2024-Tahunan-INDF.xlsx
+INDF,Indofood Sukses Makmur Tbk,2025,2025,123493214,10684653.0,217981765,120235247.0,IDR million,FinancialStatement-2025-Tahunan-INDF.xlsx
+INTP,Indocement Tunggal Prakarsa Tbk,2021,2022,14771906,1788496.0,26136114,20620964.0,IDR million,FinancialStatement-2022-Tahunan-INTP.xlsx
+INTP,Indocement Tunggal Prakarsa Tbk,2022,2022,16328278,1842434.0,25706169,19566906.0,IDR million,FinancialStatement-2022-Tahunan-INTP.xlsx
+INTP,Indocement Tunggal Prakarsa Tbk,2023,2023,17949756,1950266.0,29649645,20969511.0,IDR million,FinancialStatement-2023-Tahunan-INTP.xlsx
+INTP,Indocement Tunggal Prakarsa Tbk,2024,2024,18548734,2007947.0,30420006,22114350.0,IDR million,FinancialStatement-2024-Tahunan-INTP.xlsx
+INTP,Indocement Tunggal Prakarsa Tbk,2025,2025,17731188,2248781.0,31725343,23203101.0,IDR million,FinancialStatement-2025-Tahunan-INTP.xlsx
+ISAT,PT Indosat Tbk,2021,2022,31388311,6750873.0,63397148,10302802.0,IDR million,FinancialStatement-2022-Tahunan-ISAT.xlsx
+ISAT,PT Indosat Tbk,2022,2022,46752319,4723415.0,113880230,31614988.0,IDR million,FinancialStatement-2022-Tahunan-ISAT.xlsx
+ISAT,PT Indosat Tbk,2023,2023,51228782,4506392.0,114722249,33708792.0,IDR million,FinancialStatement-2023-Tahunan-ISAT.xlsx
+ISAT,PT Indosat Tbk,2024,2024,55886870,4910828.0,114386698,36651797.0,IDR million,FinancialStatement-2024-Tahunan-ISAT.xlsx
+ISAT,PT Indosat Tbk,2025,2025,56518141,5509703.0,118629871,39509108.0,IDR million,FinancialStatement-2025-Tahunan-ISAT.xlsx
+ITMG,Indo Tambangraya Megah Tbk,2021,2022,2076813,475570.0,1666239,1201559.0,USD thousand,FinancialStatement-2022-Tahunan-ITMG.xlsx
+ITMG,Indo Tambangraya Megah Tbk,2022,2022,3636213,1200071.0,2640177,1950280.0,USD thousand,FinancialStatement-2022-Tahunan-ITMG.xlsx
+ITMG,Indo Tambangraya Megah Tbk,2023,2023,2374315,500331.0,2187847,1788540.0,USD thousand,FinancialStatement-2023-Tahunan-ITMG.xlsx
+ITMG,Indo Tambangraya Megah Tbk,2024,2024,2304497,374119.0,2406544,1933810.0,USD thousand,FinancialStatement-2024-Tahunan-ITMG.xlsx
+ITMG,Indo Tambangraya Megah Tbk,2025,2025,1881107,190940.0,2406063,1908331.0,USD thousand,FinancialStatement-2025-Tahunan-ITMG.xlsx
+JPFA,JAPFA Comfeed Indonesia Tbk,2021,2022,44878300,2022596.0,28589656,13102710.0,IDR million,FinancialStatement-2022-Tahunan-JPFA.xlsx
+JPFA,JAPFA Comfeed Indonesia Tbk,2022,2022,48972085,1419855.0,32690887,13654777.0,IDR million,FinancialStatement-2022-Tahunan-JPFA.xlsx
+JPFA,JAPFA Comfeed Indonesia Tbk,2023,2023,51175898,929716.0,34109431,14167212.0,IDR million,FinancialStatement-2023-Tahunan-JPFA.xlsx
+JPFA,JAPFA Comfeed Indonesia Tbk,2024,2024,55800849,3018892.0,34666283,16572522.0,IDR million,FinancialStatement-2024-Tahunan-JPFA.xlsx
+JPFA,JAPFA Comfeed Indonesia Tbk,2025,2025,60715806,4004000.0,40060430,20018957.0,IDR million,FinancialStatement-2025-Tahunan-JPFA.xlsx
+JSMR,PT Jasa Marga Tbk,2021,2022,15169552,1615281.0,101242884,25500315.0,IDR million,FinancialStatement-2022-Tahunan-JSMR.xlsx
+JSMR,PT Jasa Marga Tbk,2022,2022,16582849,2746884.0,91139182,25621389.0,IDR million,FinancialStatement-2022-Tahunan-JSMR.xlsx
+JSMR,PT Jasa Marga Tbk,2023,2023,21318605,6793551.0,129311989,38911206.0,IDR million,FinancialStatement-2023-Tahunan-JSMR.xlsx
+JSMR,PT Jasa Marga Tbk,2024,2024,28703212,4535565.0,140726439,57541153.0,IDR million,FinancialStatement-2024-Tahunan-JSMR.xlsx
+JSMR,PT Jasa Marga Tbk,2025,2025,29890247,3659535.0,159995285,62361717.0,IDR million,FinancialStatement-2025-Tahunan-JSMR.xlsx
+KLBF,Kalbe Farma Tbk,2021,2022,26261194512313,3183621310043.0,25666635156271,21265877793123.0,IDR,FinancialStatement-2022-Tahunan-KLBF.xlsx
+KLBF,Kalbe Farma Tbk,2022,2022,28933502646719,3382209769015.0,27241313025674,22097328202389.0,IDR,FinancialStatement-2022-Tahunan-KLBF.xlsx
+KLBF,Kalbe Farma Tbk,2023,2023,30449134077618,2766748040055.0,27057568182323,23120022010215.0,IDR,FinancialStatement-2023-Tahunan-KLBF.xlsx
+KLBF,Kalbe Farma Tbk,2024,2024,32627776108026,3240636626331.0,29429727898195,24590433810486.0,IDR,FinancialStatement-2024-Tahunan-KLBF.xlsx
+KLBF,Kalbe Farma Tbk,2025,2025,35324544,3664998.0,30699348,24728503.0,IDR million,FinancialStatement-2025-Tahunan-KLBF.xlsx
+MEDC,PT Medco Energi Internasional Tbk,2021,2022,1252106573,47019404.0,5683884139,1229336461.0,USD,FinancialStatement-2022-Tahunan-MEDC.xlsx
+MEDC,PT Medco Energi Internasional Tbk,2022,2022,2312227602,530882675.0,6931905826,1747519324.7,USD,FinancialStatement-2022-Tahunan-MEDC.xlsx
+MEDC,PT Medco Energi Internasional Tbk,2023,2023,2249337578,330675261.0,7468316269,2027595992.0,USD,FinancialStatement-2023-Tahunan-MEDC.xlsx
+MEDC,PT Medco Energi Internasional Tbk,2024,2024,2399190555,367358268.0,7926890365,2351031569.0,USD,FinancialStatement-2024-Tahunan-MEDC.xlsx
+MEDC,PT Medco Energi Internasional Tbk,2025,2025,2395035969,100923998.0,8362663065,2360111506.0,USD,FinancialStatement-2025-Tahunan-MEDC.xlsx
+MIKA,PT Mitra Keluarga Karyasehat Tbk.,2021,2022,4352868253731,1228824616846.0,6860971097854,5925143836671.0,IDR,FinancialStatement-2022-Tahunan-MIKA.xlsx
+MIKA,PT Mitra Keluarga Karyasehat Tbk.,2022,2022,4048932635364,1007991642641.0,6918090957193,6131884486218.0,IDR,FinancialStatement-2022-Tahunan-MIKA.xlsx
+MIKA,PT Mitra Keluarga Karyasehat Tbk.,2023,2023,4264279218860,916130678388.0,7340842527691,6599783247273.0,IDR,FinancialStatement-2023-Tahunan-MIKA.xlsx
+MIKA,PT Mitra Keluarga Karyasehat Tbk.,2024,2024,4874369366591,1146354111424.0,8247188907280,7330445376542.0,IDR,FinancialStatement-2024-Tahunan-MIKA.xlsx
+MIKA,PT Mitra Keluarga Karyasehat Tbk.,2025,2025,5368322143294,1364806709425.0,9266341272989,8174058121870.0,IDR,FinancialStatement-2025-Tahunan-MIKA.xlsx
+PGAS,PT Perusahaan Gas Negara Tbk.,2021,2022,3036100956,303823865.0,7510948902,3284924558.0,USD,FinancialStatement-2022-Tahunan-PGAS.xlsx
+PGAS,PT Perusahaan Gas Negara Tbk.,2022,2022,3568594775,326239697.0,7194859813,3441770638.0,USD,FinancialStatement-2022-Tahunan-PGAS.xlsx
+PGAS,PT Perusahaan Gas Negara Tbk.,2023,2023,3646304165,278091179.0,6599238468,3540403376.0,USD,FinancialStatement-2023-Tahunan-PGAS.xlsx
+PGAS,PT Perusahaan Gas Negara Tbk.,2024,2025,3788619187,339427774.0,6415949730,3671527284.0,USD,FinancialStatement-2025-Tahunan-PGAS.xlsx
+PGAS,PT Perusahaan Gas Negara Tbk.,2025,2025,3975918206,215364799.0,6232384211,3607835570.0,USD,FinancialStatement-2025-Tahunan-PGAS.xlsx
+PTBA,Bukit Asam Tbk,2021,2022,29261468,7909113.0,36123703,24253724.0,IDR million,FinancialStatement-2022-Tahunan-PTBA.xlsx
+PTBA,Bukit Asam Tbk,2022,2022,42648590,12567582.0,45359207,28916046.0,IDR million,FinancialStatement-2022-Tahunan-PTBA.xlsx
+PTBA,Bukit Asam Tbk,2023,2023,38488867,6105856.0,38765189,21563196.0,IDR million,FinancialStatement-2023-Tahunan-PTBA.xlsx
+PTBA,Bukit Asam Tbk,2024,2024,42764968,5103720.0,41854334,22643812.0,IDR million,FinancialStatement-2024-Tahunan-PTBA.xlsx
+PTBA,Bukit Asam Tbk,2025,2025,42651724,2929957.0,43917063,22616801.0,IDR million,FinancialStatement-2025-Tahunan-PTBA.xlsx
+SIDO,PT Industri Jamu Dan Farmasi Sido Muncul Tbk,2021,2022,4020980,1260898.0,4068970,3471185.0,IDR million,FinancialStatement-2022-Tahunan-SIDO.xlsx
+SIDO,PT Industri Jamu Dan Farmasi Sido Muncul Tbk,2022,2022,3865523,1104714.0,4081442,3505475.0,IDR million,FinancialStatement-2022-Tahunan-SIDO.xlsx
+SIDO,PT Industri Jamu Dan Farmasi Sido Muncul Tbk,2023,2023,3565930,950648.0,3890706,3385941.0,IDR million,FinancialStatement-2023-Tahunan-SIDO.xlsx
+SIDO,PT Industri Jamu Dan Farmasi Sido Muncul Tbk,2024,2024,3919084,1171026.0,3939625,3487844.0,IDR million,FinancialStatement-2024-Tahunan-SIDO.xlsx
+SIDO,PT Industri Jamu Dan Farmasi Sido Muncul Tbk,2025,2025,4079659,1229202.0,3681875,3120434.0,IDR million,FinancialStatement-2025-Tahunan-SIDO.xlsx
+SMGR,Semen Indonesia (Persero) Tbk,2021,2022,36702301,2046692.0,81766327,42875012.0,IDR million,FinancialStatement-2022-Tahunan-SMGR.xlsx
+SMGR,Semen Indonesia (Persero) Tbk,2022,2022,36378597,2364836.0,82960012,47239360.0,IDR million,FinancialStatement-2022-Tahunan-SMGR.xlsx
+SMGR,Semen Indonesia (Persero) Tbk,2023,2023,38651360,2170497.0,81820529,47800976.0,IDR million,FinancialStatement-2023-Tahunan-SMGR.xlsx
+SMGR,Semen Indonesia (Persero) Tbk,2024,2025,36186127,719763.0,76993082,48307211.0,IDR million,FinancialStatement-2025-Tahunan-SMGR.xlsx
+SMGR,Semen Indonesia (Persero) Tbk,2025,2025,35243751,190848.0,76568724,47719715.0,IDR million,FinancialStatement-2025-Tahunan-SMGR.xlsx
+SMSM,Selamat Sempurna Tbk,2021,2022,4162931,662041.0,3868862,2911633.0,IDR million,FinancialStatement-2022-Tahunan-SMSM.xlsx
+SMSM,Selamat Sempurna Tbk,2022,2022,4894164,848315.0,4379577,3319032.0,IDR million,FinancialStatement-2022-Tahunan-SMSM.xlsx
+SMSM,Selamat Sempurna Tbk,2023,2023,5100372,944189.0,4574793,3630033.0,IDR million,FinancialStatement-2023-Tahunan-SMSM.xlsx
+SMSM,Selamat Sempurna Tbk,2024,2024,5164985,1024180.0,4963939,3926015.0,IDR million,FinancialStatement-2024-Tahunan-SMSM.xlsx
+SMSM,Selamat Sempurna Tbk,2025,2025,5338789,1124703.0,5163198,4306786.0,IDR million,FinancialStatement-2025-Tahunan-SMSM.xlsx
+TLKM,PT Telkom Indonesia (Persero) Tbk,2021,2022,143210,24760.0,277184,145399.0,IDR billion,FinancialStatement-2022-Tahunan-TLKM.xlsx
+TLKM,PT Telkom Indonesia (Persero) Tbk,2022,2022,147306,20753.0,275192,149262.0,IDR billion,FinancialStatement-2022-Tahunan-TLKM.xlsx
+TLKM,PT Telkom Indonesia (Persero) Tbk,2023,2023,149216,24560.0,287042,156562.0,IDR billion,FinancialStatement-2023-Tahunan-TLKM.xlsx
+TLKM,PT Telkom Indonesia (Persero) Tbk,2024,2024,149967,23649.0,299675,162490.0,IDR billion,FinancialStatement-2024-Tahunan-TLKM.xlsx
+TLKM,PT Telkom Indonesia (Persero) Tbk,2025,2025,146742,17814.0,287759,150537.0,IDR billion,FinancialStatement-2025-Tahunan-TLKM.xlsx
+TPIA,PT Chandra Asri Petrochemical Tbk,2021,2022,2580425,151986.0,4993060,2932472.0,USD thousand,FinancialStatement-2022-Tahunan-TPIA.xlsx
+TPIA,PT Chandra Asri Petrochemical Tbk,2022,2022,2384591,-149538.0,4929871,2809106.0,USD thousand,FinancialStatement-2022-Tahunan-TPIA.xlsx
+TPIA,PT Chandra Asri Petrochemical Tbk,2023,2023,2159932,-33576.0,5614452,2993910.0,USD thousand,FinancialStatement-2023-Tahunan-TPIA.xlsx
+TPIA,PT Chandra Asri Petrochemical Tbk,2024,2024,1785364,-69163.0,5658866,2932743.0,USD thousand,FinancialStatement-2024-Tahunan-TPIA.xlsx
+TPIA,PT Chandra Asri Petrochemical Tbk,2025,2025,7020007,1090091.0,12322724,4656915.0,USD thousand,FinancialStatement-2025-Tahunan-TPIA.xlsx
+UNTR,United Tractors Tbk,2021,2022,79460503,10279683.0,112561356,71822757.0,IDR million,FinancialStatement-2022-Tahunan-UNTR.xlsx
+UNTR,United Tractors Tbk,2022,2022,123607460,21005105.0,140478220,89513825.0,IDR million,FinancialStatement-2022-Tahunan-UNTR.xlsx
+UNTR,United Tractors Tbk,2023,2023,128583264,20611775.0,154028248,84035563.0,IDR million,FinancialStatement-2023-Tahunan-UNTR.xlsx
+UNTR,United Tractors Tbk,2024,2024,134426998,19531205.0,169480618,98175173.0,IDR million,FinancialStatement-2024-Tahunan-UNTR.xlsx
+UNTR,United Tractors Tbk,2025,2025,131300810,14810434.0,177637299,103136323.0,IDR million,FinancialStatement-2025-Tahunan-UNTR.xlsx
+UNVR,Unilever Indonesia Tbk,2021,2022,39545959,5758148.0,19068532,4321269.0,IDR million,FinancialStatement-2022-Tahunan-UNVR.xlsx
+UNVR,Unilever Indonesia Tbk,2022,2022,41218881,5364761.0,18318114,3997256.0,IDR million,FinancialStatement-2022-Tahunan-UNVR.xlsx
+UNVR,Unilever Indonesia Tbk,2023,2023,38611401,4800940.0,16664086,3381238.0,IDR million,FinancialStatement-2023-Tahunan-UNVR.xlsx
+UNVR,Unilever Indonesia Tbk,2024,2024,35138643,3368693.0,16046195,2149267.0,IDR million,FinancialStatement-2024-Tahunan-UNVR.xlsx
+UNVR,Unilever Indonesia Tbk,2025,2025,31943461,7641161.0,20017339,4475118.0,IDR million,FinancialStatement-2025-Tahunan-UNVR.xlsx

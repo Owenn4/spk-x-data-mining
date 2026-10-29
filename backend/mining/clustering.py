@@ -70,7 +70,7 @@ def label_cluster_profile(mean_metrics: Dict[str, float]) -> str:
 
 def run_kmeans_clustering(
     df: pd.DataFrame,
-    n_clusters: int = 4,
+    n_clusters: int = 3,
     features: Optional[List[str]] = None
 ) -> Dict[str, Any]:
     features = features or CLUSTER_FEATURES

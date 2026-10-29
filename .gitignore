@@ -37,3 +37,4 @@ ENV/
 .luna/checkpoints/
 data/migration_checkpoints/
 data/raw_reports/
+data/active_stock_universe.json

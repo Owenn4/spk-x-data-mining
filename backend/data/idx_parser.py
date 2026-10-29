@@ -53,6 +53,23 @@ DEFAULT_30_NON_FINANCIAL_METRICS = [
 ]
 
 PARSED_CACHE_FILE = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'parsed_idx_metrics.json')
+RAW_CSV_PATH = os.path.join(os.path.dirname(__file__), '..', '..', 'data', 'financial_raw.csv')
+
+def get_raw_financial_records(ticker: Optional[str] = None) -> List[Dict[str, Any]]:
+    """
+    Returns extracted audited 5-year financial statements from data/financial_raw.csv.
+    """
+    if not os.path.exists(RAW_CSV_PATH):
+        return []
+    try:
+        import pandas as pd
+        df = pd.read_csv(RAW_CSV_PATH)
+        if ticker:
+            df = df[df["ticker"].str.upper() == ticker.upper()]
+        return df.to_dict(orient="records")
+    except Exception as e:
+        logger.error(f"Failed to read raw financial records: {e}")
+        return []
 
 def get_30_non_financial_data() -> List[Dict[str, Any]]:
     """
@@ -69,8 +86,34 @@ def get_30_non_financial_data() -> List[Dict[str, Any]]:
 def parse_idx_excel_file(file_path: str) -> Dict[str, Any]:
     """
     Parses a single IDX audited XLSX statement workbook.
-    Scans sheets for Income Statement & Balance Sheet line items using zip/xml parser.
+    First tries structured openpyxl extraction using IDX standard sheets (1000000, 1210000, 1321000).
+    Falls back to XML element tree streaming if needed.
     """
+    # 1. Try structured openpyxl extraction from extract.py
+    try:
+        from pathlib import Path
+        from backend.data.extract import extract_report_file
+        meta, extracted = extract_report_file(Path(file_path))
+        cur = extracted.get("current", {})
+        if any(cur.get(k) is not None for k in ["revenue", "net_income", "total_assets", "total_equity"]):
+            return {
+                "file": os.path.basename(file_path),
+                "status": "parsed",
+                "ticker": meta.get("ticker", ""),
+                "company": meta.get("company", ""),
+                "unit": meta.get("unit", "IDR"),
+                "currency": meta.get("currency", "IDR"),
+                "metrics": {
+                    "revenue": cur.get("revenue"),
+                    "net_income": cur.get("net_income"),
+                    "total_assets": cur.get("total_assets"),
+                    "total_equity": cur.get("total_equity")
+                }
+            }
+    except Exception as ex_openpyxl:
+        logger.debug(f"Openpyxl extraction fallback to XML parser: {ex_openpyxl}")
+
+    # 2. Resilient XML/ZIP fallback parser
     try:
         import zipfile
         import xml.etree.ElementTree as ET

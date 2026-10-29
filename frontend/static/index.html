@@ -1,1287 +1,1207 @@
 <!DOCTYPE html>
-<html lang="en" class="dark">
+<html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>SPK x DATA MINING :: Institutional Quantitative Terminal</title>
-  <!-- Tailwind CSS CDN -->
-  <script src="https://cdn.tailwindcss.com"></script>
-  <!-- Chart.js CDN -->
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <!-- Lucide Icons -->
-  <script src="https://unpkg.com/lucide@latest"></script>
-  <script>
-    tailwind.config = {
-      darkMode: 'class',
-      theme: {
-        extend: {
-          colors: {
-            obsidian: {
-              950: '#080a0f',
-              900: '#0d1117',
-              850: '#121820',
-              800: '#171f2c',
-              700: '#1e293b',
-              600: '#2b394e'
-            },
-            surface: {
-              base: '#090b10',
-              raised: '#0f131a',
-              card: '#141a24',
-              hover: '#1a2230',
-              border: 'rgba(255, 255, 255, 0.08)',
-              borderStrong: 'rgba(255, 255, 255, 0.16)'
-            },
-            terminal: {
-              emerald: '#10b981',
-              amber: '#f59e0b',
-              cyan: '#06b6d4',
-              blue: '#3b82f6',
-              rose: '#f43f5e',
-              muted: '#64748b'
-            }
-          },
-          fontFamily: {
-            sans: ['Space Grotesk', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'sans-serif'],
-            mono: ['JetBrains Mono', 'Fira Code', 'monospace']
-          }
-        }
-      }
-    }
-  </script>
-  <style>
-    @import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap');
-    
-    * {
-      box-sizing: border-box;
-    }
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SPK x Data Mining | IDX Equity Cockpit</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#EEF1F6;
+  --card:#FFFFFF;
+  --line:#D9DFE7;
+  --line-dark:#BAC4D1;
+  --ink:#0F172A;
+  --ink2:#334155;
+  --mute:#64748B;
+  --key:#F6F8FA;
+  
+  --font-main:'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  --font-mono:'JetBrains Mono', 'SF Mono', ui-monospace, monospace;
+  
+  --c0:#D92626; --c1:#1E60D5; --c2:#15803D; --c3:#D97706; --c4:#475569; --c5:#6D28D9;
+  --b0:#FEE2E2; --b1:#DBEAFE; --b2:#DCFCE7; --b3:#FEF3C7; --b4:#E2E8F0; --b5:#EDE9FE;
+  --success:#16A34A; --danger:#DC2626;
+  
+  --shadow:0 1px 3px rgba(15,23,42,0.06), 0 4px 16px rgba(15,23,42,0.04);
+  --shadow-hover:0 4px 14px rgba(15,23,42,0.09), 0 12px 28px rgba(15,23,42,0.07);
+}
 
-    body {
-      font-family: 'Space Grotesk', sans-serif;
-      background-color: #080a0f;
-      color: #e2e8f0;
-      letter-spacing: -0.012em;
-    }
-    
-    .font-mono, td, th.num, .tabular-nums {
-      font-family: 'JetBrains Mono', monospace;
-      font-feature-settings: "tnum" 1, "zero" 1;
-    }
+[data-theme="dark"]{
+  --bg:#0C0E12;
+  --card:#14171E;
+  --line:#212631;
+  --line-dark:#313847;
+  --ink:#F0F3F8;
+  --ink2:#C3C9D5;
+  --mute:#828C9E;
+  --key:#1B1F27;
+  
+  /* High-legibility soft luminescence for dark surfaces */
+  --c0:#FF8787; --c1:#4DABF7; --c2:#51CF66; --c3:#F59E0B; --c4:#CED4DA; --c5:#DA77F2;
+  --b0:rgba(255,107,107,0.16); --b1:rgba(77,171,247,0.16); --b2:rgba(81,207,102,0.16);
+  --b3:rgba(245,158,11,0.16); --b4:rgba(206,212,218,0.14); --b5:rgba(218,119,242,0.16);
+  --success:#51CF66; --danger:#FF8787;
+  
+  --shadow:0 2px 8px rgba(0,0,0,0.3);
+  --shadow-hover:0 6px 20px rgba(0,0,0,0.45);
+}
 
-    /* Architectural terminal surfaces - anti-slop matte hierarchy */
-    .glass-panel {
-      background: #0d1117;
-      border: 1px solid rgba(255, 255, 255, 0.08);
-      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.6);
-    }
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  background:var(--bg);
+  color:var(--ink2);
+  font:14px/1.6 var(--font-main);
+  -webkit-font-smoothing:antialiased;
+  transition:background-color .2s ease, color .2s ease;
+}
+.wrap{max-width:1380px;margin:0 auto;padding:0 32px}
 
-    .glass-card {
-      background: #121820;
-      border: 1px solid rgba(255, 255, 255, 0.07);
-      transition: border-color 0.15s ease, background-color 0.15s ease;
-    }
+header{padding:42px 0 26px;border-bottom:1px solid var(--line);transition:border-color .2s ease}
+.meta{display:flex;align-items:center;gap:12px;font:11px var(--font-mono);letter-spacing:.04em;text-transform:uppercase;color:var(--mute);margin-bottom:14px;flex-wrap:wrap}
+.pill-live{display:inline-flex;align-items:center;gap:6px;background:var(--b2);color:var(--success);padding:3px 9px;border-radius:999px;font:600 10px var(--font-mono)}
+.pill-live::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;display:inline-block}
 
-    .glass-card:hover {
-      border-color: rgba(59, 130, 246, 0.4);
-      background: #161e29;
-    }
+.theme-toggle-btn{
+  margin-left:auto;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+  background:var(--key);
+  color:var(--ink);
+  border:1px solid var(--line);
+  padding:5px 11px;
+  border-radius:6px;
+  font:500 12px var(--font-main);
+  cursor:pointer;
+  transition:all .15s ease;
+}
+.theme-toggle-btn:hover{background:var(--line);border-color:var(--line-dark)}
 
-    /* Table row interactions - tactile crisp line hover */
-    .stock-row {
-      transition: background-color 0.12s ease, border-color 0.12s ease;
-    }
+h1{
+  font-family:var(--font-main);
+  font-size:32px;
+  font-weight:700;
+  line-height:1.2;
+  letter-spacing:-0.03em;
+  color:var(--ink);
+  max-width:880px;
+}
+header p{color:var(--mute);max-width:720px;margin-top:10px;font-size:14px;line-height:1.55}
 
-    .stock-row:hover {
-      background: rgba(30, 41, 59, 0.55);
-    }
+main{display:grid;grid-template-columns:minmax(0,1.18fr) minmax(0,1fr);gap:24px;padding:26px 0 48px;align-items:start}
+@media(max-width:1040px){main{grid-template-columns:1fr}.wrap{padding:0 16px}h1{font-size:26px}}
 
-    .stock-row.active {
-      background: rgba(30, 58, 95, 0.35);
-      border-left: 3px solid #3b82f6;
-    }
+.card{
+  background:var(--card);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:22px;
+  min-width:0;
+  box-shadow:var(--shadow);
+  transition:box-shadow .2s ease, border-color .2s ease, background-color .2s ease;
+}
+.card:hover{box-shadow:var(--shadow-hover)}
 
-    /* Ultra slim custom scrollbar */
-    ::-webkit-scrollbar {
-      width: 4px;
-      height: 4px;
-    }
-    ::-webkit-scrollbar-track {
-      background: #080a0f;
-    }
-    ::-webkit-scrollbar-thumb {
-      background: rgba(255, 255, 255, 0.12);
-      border-radius: 2px;
-    }
-    ::-webkit-scrollbar-thumb:hover {
-      background: rgba(255, 255, 255, 0.28);
-    }
+.row{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+h2{
+  font-family:var(--font-main);
+  font-size:18px;
+  font-weight:600;
+  letter-spacing:-0.02em;
+  color:var(--ink);
+}
 
-    /* Crisp live status dot - precise, zero artificial blur bloom */
-    .glow-dot {
-      box-shadow: 0 0 6px currentColor;
-    }
+.filter-box{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+input[type=search],select{
+  font:13px var(--font-main);
+  border:1px solid var(--line);
+  border-radius:6px;
+  padding:6.5px 10px;
+  background:var(--key);
+  color:var(--ink);
+  transition:border-color .15s, background-color .15s;
+}
+input[type=search]{width:180px}
+input[type=search]:focus,select:focus,button:focus-visible{outline:none;border-color:var(--ink)}
 
-    .glow-border {
-      border-color: #3b82f6;
-    }
+kbd{font:11px var(--font-mono);border:1px solid var(--line-dark);border-radius:4px;background:var(--key);padding:1px 5px;color:var(--ink2)}
 
-    /* Precision quantitative range slider */
-    input[type=range] {
-      -webkit-appearance: none;
-      appearance: none;
-      background: rgba(255, 255, 255, 0.1);
-      height: 4px;
-      border-radius: 2px;
-    }
-    input[type=range]::-webkit-slider-thumb {
-      -webkit-appearance: none;
-      appearance: none;
-      height: 14px;
-      width: 14px;
-      border-radius: 2px;
-      background: #3b82f6;
-      cursor: pointer;
-      border: 1px solid #ffffff;
-      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.6);
-      transition: transform 0.1s ease;
-    }
-    input[type=range]::-webkit-slider-thumb:hover {
-      transform: scale(1.15);
-      background: #60a5fa;
-    }
+.table-wrap{overflow:auto;max-height:580px;margin-top:14px;border-top:1px solid var(--line)}
+table{width:100%;border-collapse:collapse;font-variant-numeric:tabular-nums}
+th{
+  font:600 11px var(--font-mono);
+  letter-spacing:.05em;
+  text-transform:uppercase;
+  color:var(--mute);
+  text-align:right;
+  padding:10px 8px;
+  position:sticky;
+  top:0;
+  background:var(--card);
+  border-bottom:1px solid var(--line);
+  z-index:2;
+}
+td{padding:8.5px 8px;border-bottom:1px solid var(--line);text-align:right;font:12.5px var(--font-mono);white-space:nowrap}
+th:nth-child(-n+3),td:nth-child(-n+3){text-align:left}
+tr.r{cursor:pointer;transition:background .1s}
+tr.r:hover td{background:var(--key)}
+tr.sel td{background:var(--b1)!important}
+td.name{font-family:var(--font-main);color:var(--ink);font-weight:500;max-width:160px;overflow:hidden;text-overflow:ellipsis}
+.neg{color:var(--danger)}
+.tag{display:inline-block;font:600 10px var(--font-mono);letter-spacing:.03em;padding:2px 7px;border-radius:999px;white-space:nowrap}
 
-    /* Segmented institutional button control */
-    .segmented-btn.active {
-      background: #1e293b;
-      color: #38bdf8;
-      border-color: rgba(56, 189, 248, 0.4);
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.4);
-    }
+.bar-track{display:inline-block;width:38px;height:4px;background:var(--line);border-radius:2px;vertical-align:middle;margin-right:8px;overflow:hidden}
+.bar-fill{display:block;height:100%;background:var(--ink);border-radius:2px}
 
-    /* Badge rank indicators - distinct precision metallics */
-    .badge-rank-1 {
-      background: rgba(245, 158, 11, 0.12);
-      border: 1px solid rgba(245, 158, 11, 0.4);
-      color: #fbbf24;
-    }
-    .badge-rank-2 {
-      background: rgba(148, 163, 184, 0.12);
-      border: 1px solid rgba(148, 163, 184, 0.35);
-      color: #cbd5e1;
-    }
-    .badge-rank-3 {
-      background: rgba(217, 119, 6, 0.12);
-      border: 1px solid rgba(217, 119, 6, 0.35);
-      color: #d97706;
-    }
-  </style>
+.tabs{display:flex;gap:4px;margin-bottom:18px;border-bottom:1px solid var(--line)}
+.tabs button{
+  font:500 13px var(--font-main);
+  background:none;
+  border:0;
+  border-bottom:2px solid transparent;
+  padding:8px 12px;
+  color:var(--mute);
+  cursor:pointer;
+  margin-bottom:-1px;
+  transition:all .15s;
+}
+.tabs button.on{color:var(--ink);font-weight:600;border-color:var(--ink)}
+.pane{display:none}.pane.on{display:block}
+
+.btn{
+  font:600 13px var(--font-main);
+  background:var(--ink);
+  color:var(--bg);
+  border:0;
+  border-radius:6px;
+  padding:7px 13px;
+  cursor:pointer;
+  transition:all .15s;
+  display:inline-flex;
+  align-items:center;
+  gap:6px;
+}
+.btn:hover{opacity:.9;transform:translateY(-1px)}
+.btn:active{transform:translateY(0)}
+.btn.ghost{background:var(--key);color:var(--ink);border:1px solid var(--line)}
+.btn.ghost:hover{background:var(--line);border-color:var(--line-dark)}
+.btn.sm{padding:4px 9px;font-size:12px}
+
+.presets{display:flex;gap:6px;flex-wrap:wrap;margin:4px 0 16px}
+.k-selector{display:inline-flex;gap:4px;background:var(--key);padding:3px;border-radius:6px;border:1px solid var(--line)}
+.k-btn{font:600 11px var(--font-mono);border:0;background:none;padding:3px 8px;border-radius:4px;cursor:pointer;color:var(--mute)}
+.k-btn.active{background:var(--card);color:var(--ink);box-shadow:0 1px 3px rgba(0,0,0,.08)}
+
+.sl{display:grid;grid-template-columns:140px 1fr 52px;gap:12px;align-items:center;padding:11px 0;border-bottom:1px solid var(--line)}
+.sl small{display:block;color:var(--mute);font-size:11.5px;font-family:var(--font-main)}
+.sl b{font:13px var(--font-mono);text-align:right;color:var(--ink);font-weight:600}
+input[type=range]{width:100%;accent-color:var(--ink);cursor:pointer}
+
+svg text{font-family:var(--font-mono);font-size:10px;fill:var(--mute)}
+.legend{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;align-items:center}
+.err{background:var(--b0);color:var(--c0);border:1px solid var(--line);border-radius:8px;padding:10px 14px;margin:20px 0 0;display:none;font-size:13px}
+
+.detail{margin-top:16px;border-top:1px solid var(--line);padding-top:14px;font-size:13px}
+.detail .g{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:10px}
+.detail .g div{border:1px solid var(--line);border-radius:8px;padding:9px;background:var(--key)}
+.detail .g span{display:block;font:10px var(--font-mono);text-transform:uppercase;color:var(--mute)}
+.detail .g b{font:600 14.5px var(--font-mono);color:var(--ink);margin:2px 0}
+.detail .g small{display:block;font:10.5px var(--font-mono);color:var(--mute)}
+.sub-row{display:flex;justify-content:space-between;align-items:center;margin-top:12px;font-size:12px;color:var(--mute)}
+
+dialog{
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:0;
+  max-width:min(940px,94vw);
+  width:100%;
+  background:var(--card);
+  color:var(--ink2);
+  margin:auto;
+  box-shadow:var(--shadow-hover);
+}
+dialog::backdrop{background:rgba(0,0,0,.6);backdrop-filter:blur(3px)}
+.chrome{display:flex;gap:6px;padding:12px 18px;border-bottom:1px solid var(--line);align-items:center;background:var(--key)}
+.chrome i{width:9px;height:9px;border-radius:50%;background:#D0D0CE}
+[data-theme="dark"] .chrome i{background:#414856}
+.chrome span{margin-left:8px;font:11px var(--font-mono);color:var(--mute)}
+.mbody{padding:22px 24px;max-height:75vh;overflow:auto}
+.mbody h3{font-family:var(--font-main);font-size:17px;font-weight:600;color:var(--ink);margin:18px 0 8px}
+.mbody h3:first-child{margin-top:0}
+
+footer{border-top:1px solid var(--line);padding:22px 0 44px;color:var(--mute);font-size:12px;display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.fade{animation:f .4s cubic-bezier(.16,1,.3,1) both}
+@keyframes f{from{opacity:0;transform:translateY(6px)}}
+@media(prefers-reduced-motion:reduce){.fade{animation:none}}
+#pca, #elb, #sil {
+  background:var(--key);
+  border:1px solid var(--line);
+  border-radius:8px;
+  display:block;
+  box-shadow:inset 0 1px 2px rgba(0,0,0,0.02);
+}
+
+.btn-del{
+  background:transparent;
+  border:1px solid transparent;
+  color:var(--mute);
+  font-size:16px;
+  line-height:1;
+  width:22px;
+  height:22px;
+  border-radius:4px;
+  cursor:pointer;
+  display:inline-flex;
+  align-items:center;
+  justify-content:center;
+  transition:all .15s ease;
+  font-family:var(--font-mono);
+}
+.btn-del:hover{
+  background:var(--b0);
+  color:var(--danger);
+  border-color:rgba(220,38,38,0.3);
+  transform:scale(1.15);
+}
+
+.stock-chip{
+  display:inline-flex;
+  align-items:center;
+  gap:5px;
+  background:var(--key);
+  border:1px solid var(--line);
+  padding:3px 8px;
+  border-radius:6px;
+  font:600 11px var(--font-mono);
+  color:var(--ink);
+  transition:all .15s ease;
+}
+.stock-chip:hover{
+  border-color:var(--line-dark);
+  background:var(--card);
+}
+.stock-chip .chip-del{
+  cursor:pointer;
+  color:var(--mute);
+  font-size:13px;
+  padding:0 2px;
+  border-radius:3px;
+  font-weight:700;
+  line-height:1;
+}
+.stock-chip .chip-del:hover{
+  color:var(--danger);
+}
+.callout{background:var(--key);border-left:3px solid var(--ink);padding:10px 14px;border-radius:0 6px 6px 0;font-size:12.5px;color:var(--ink2);margin-top:14px}
+</style>
 </head>
-<body class="h-screen flex flex-col antialiased selection:bg-indigo-500 selection:text-white bg-[#06080c] text-slate-100 overflow-hidden">
+<body>
+<div class="wrap">
+<header class="fade">
+  <div class="meta">
+    <span>IDX Non-Financial Universe / 2020–2024 Audited Financials</span>
+    <span class="pill-live" id="live-indicator">Engine Active</span>
+    <span id="active-k-badge" style="font-family:var(--font-mono)">K-Means (k=3) + TOPSIS</span>
+    <button class="theme-toggle-btn" id="theme-toggle" title="Toggle Theme (Hotkey: d)">
+      <span id="theme-icon">🌙</span> <span id="theme-text">Dark</span>
+    </button>
+  </div>
+  <h1>Thirty listed companies, grouped by behavior and ranked by trade-off.</h1>
+  <p>Dynamic Multi-Criteria Decision Support (TOPSIS) unified with Unsupervised Machine Learning (K-Means Clustering & PCA). Adjust the strategy weights below to recompute rankings live in the browser.</p>
+</header>
 
-  <!-- ========================================== -->
-  <!-- TOP HIGH-FREQUENCY TELEMETRY RIBBON        -->
-  <!-- ========================================== -->
-  <header class="h-12 bg-[#0a0d14]/90 backdrop-blur-md border-b border-white/[0.08] px-4 flex items-center justify-between shrink-0 z-30 select-none">
+<div class="err" id="err"></div>
+
+<main>
+  <!-- Left Column: Ranking & Company Detail -->
+  <section class="card fade">
+    <div class="row">
+      <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <h2>Ranking Decision Matrix</h2>
+        <span id="table-count-badge" class="tag" style="background:var(--b1);color:var(--c1);border:1px solid rgba(30,96,213,0.3);font-size:11px">30 Emiten Aktif</span>
+      </div>
+      <div class="filter-box">
+        <select id="sector-filter" aria-label="Sector Filter">
+          <option value="">All Sectors</option>
+        </select>
+        <input type="search" id="q" placeholder="Filter ticker or name" aria-label="Filter">
+      </div>
+    </div>
     
-    <!-- Brand / Engine Identity -->
-    <div class="flex items-center space-x-4">
-      <div class="flex items-center space-x-2.5">
-        <div class="w-7 h-7 rounded-lg bg-gradient-to-tr from-indigo-600 to-cyan-500 p-[1px] shadow-lg shadow-indigo-500/20 flex items-center justify-center">
-          <div class="w-full h-full bg-[#0b0e14] rounded-[7px] flex items-center justify-center">
-            <i data-lucide="activity" class="w-3.5 h-3.5 text-cyan-400"></i>
-          </div>
-        </div>
-        <div>
-          <span class="font-mono font-extrabold text-xs tracking-wider text-white">IDX<span class="text-indigo-400">::</span>QUANT<span class="text-slate-500 font-normal">_TERMINAL</span></span>
-          <span class="ml-1.5 px-1.5 py-0.2 rounded text-[9px] font-mono uppercase bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">v2.4 Core</span>
-        </div>
-      </div>
-
-      <div class="h-4 w-[1px] bg-white/[0.08]"></div>
-
-      <!-- Live Pipeline Telemetry Feed -->
-      <div class="flex items-center space-x-3 text-[11px] font-mono">
-        <div class="flex items-center space-x-1.5 px-2.5 py-0.5 rounded-full bg-emerald-500/10 border border-emerald-500/25 text-emerald-400">
-          <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 glow-dot"></span>
-          <span class="font-semibold tracking-tight">30 UNIVERSE ASSETS</span>
-        </div>
-        <div class="hidden sm:flex items-center space-x-1.5 text-slate-400 text-[11px]">
-          <span class="text-slate-600">•</span>
-          <span>REGIME: <strong class="text-slate-200">2020–2024 AUDITED</strong></span>
-        </div>
-        <div class="hidden md:flex items-center space-x-1.5 text-slate-400 text-[11px]">
-          <span class="text-slate-600">•</span>
-          <span>ALPHA #1: <strong class="text-indigo-300" id="ribbon-top-pick">CALCULATING...</strong></span>
-        </div>
-        <div class="hidden lg:flex items-center space-x-1.5 text-slate-400 text-[11px]">
-          <span class="text-slate-600">•</span>
-          <span>TOPOLOGY: <strong class="text-purple-300" id="ribbon-cluster-info">K-MEANS (k=4)</strong></span>
-        </div>
-      </div>
-    </div>
-
-    <!-- Right Cockpit Actions -->
-    <div class="flex items-center space-x-2">
-      <button onclick="openIngestModal()" class="flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-mono bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.08] hover:border-white/[0.18] text-slate-300 hover:text-white transition-all shadow-sm">
-        <i data-lucide="cloud-download" class="w-3.5 h-3.5 text-indigo-400"></i>
-        <span>Ingest Data</span>
-      </button>
-      <button onclick="openAuditModal()" class="flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-mono bg-white/[0.03] hover:bg-white/[0.07] border border-white/[0.08] hover:border-white/[0.18] text-slate-300 hover:text-white transition-all shadow-sm">
-        <i data-lucide="binary" class="w-3.5 h-3.5 text-cyan-400"></i>
-        <span>Matrix Audit</span>
-      </button>
-      <div class="h-4 w-[1px] bg-white/[0.08]"></div>
-      <button onclick="exportUniverseJSON()" title="Export Analytical Universe (JSON)" class="p-1.5 rounded-md text-slate-400 hover:text-white hover:bg-white/[0.08] border border-transparent hover:border-white/[0.1] transition-all">
-        <i data-lucide="download" class="w-3.5 h-3.5"></i>
-      </button>
-    </div>
-
-  </header>
-
-  <!-- ========================================== -->
-  <!-- MAIN WORKSPACE SPLIT-PANE                  -->
-  <!-- ========================================== -->
-  <div class="flex-1 flex flex-col md:flex-row overflow-hidden">
-
-    <!-- LEFT SCREENER PANE (42% Width on Desktop) -->
-    <section class="w-full md:w-[42%] lg:w-[40%] flex flex-col border-r border-white/[0.08] bg-[#090c13] shrink-0">
-      
-      <!-- Screener Search & Sector Filter Ribbon -->
-      <div class="p-3 bg-[#0c0f17] border-b border-white/[0.08] space-y-2.5">
-        <div class="flex items-center justify-between">
-          <div class="flex items-center space-x-2">
-            <i data-lucide="layers" class="w-3.5 h-3.5 text-indigo-400"></i>
-            <span class="text-xs font-bold uppercase tracking-wider font-mono text-slate-200">Equity Screener &amp; Leaderboard</span>
-          </div>
-          <span id="screener-count" class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.06] text-slate-400">
-            30 / 30 STOCKS
-          </span>
-        </div>
-
-        <div class="grid grid-cols-12 gap-2">
-          <div class="col-span-7 relative">
-            <i data-lucide="search" class="w-3.5 h-3.5 text-slate-500 absolute left-2.5 top-2"></i>
-            <input type="text" id="table-search" onkeyup="filterTable()" placeholder="Search ticker or name..." 
-                   class="w-full bg-[#06080c] border border-white/[0.08] hover:border-white/[0.16] focus:border-indigo-500 pl-8 pr-2.5 py-1.5 rounded-md text-xs font-mono text-slate-200 placeholder-slate-600 focus:outline-none transition-colors">
-          </div>
-          <div class="col-span-5">
-            <select id="sector-filter" onchange="filterTable()" class="w-full bg-[#06080c] border border-white/[0.08] hover:border-white/[0.16] focus:border-indigo-500 px-2.5 py-1.5 rounded-md text-xs font-mono text-slate-300 focus:outline-none transition-colors cursor-pointer">
-              <option value="ALL">All Sectors</option>
-            </select>
-          </div>
-        </div>
-      </div>
-
-      <!-- High-Density Stock List Table -->
-      <div class="flex-1 overflow-y-auto">
-        <table class="w-full text-left text-xs border-collapse">
-          <thead class="bg-[#080a10]/95 backdrop-blur text-slate-400 uppercase tracking-wider text-[9px] font-mono sticky top-0 border-b border-white/[0.08] z-10 select-none">
-            <tr>
-              <th class="py-2 pl-3.5 pr-1 w-12 text-center">Rank</th>
-              <th class="py-2 px-2.5">Asset / Sector</th>
-              <th class="py-2 px-2 text-center">Cluster</th>
-              <th class="py-2 px-3 text-right">TOPSIS Alpha</th>
-              <th class="py-2 pr-3.5 text-right">CAGR Performance</th>
-            </tr>
-          </thead>
-          <tbody id="ranked-tbody" class="divide-y divide-white/[0.04]">
-            <!-- Populated dynamically via JS -->
-          </tbody>
-        </table>
-      </div>
-
-      <!-- Strategy Quick Presets Footer -->
-      <div class="p-2.5 bg-[#0a0d14] border-t border-white/[0.08] flex items-center justify-between text-[11px] font-mono select-none">
-        <div class="flex items-center space-x-1.5 text-slate-400 text-[10px]">
-          <i data-lucide="sliders" class="w-3 h-3 text-cyan-400"></i>
-          <span class="uppercase font-semibold tracking-wider">Presets:</span>
-        </div>
-        <div class="flex flex-wrap gap-1">
-          <button onclick="applyPreset('balanced')" id="preset-balanced" class="px-2 py-0.5 rounded text-[10px] bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white transition-all">Balanced</button>
-          <button onclick="applyPreset('profitability')" id="preset-profitability" class="px-2 py-0.5 rounded text-[10px] bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white transition-all">Profit-Max</button>
-          <button onclick="applyPreset('topline')" id="preset-topline" class="px-2 py-0.5 rounded text-[10px] bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white transition-all">Topline</button>
-          <button onclick="applyPreset('asset_scale')" id="preset-asset_scale" class="px-2 py-0.5 rounded text-[10px] bg-white/[0.04] hover:bg-white/[0.08] border border-white/[0.08] text-slate-300 hover:text-white transition-all">Scale</button>
-          <button onclick="applyPreset('defensive')" id="preset-defensive" class="px-2 py-0.5 rounded text-[10px] bg-cyan-950/30 hover:bg-cyan-900/40 border border-cyan-500/30 text-cyan-300 hover:text-cyan-100 transition-all font-semibold">Defensive</button>
-        </div>
-      </div>
-
-    </section>
-
-    <!-- RIGHT ANALYTICS COCKPIT (58% Width on Desktop) -->
-    <section class="flex-1 flex flex-col bg-[#06080c] overflow-hidden">
-      
-      <!-- Cockpit View Switcher Nav -->
-      <div class="h-11 bg-[#0a0d14] border-b border-white/[0.08] px-4 flex items-center justify-between shrink-0 select-none">
-        <div class="flex space-x-1.5 p-0.5 rounded-lg bg-black/40 border border-white/[0.06]">
-          <button onclick="switchCockpitView('pca')" id="tab-btn-pca" class="segmented-btn active flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-mono font-semibold transition-all">
-            <i data-lucide="scatter-chart" class="w-3.5 h-3.5"></i>
-            <span>2D Cluster Topology</span>
-          </button>
-          <button onclick="switchCockpitView('weights')" id="tab-btn-weights" class="segmented-btn flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-mono text-slate-400 hover:text-white transition-all">
-            <i data-lucide="sliders-horizontal" class="w-3.5 h-3.5"></i>
-            <span>MCDM Weights</span>
-          </button>
-          <button onclick="switchCockpitView('diagnostics')" id="tab-btn-diagnostics" class="segmented-btn flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-mono text-slate-400 hover:text-white transition-all">
-            <i data-lucide="line-chart" class="w-3.5 h-3.5"></i>
-            <span>Diagnostics</span>
-          </button>
-        </div>
-
-        <div class="flex items-center space-x-2.5">
-          <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">K-Partitions:</span>
-          <select id="cluster-select" onchange="runClustering()" class="bg-[#0b0e14] border border-white/[0.12] hover:border-indigo-500 text-xs font-mono rounded-md px-2.5 py-1 text-slate-200 focus:outline-none focus:border-indigo-500 transition-colors cursor-pointer">
-            <option value="2">k = 2</option>
-            <option value="3">k = 3</option>
-            <option value="4" selected>k = 4 (Optimal)</option>
-            <option value="5">k = 5</option>
-            <option value="6">k = 6</option>
-          </select>
-        </div>
-      </div>
-
-      <!-- Cockpit Dynamic Viewports -->
-      <div class="flex-1 overflow-y-auto p-4 space-y-4">
-
-        <!-- VIEWPORT 1: PCA 2D SCATTER & CLUSTER PROFILES -->
-        <div id="view-pca" class="space-y-4">
-          <div class="glass-panel rounded-xl p-4 border border-white/[0.08] shadow-xl flex flex-col">
-            <div class="flex items-center justify-between mb-2.5">
-              <div class="flex items-center space-x-2">
-                <div class="w-2 h-2 rounded-full bg-cyan-400 glow-dot"></div>
-                <span class="text-xs font-bold font-mono text-slate-200 uppercase tracking-wider">PCA Dimensionality Space (PC1 vs PC2 • 4 Audited CAGR Vectors)</span>
-              </div>
-              <div class="text-[11px] font-mono px-2.5 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-slate-300" id="pca-variance-badge">
-                Var: PC1 91.64% | PC2 6.40%
-              </div>
-            </div>
-            
-            <div class="h-[285px] w-full relative">
-              <canvas id="pcaChart"></canvas>
-            </div>
-          </div>
-
-          <!-- Cluster Archetype Cards Grid -->
-          <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3" id="cluster-cards-grid">
-            <!-- Rendered dynamically -->
-          </div>
-        </div>
-
-        <!-- VIEWPORT 2: WEIGHT REBALANCER & MCDM CONFIG -->
-        <div id="view-weights" class="hidden space-y-4">
-          <div class="glass-panel rounded-xl p-5 border border-white/[0.08] shadow-xl space-y-5">
-            <div class="flex items-center justify-between border-b border-white/[0.08] pb-3">
-              <div>
-                <h3 class="text-xs font-bold font-mono text-white uppercase tracking-wider flex items-center space-x-2">
-                  <i data-lucide="sliders" class="w-4 h-4 text-indigo-400"></i>
-                  <span>Dynamic Criteria Weight &amp; Normalization Matrix</span>
-                </h3>
-                <p class="text-[11px] text-slate-400 mt-0.5">Tune the multi-criteria decision weights across the 5-year audited financial dimensions</p>
-              </div>
-              <span id="weight-sum-badge" class="text-xs font-mono font-bold text-emerald-400 bg-emerald-500/10 border border-emerald-500/25 px-3 py-1 rounded-md">
-                Sum: 100%
-              </span>
-            </div>
-
-            <div id="criteria-sliders" class="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-1">
-              <!-- Dynamic Sliders -->
-            </div>
-
-            <div class="flex items-center justify-between pt-2 border-t border-white/[0.08]">
-              <div class="text-[11px] text-slate-500 font-mono">
-                *Normalized vector lengths recalculate in real-time across ideal solutions ($A^+$ and $A^-$)
-              </div>
-              <button onclick="recalculateTopsis()" class="px-5 py-2 rounded-lg text-xs font-mono bg-gradient-to-r from-indigo-600 to-indigo-500 hover:from-indigo-500 hover:to-indigo-400 text-white font-bold flex items-center space-x-2 shadow-lg shadow-indigo-500/25 transition-all">
-                <i data-lucide="refresh-cw" class="w-3.5 h-3.5"></i>
-                <span>Re-rank Universe Matrix</span>
-              </button>
-            </div>
-          </div>
-        </div>
-
-        <!-- VIEWPORT 3: MODEL DIAGNOSTICS (ELBOW & SILHOUETTE) -->
-        <div id="view-diagnostics" class="hidden space-y-4">
-          <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
-            <div class="glass-panel rounded-xl p-4 border border-white/[0.08] shadow-xl">
-              <div class="flex items-center justify-between mb-3">
-                <div class="flex items-center space-x-2">
-                  <div class="w-2 h-2 rounded-full bg-indigo-400"></div>
-                  <span class="text-xs font-bold font-mono text-white">Elbow Curve (Inertia SSE)</span>
-                </div>
-                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-indigo-500/10 text-indigo-300 border border-indigo-500/20">k=2..8 Range</span>
-              </div>
-              <div class="h-60">
-                <canvas id="elbowChart"></canvas>
-              </div>
-            </div>
-
-            <div class="glass-panel rounded-xl p-4 border border-white/[0.08] shadow-xl">
-              <div class="flex items-center justify-between mb-3">
-                <div class="flex items-center space-x-2">
-                  <div class="w-2 h-2 rounded-full bg-purple-400"></div>
-                  <span class="text-xs font-bold font-mono text-white">Silhouette Score Profile</span>
-                </div>
-                <span class="text-[10px] font-mono px-2 py-0.5 rounded bg-purple-500/10 text-purple-300 border border-purple-500/20">Cluster Quality Metric</span>
-              </div>
-              <div class="h-60">
-                <canvas id="silhouetteChart"></canvas>
-              </div>
-            </div>
-          </div>
-        </div>
-
-      </div>
-
-      <!-- ACTIVE TICKER HUD (STICKY FROSTED DOCK) -->
-      <div id="active-ticker-dock" class="border-t border-white/[0.08] bg-[#090d16]/95 backdrop-blur-md p-3.5 shrink-0 flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4 select-none">
-        
-        <!-- Left: Ticker Symbol & Metadata -->
-        <div class="flex items-center space-x-3.5">
-          <div class="w-11 h-11 rounded-xl bg-gradient-to-br from-indigo-500/20 to-cyan-500/10 border border-indigo-500/30 flex items-center justify-center text-indigo-300 font-mono font-extrabold text-base shadow-inner" id="dock-ticker-badge">
-            --
-          </div>
-          <div>
-            <div class="flex items-center space-x-2.5">
-              <span class="font-extrabold text-white text-base font-mono tracking-tight" id="dock-ticker-title">SELECT ASSET</span>
-              <span class="text-[10px] font-mono px-2 py-0.5 rounded-full bg-white/[0.06] text-slate-300 border border-white/[0.08]" id="dock-ticker-rank">Rank #--</span>
-            </div>
-            <div class="text-[11px] text-slate-400 font-sans mt-0.5" id="dock-ticker-name">Click any row in the screener table or scatter plot coordinate</div>
-          </div>
-        </div>
-
-        <!-- Center: 4 Key CAGR Ratios -->
-        <div class="grid grid-cols-4 gap-2.5 text-xs font-mono">
-          <div class="bg-black/40 px-3 py-1.5 rounded-lg border border-white/[0.06] flex flex-col justify-center">
-            <div class="text-[9px] uppercase tracking-wider text-slate-400">REV CAGR</div>
-            <div class="font-bold text-slate-200 mt-0.5 text-xs" id="dock-rev">--</div>
-          </div>
-          <div class="bg-black/40 px-3 py-1.5 rounded-lg border border-white/[0.06] flex flex-col justify-center">
-            <div class="text-[9px] uppercase tracking-wider text-slate-400">NET CAGR</div>
-            <div class="font-bold text-slate-200 mt-0.5 text-xs" id="dock-net">--</div>
-          </div>
-          <div class="bg-black/40 px-3 py-1.5 rounded-lg border border-white/[0.06] flex flex-col justify-center">
-            <div class="text-[9px] uppercase tracking-wider text-slate-400">ASSET CAGR</div>
-            <div class="font-bold text-slate-200 mt-0.5 text-xs" id="dock-asset">--</div>
-          </div>
-          <div class="bg-black/40 px-3 py-1.5 rounded-lg border border-white/[0.06] flex flex-col justify-center">
-            <div class="text-[9px] uppercase tracking-wider text-slate-400">EQUITY CAGR</div>
-            <div class="font-bold text-slate-200 mt-0.5 text-xs" id="dock-equity">--</div>
-          </div>
-        </div>
-
-        <!-- Right: TOPSIS Composite & Recommendation Grade -->
-        <div class="flex items-center space-x-3.5">
-          <div class="text-right font-mono">
-            <div class="text-[9px] text-slate-400 uppercase tracking-wider">TOPSIS Score</div>
-            <div class="text-base font-extrabold text-emerald-400" id="dock-score">--</div>
-          </div>
-          <span id="dock-recommendation-badge" class="px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-white/[0.05] text-slate-400 border border-white/[0.08]">
-            --
-          </span>
-        </div>
-
-      </div>
-
-    </section>
-
-  </div>
-
-  <!-- ========================================== -->
-  <!-- MODALS                                     -->
-  <!-- ========================================== -->
-
-  <!-- MODAL 1: VECTOR MATRIX AUDIT -->
-  <div id="modal-audit" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="glass-panel max-w-2xl w-full rounded-2xl overflow-hidden border border-white/[0.12] shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-      <div class="p-4 bg-[#0a0d14] border-b border-white/[0.08] flex items-center justify-between">
-        <div class="flex items-center space-x-2 text-xs font-mono font-bold text-white uppercase">
-          <i data-lucide="binary" class="w-4 h-4 text-cyan-400"></i>
-          <span>TOPSIS Ideal Vector &amp; Column Norm Matrix Audit</span>
-        </div>
-        <button onclick="closeAuditModal()" class="text-slate-400 hover:text-white p-1 rounded-md hover:bg-white/[0.08] transition-colors">
-          <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
-      </div>
-      <div class="p-4 overflow-x-auto">
-        <table class="w-full text-left text-xs font-mono text-slate-300 border-collapse">
-          <thead class="bg-black/50 text-slate-400 uppercase text-[10px] border-b border-white/[0.08]">
-            <tr id="audit-thead">
-              <!-- Populated by JS -->
-            </tr>
-          </thead>
-          <tbody id="audit-tbody" class="divide-y divide-white/[0.06]">
-            <!-- Populated by JS -->
-          </tbody>
-        </table>
-      </div>
-      <div class="p-3 bg-[#0a0d14] border-t border-white/[0.08] flex justify-end">
-        <button onclick="closeAuditModal()" class="px-4 py-1.5 rounded-md text-xs font-mono bg-white/[0.06] hover:bg-white/[0.1] text-slate-200 transition-colors">Close</button>
-      </div>
-    </div>
-  </div>
-
-  <!-- MODAL 2: INGESTION & SCRAPER WORKBENCH -->
-  <div id="modal-ingest" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-md hidden flex items-center justify-center p-4">
-    <div class="glass-panel max-w-3xl w-full rounded-2xl overflow-hidden border border-white/[0.12] shadow-2xl animate-in fade-in zoom-in-95 duration-150">
-      <div class="p-4 bg-[#0a0d14] border-b border-white/[0.08] flex items-center justify-between">
-        <div class="flex items-center space-x-2 text-xs font-mono font-bold text-white uppercase">
-          <i data-lucide="database" class="w-4 h-4 text-indigo-400"></i>
-          <span>Data Ingestion &amp; IDX Automated Pipeline</span>
-        </div>
-        <button onclick="closeIngestModal()" class="text-slate-400 hover:text-white p-1 rounded-md hover:bg-white/[0.08] transition-colors">
-          <i data-lucide="x" class="w-4 h-4"></i>
-        </button>
-      </div>
-      <div class="p-5 space-y-4 max-h-[80vh] overflow-y-auto">
-        
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-          <!-- IDX Web Scraper Form -->
-          <div class="glass-card p-4 rounded-xl space-y-3">
-            <div class="flex items-center space-x-2 text-xs font-mono font-bold text-white">
-              <i data-lucide="cloud-download" class="w-4 h-4 text-indigo-400"></i>
-              <span>Automated IDX Scraper</span>
-            </div>
-            <div>
-              <label class="text-[10px] text-slate-400 font-mono">Target Tickers (Comma-separated or blank for all)</label>
-              <input type="text" id="scrape-tickers" placeholder="ASII, ICBP, TLKM, UNVR" class="w-full mt-1 bg-[#06080c] border border-white/[0.1] px-3 py-1.5 rounded-md text-xs font-mono text-white placeholder-slate-600 focus:outline-none focus:border-indigo-500 transition-colors">
-            </div>
-            <div class="grid grid-cols-2 gap-2">
-              <div>
-                <label class="text-[10px] text-slate-400 font-mono">Start Year</label>
-                <input type="number" id="scrape-start-year" value="2020" class="w-full mt-1 bg-[#06080c] border border-white/[0.1] px-2.5 py-1.5 rounded-md text-xs text-white font-mono">
-              </div>
-              <div>
-                <label class="text-[10px] text-slate-400 font-mono">End Year</label>
-                <input type="number" id="scrape-end-year" value="2024" class="w-full mt-1 bg-[#06080c] border border-white/[0.1] px-2.5 py-1.5 rounded-md text-xs text-white font-mono">
-              </div>
-            </div>
-            <button onclick="triggerScrape()" id="btn-scrape" class="w-full py-2 rounded-lg text-xs bg-indigo-600 hover:bg-indigo-500 text-white font-mono font-bold flex items-center justify-center space-x-1.5 shadow-lg shadow-indigo-600/25 transition-all">
-              <i data-lucide="play" class="w-3.5 h-3.5"></i>
-              <span>Run Scraper Pipeline</span>
-            </button>
-          </div>
-
-          <!-- Batch XLSX Upload -->
-          <div class="glass-card p-4 rounded-xl space-y-3">
-            <div class="flex items-center space-x-2 text-xs font-mono font-bold text-white">
-              <i data-lucide="file-up" class="w-4 h-4 text-emerald-400"></i>
-              <span>Batch Workbook Upload</span>
-            </div>
-            <div id="dropzone" class="border border-dashed border-white/[0.15] hover:border-emerald-500/60 rounded-xl p-5 text-center cursor-pointer transition-all bg-[#06080c]/50">
-              <input type="file" id="file-input" accept=".xlsx,.zip" class="hidden" onchange="handleFileSelect(event)">
-              <div class="space-y-1.5">
-                <i data-lucide="upload-cloud" class="w-6 h-6 text-slate-400 mx-auto"></i>
-                <div class="text-xs text-slate-200 font-mono font-semibold" id="dropzone-text">Click or drop .xlsx/.zip file</div>
-                <div class="text-[10px] text-slate-500 font-mono">Audited Statement Schemas</div>
-              </div>
-            </div>
-            <button onclick="triggerUpload()" id="btn-upload" class="w-full py-2 rounded-lg text-xs bg-emerald-600 hover:bg-emerald-500 text-white font-mono font-bold flex items-center justify-center space-x-1.5 shadow-lg shadow-emerald-600/25 transition-all">
-              <i data-lucide="upload" class="w-3.5 h-3.5"></i>
-              <span>Ingest &amp; Extract Ratios</span>
-            </button>
-          </div>
-        </div>
-
-        <!-- Ingestion Logs Console -->
-        <div class="glass-card p-3.5 rounded-xl space-y-2">
-          <div class="flex items-center justify-between">
-            <span class="text-[10px] font-mono text-slate-400 uppercase tracking-wider">Activity Console</span>
-            <span id="ingest-status-tag" class="text-[9px] font-mono px-2 py-0.5 rounded bg-white/[0.06] text-slate-400 border border-white/[0.08]">IDLE</span>
-          </div>
-          <div id="ingest-console" class="bg-[#06080c] p-3 rounded-lg font-mono text-xs text-slate-400 h-32 overflow-y-auto border border-white/[0.06] space-y-1">
-            <div class="text-slate-500">[system] Pipeline standby. Awaiting scraper job or batch XLSX upload.</div>
-          </div>
-        </div>
-
-      </div>
-    </div>
-  </div>
-
-  <!-- ========================================== -->
-  <!-- APPLICATION SCRIPT LOGIC                   -->
-  <!-- ========================================== -->
-  <script>
-    let appState = {
-      stocks: [],
-      clusterData: null,
-      topsisData: null,
-      elbowData: null,
-      criteria: {},
-      weights: {
-        rev_growth: 0.35,
-        net_growth: 0.35,
-        asset_growth: 0.15,
-        equity_growth: 0.15
-      },
-      selectedTicker: null,
-      activeCockpitView: 'pca',
-      pcaChart: null,
-      elbowChart: null,
-      silhouetteChart: null
-    };
-
-    // Institutional high-contrast cluster palette (terminal grade)
-    const CLUSTER_COLORS = [
-      '#00f2fe', // Tier 1: Alpha Cyan
-      '#10b981', // Tier 2: Emerald Core
-      '#f59e0b', // Tier 3: Amber Sentinel
-      '#a78bfa', // Tier 4: Lavender Yield
-      '#38bdf8', // Tier 5: Sky Liquidity
-      '#f43f5e', // Tier 6: High Risk Rose
-      '#e2e8f0', // Tier 7: Platinum Defensive
-      '#64748b'  // Tier 8: Neutral Slate
-    ];
-
-    async function init() {
-      try {
-        lucide.createIcons();
-        await loadCriteria();
-        await runClustering();
-        await recalculateTopsis();
-        await loadElbow();
-      } catch (err) {
-        console.error("Initialization error:", err);
-      }
-    }
-
-    function switchCockpitView(viewId) {
-      appState.activeCockpitView = viewId;
-      ['pca', 'weights', 'diagnostics'].forEach(v => {
-        const viewEl = document.getElementById(`view-${v}`);
-        const btnEl = document.getElementById(`tab-btn-${v}`);
-        if (v === viewId) {
-          viewEl.classList.remove('hidden');
-          btnEl.className = 'segmented-btn active flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-mono font-semibold transition-all';
-        } else {
-          viewEl.classList.add('hidden');
-          btnEl.className = 'segmented-btn flex items-center space-x-1.5 px-3 py-1 rounded-md text-xs font-mono text-slate-400 hover:text-white transition-all';
-        }
-      });
-      lucide.createIcons();
-    }
-
-    function openAuditModal() {
-      document.getElementById('modal-audit').classList.remove('hidden');
-      lucide.createIcons();
-    }
-    function closeAuditModal() {
-      document.getElementById('modal-audit').classList.add('hidden');
-    }
-
-    function openIngestModal() {
-      document.getElementById('modal-ingest').classList.remove('hidden');
-      lucide.createIcons();
-    }
-    function closeIngestModal() {
-      document.getElementById('modal-ingest').classList.add('hidden');
-    }
-
-    let selectedUploadFile = null;
-    function handleFileSelect(event) {
-      const file = event.target.files[0];
-      if (file) {
-        selectedUploadFile = file;
-        document.getElementById('dropzone-text').innerText = `File: ${file.name} (${(file.size / 1024).toFixed(1)} KB)`;
-      }
-    }
-
-    document.addEventListener('DOMContentLoaded', () => {
-      const dropzone = document.getElementById('dropzone');
-      if (dropzone) {
-        dropzone.addEventListener('click', () => document.getElementById('file-input').click());
-        dropzone.addEventListener('dragover', (e) => { e.preventDefault(); dropzone.classList.add('border-emerald-500'); });
-        dropzone.addEventListener('dragleave', () => dropzone.classList.remove('border-emerald-500'));
-        dropzone.addEventListener('drop', (e) => {
-          e.preventDefault();
-          dropzone.classList.remove('border-emerald-500');
-          if (e.dataTransfer.files.length) {
-            selectedUploadFile = e.dataTransfer.files[0];
-            document.getElementById('dropzone-text').innerText = `File: ${selectedUploadFile.name} (${(selectedUploadFile.size / 1024).toFixed(1)} KB)`;
-          }
-        });
-      }
-    });
-
-    function logIngest(msg, type = 'info') {
-      const con = document.getElementById('ingest-console');
-      const time = new Date().toLocaleTimeString();
-      let colorClass = 'text-slate-300';
-      if (type === 'error') colorClass = 'text-rose-400 font-bold';
-      else if (type === 'success') colorClass = 'text-emerald-400 font-bold';
-      else if (type === 'warn') colorClass = 'text-amber-400';
-
-      const line = document.createElement('div');
-      line.className = colorClass;
-      line.innerText = `[${time}] ${msg}`;
-      con.appendChild(line);
-      con.scrollTop = con.scrollHeight;
-    }
-
-    async function triggerScrape() {
-      const tickersRaw = document.getElementById('scrape-tickers').value.trim();
-      const startYear = parseInt(document.getElementById('scrape-start-year').value) || 2020;
-      const endYear = parseInt(document.getElementById('scrape-end-year').value) || 2024;
-      const tickers = tickersRaw ? tickersRaw.split(',').map(t => t.trim().toUpperCase()).filter(Boolean) : [];
-
-      const btn = document.getElementById('btn-scrape');
-      const statusTag = document.getElementById('ingest-status-tag');
-      btn.disabled = true;
-      btn.classList.add('opacity-50');
-      statusTag.innerText = 'SCRAPING...';
-      statusTag.className = 'text-[9px] font-mono px-2 py-0.5 rounded bg-indigo-500/20 text-indigo-400 animate-pulse border border-indigo-500/30';
-
-      logIngest(`Triggering IDX financial report scraper (Range: ${startYear}–${endYear}, Target: ${tickers.length ? tickers.join(', ') : 'Default Universe'})...`);
-
-      try {
-        const res = await fetch('/api/data/scrape', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ tickers, start_year: startYear, end_year: endYear })
-        });
-        const data = await res.json();
-        if (res.ok && data.status === 'success') {
-          logIngest(`Scrape finished! Downloaded ${data.total_downloaded_files || 0} reports across ${data.scraped_tickers.length} tickers.`, 'success');
-          await runClustering();
-          await recalculateTopsis();
-          logIngest(`Workspace models re-computed and synced with fresh filings.`, 'success');
-        } else {
-          logIngest(`Scrape failed: ${data.detail || JSON.stringify(data)}`, 'error');
-        }
-      } catch (err) {
-        logIngest(`Network fault during scrape: ${err.message}`, 'error');
-      } finally {
-        btn.disabled = false;
-        btn.classList.remove('opacity-50');
-        statusTag.innerText = 'IDLE';
-        statusTag.className = 'text-[9px] font-mono px-2 py-0.5 rounded bg-white/[0.06] text-slate-400 border border-white/[0.08]';
-      }
-    }
-
-    async function triggerUpload() {
-      if (!selectedUploadFile) {
-        alert("Select or drop a financial statement .xlsx/.zip file first.");
-        return;
-      }
-
-      const btn = document.getElementById('btn-upload');
-      const statusTag = document.getElementById('ingest-status-tag');
-      btn.disabled = true;
-      btn.classList.add('opacity-50');
-      statusTag.innerText = 'UPLOADING...';
-      statusTag.className = 'text-[9px] font-mono px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 animate-pulse border border-emerald-500/30';
-
-      logIngest(`Uploading workbook bundle: ${selectedUploadFile.name}...`);
-      const formData = new FormData();
-      formData.append('file', selectedUploadFile);
-
-      try {
-        const res = await fetch('/api/data/upload', {
-          method: 'POST',
-          body: formData
-        });
-        const data = await res.json();
-        if (res.ok && data.status === 'success') {
-          logIngest(`Upload extracted ${data.extracted_records || 0} financial records into pipeline cache.`, 'success');
-          await runClustering();
-          await recalculateTopsis();
-          logIngest(`Models refreshed with uploaded figures.`, 'success');
-        } else {
-          logIngest(`Extraction failed: ${data.detail || JSON.stringify(data)}`, 'error');
-        }
-      } catch (err) {
-        logIngest(`Upload network error: ${err.message}`, 'error');
-      } finally {
-        btn.disabled = false;
-        btn.classList.remove('opacity-50');
-        statusTag.innerText = 'IDLE';
-        statusTag.className = 'text-[9px] font-mono px-2 py-0.5 rounded bg-white/[0.06] text-slate-400 border border-white/[0.08]';
-      }
-    }
-
-    async function loadCriteria() {
-      const res = await fetch('/api/spk/criteria');
-      appState.criteria = await res.json();
-      renderCriteriaSliders();
-    }
-
-    async function runClustering() {
-      const k = parseInt(document.getElementById('cluster-select').value);
-      const res = await fetch('/api/mining/cluster', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ n_clusters: k })
-      });
-      appState.clusterData = await res.json();
-      document.getElementById('ribbon-cluster-info').innerText = `K-MEANS (k=${k}, SIL=${appState.clusterData.overall_silhouette})`;
-      
-      const v = appState.clusterData.explained_variance_2d_percent || [91.64, 6.40];
-      document.getElementById('pca-variance-badge').innerText = `Var: PC1 ${v[0]}% | PC2 ${v[1]}%`;
-
-      renderPCAChart();
-      renderClusterCards();
-      renderCombinedTable();
-    }
-
-    async function recalculateTopsis() {
-      const res = await fetch('/api/spk/topsis', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ weights: appState.weights })
-      });
-      appState.topsisData = await res.json();
-      
-      const topStock = appState.topsisData.ranked_stocks[0];
-      if (topStock) {
-        document.getElementById('ribbon-top-pick').innerText = `${topStock.ticker.replace('.JK', '')} (#1, ${topStock.topsis_score})`;
-      }
-
-      renderCombinedTable();
-      renderMatrixAudit();
-
-      // Maintain or set default selection
-      if (!appState.selectedTicker && topStock) {
-        selectStock(topStock.ticker);
-      } else if (appState.selectedTicker) {
-        selectStock(appState.selectedTicker);
-      }
-    }
-
-    async function loadElbow() {
-      const res = await fetch('/api/mining/elbow');
-      appState.elbowData = await res.json();
-      renderElbowCharts();
-    }
-
-    function renderPCAChart() {
-      if (!appState.clusterData) return;
-      const ctx = document.getElementById('pcaChart').getContext('2d');
-      if (appState.pcaChart) appState.pcaChart.destroy();
-
-      const datasets = appState.clusterData.cluster_profiles.map((cp, idx) => {
-        const points = appState.clusterData.clustered_stocks
-          .filter(s => s.cluster === cp.cluster_id)
-          .map(s => ({ x: s.pca_x, y: s.pca_y, label: s.ticker, name: s.name, sector: s.sector }));
-
-        const color = CLUSTER_COLORS[idx % CLUSTER_COLORS.length];
-
-        return {
-          label: `C${cp.cluster_id}: ${cp.label}`,
-          data: points,
-          backgroundColor: color,
-          borderColor: color,
-          pointRadius: 6,
-          pointHoverRadius: 9,
-          pointHoverBorderColor: '#ffffff',
-          pointHoverBorderWidth: 2,
-          borderWidth: 1
-        };
-      });
-
-      appState.pcaChart = new Chart(ctx, {
-        type: 'scatter',
-        data: { datasets },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          onClick: (e, elements) => {
-            if (elements.length > 0) {
-              const el = elements[0];
-              const item = datasets[el.datasetIndex].data[el.index];
-              if (item && item.label) {
-                selectStock(item.label);
-              }
-            }
-          },
-          plugins: {
-            legend: { 
-              position: 'top',
-              labels: { 
-                color: '#94a3b8', 
-                font: { family: 'JetBrains Mono', size: 10 },
-                boxWidth: 8,
-                padding: 12,
-                usePointStyle: true,
-                pointStyle: 'circle'
-              } 
-            },
-            tooltip: {
-              backgroundColor: 'rgba(11, 14, 20, 0.95)',
-              borderColor: 'rgba(255, 255, 255, 0.15)',
-              borderWidth: 1,
-              titleFont: { family: 'JetBrains Mono', size: 12, weight: 'bold' },
-              bodyFont: { family: 'JetBrains Mono', size: 10 },
-              padding: 10,
-              displayColors: true,
-              callbacks: {
-                label: (ctx) => {
-                  const raw = ctx.raw;
-                  return `${raw.label.replace('.JK', '')} — ${raw.name} (${raw.sector}) • [${raw.x.toFixed(2)}, ${raw.y.toFixed(2)}]`;
-                }
-              }
-            }
-          },
-          scales: {
-            x: {
-              title: { display: true, text: `PC1 Projection (Topline & Asset Growth Dimension)`, color: '#64748b', font: { family: 'JetBrains Mono', size: 10 } },
-              grid: { color: 'rgba(255, 255, 255, 0.04)', drawBorder: false },
-              ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 9 } }
-            },
-            y: {
-              title: { display: true, text: `PC2 Projection (Profitability & Margin Alpha)`, color: '#64748b', font: { family: 'JetBrains Mono', size: 10 } },
-              grid: { color: 'rgba(255, 255, 255, 0.04)', drawBorder: false },
-              ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 9 } }
-            }
-          }
-        }
-      });
-    }
-
-    function renderCombinedTable() {
-      if (!appState.topsisData || !appState.clusterData) return;
-      const tbody = document.getElementById('ranked-tbody');
-      const clusterMap = {};
-      appState.clusterData.clustered_stocks.forEach(s => { clusterMap[s.ticker] = s; });
-
-      const sectorFilter = document.getElementById('sector-filter');
-      const sectors = new Set(appState.topsisData.ranked_stocks.map(s => s.sector));
-      if (sectorFilter.options.length <= 1) {
-        sectors.forEach(sec => {
-          const opt = document.createElement('option');
-          opt.value = sec;
-          opt.innerText = sec;
-          sectorFilter.appendChild(opt);
-        });
-      }
-
-      tbody.innerHTML = appState.topsisData.ranked_stocks.map(s => {
-        const cInfo = clusterMap[s.ticker] || {};
-        const color = CLUSTER_COLORS[(cInfo.cluster || 0) % CLUSTER_COLORS.length];
-        const isActive = appState.selectedTicker === s.ticker ? 'active' : '';
-
-        // Rank Badge
-        let rankBadgeClass = 'text-slate-500 font-mono';
-        if (s.rank === 1) rankBadgeClass = 'badge-rank-1 font-mono font-extrabold px-1.5 py-0.5 rounded';
-        else if (s.rank === 2) rankBadgeClass = 'badge-rank-2 font-mono font-bold px-1.5 py-0.5 rounded';
-        else if (s.rank === 3) rankBadgeClass = 'badge-rank-3 font-mono font-bold px-1.5 py-0.5 rounded';
-
-        const fmtPct = (val) => {
-          if (val === undefined || val === null) return '--';
-          const sign = val > 0 ? '+' : '';
-          const c = val >= 15.0 ? 'text-emerald-400 font-semibold' : (val >= 0 ? 'text-slate-300' : 'text-rose-400 font-semibold');
-          return `<span class="${c}">${sign}${val.toFixed(1)}%</span>`;
-        };
-
-        const scorePercent = Math.min(100, Math.max(0, s.topsis_score * 100));
-
-        return `
-          <tr onclick="selectStock('${s.ticker}')" class="stock-row ${isActive} cursor-pointer select-none" id="row-${s.ticker}" data-ticker="${s.ticker.toLowerCase()}" data-name="${s.name.toLowerCase()}" data-sector="${s.sector}">
-            <td class="py-2.5 pl-3.5 pr-1 text-center font-mono">
-              <span class="${rankBadgeClass}">#${s.rank}</span>
-            </td>
-            <td class="py-2.5 px-2.5">
-              <div class="font-extrabold text-white font-mono tracking-tight text-xs">${s.ticker.replace('.JK', '')}</div>
-              <div class="text-[10px] text-slate-400 truncate max-w-[130px]">${s.sector}</div>
-            </td>
-            <td class="py-2.5 px-2 text-center">
-              <span class="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-mono font-bold" style="background: ${color}15; color: ${color}; border: 1px solid ${color}35">
-                C${cInfo.cluster}
-              </span>
-            </td>
-            <td class="py-2.5 px-3 text-right">
-              <div class="font-mono font-bold text-emerald-400 text-xs">${s.topsis_score}</div>
-              <div class="w-full bg-white/[0.08] h-1.5 rounded-full mt-1 overflow-hidden">
-                <div class="bg-gradient-to-r from-cyan-500 to-emerald-400 h-full rounded-full" style="width: ${scorePercent}%"></div>
-              </div>
-            </td>
-            <td class="py-2.5 pr-3.5 text-right font-mono text-[11px] leading-snug">
-              <div class="flex items-center justify-end space-x-1">
-                <span class="text-[9px] text-slate-400 uppercase">R</span>
-                <span>${fmtPct(s.rev_growth)}</span>
-              </div>
-              <div class="flex items-center justify-end space-x-1">
-                <span class="text-[9px] text-slate-400 uppercase">N</span>
-                <span>${fmtPct(s.net_growth)}</span>
-              </div>
-            </td>
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Ticker</th>
+            <th>Company</th>
+            <th>Cluster</th>
+            <th>Score</th>
+            <th>Rev</th>
+            <th>NI</th>
+            <th>Asset</th>
+            <th>Equity</th>
+            <th style="text-align:center;width:28px" title="Hapus dari Universe">Del</th>
           </tr>
-        `;
-      }).join('');
-    }
+        </thead>
+        <tbody id="tb"></tbody>
+      </table>
+    </div>
 
-    function selectStock(ticker) {
-      if (!appState.topsisData) return;
-      const stock = appState.topsisData.ranked_stocks.find(s => s.ticker === ticker);
-      if (!stock) return;
+    <div class="detail" id="detail" hidden></div>
+  </section>
 
-      appState.selectedTicker = ticker;
+  <!-- Right Column: PCA Scatter, Weights Sliders, Diagnostics & Ingestion -->
+  <section class="card fade">
+    <div class="tabs" role="tablist">
+      <button class="on" data-t="0">PCA scatter <kbd>1</kbd></button>
+      <button data-t="1">Weights <kbd>2</kbd></button>
+      <button data-t="2">Diagnostics <kbd>3</kbd></button>
+    </div>
 
-      // Update active state in table rows
-      document.querySelectorAll('.stock-row').forEach(r => r.classList.remove('active'));
-      const activeRow = document.getElementById(`row-${ticker}`);
-      if (activeRow) activeRow.classList.add('active');
-
-      // Update Bottom Dock HUD
-      document.getElementById('dock-ticker-badge').innerText = stock.ticker.substring(0, 2);
-      document.getElementById('dock-ticker-title').innerText = stock.ticker.replace('.JK', '');
-      document.getElementById('dock-ticker-rank').innerText = `Rank #${stock.rank} of 30`;
-      document.getElementById('dock-ticker-name').innerText = `${stock.name} • Sector: ${stock.sector}`;
-
-      const fmtMetric = (val) => {
-        if (val === undefined || val === null) return '--';
-        const sign = val > 0 ? '+' : '';
-        const c = val >= 10.0 ? 'text-emerald-400 font-bold' : (val >= 0 ? 'text-slate-200' : 'text-rose-400 font-bold');
-        return `<span class="${c}">${sign}${val.toFixed(2)}%</span>`;
-      };
-
-      document.getElementById('dock-rev').innerHTML = fmtMetric(stock.rev_growth);
-      document.getElementById('dock-net').innerHTML = fmtMetric(stock.net_growth);
-      document.getElementById('dock-asset').innerHTML = fmtMetric(stock.asset_growth);
-      document.getElementById('dock-equity').innerHTML = fmtMetric(stock.equity_growth);
-      document.getElementById('dock-score').innerText = stock.topsis_score;
-
-      const badgeEl = document.getElementById('dock-recommendation-badge');
-      badgeEl.innerText = stock.recommendation;
-      if (stock.topsis_score >= 0.65) {
-        badgeEl.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 shadow-lg shadow-emerald-500/10';
-      } else if (stock.topsis_score >= 0.50) {
-        badgeEl.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-indigo-500/20 text-indigo-400 border border-indigo-500/30 shadow-lg shadow-indigo-500/10';
-      } else {
-        badgeEl.className = 'px-3 py-1.5 rounded-lg text-xs font-mono font-bold bg-amber-500/20 text-amber-400 border border-amber-500/30 shadow-lg shadow-amber-500/10';
-      }
-    }
-
-    function filterTable() {
-      const q = document.getElementById('table-search').value.toLowerCase();
-      const sec = document.getElementById('sector-filter').value;
-      const rows = document.querySelectorAll('.stock-row');
-      let visible = 0;
-      rows.forEach(r => {
-        const matchesQ = r.getAttribute('data-ticker').includes(q) || r.getAttribute('data-name').includes(q);
-        const matchesSec = sec === 'ALL' || r.getAttribute('data-sector') === sec;
-        if (matchesQ && matchesSec) {
-          r.style.display = '';
-          visible++;
-        } else {
-          r.style.display = 'none';
-        }
-      });
-      document.getElementById('screener-count').innerText = `${visible} / 30 STOCKS`;
-    }
-
-    function renderClusterCards() {
-      if (!appState.clusterData) return;
-      const el = document.getElementById('cluster-cards-grid');
-      el.innerHTML = appState.clusterData.cluster_profiles.map((cp, idx) => {
-        const color = CLUSTER_COLORS[idx % CLUSTER_COLORS.length];
-        const m = cp.mean_metrics || {};
-        const rev = m.rev_growth !== undefined ? `${m.rev_growth > 0 ? '+' : ''}${m.rev_growth}%` : '--';
-        const net = m.net_growth !== undefined ? `${m.net_growth > 0 ? '+' : ''}${m.net_growth}%` : '--';
-
-        return `
-          <div class="glass-card rounded-xl p-3.5 border border-white/[0.08] space-y-2 text-xs font-mono transition-all">
-            <div class="flex items-center justify-between">
-              <span class="font-bold px-2 py-0.5 rounded text-[10px]" style="background: ${color}15; color: ${color}; border: 1px solid ${color}35">
-                Cluster ${cp.cluster_id}
-              </span>
-              <span class="text-slate-400 text-[10px] font-sans font-medium">${cp.count} Stocks</span>
-            </div>
-            <div class="font-bold text-white text-xs leading-snug truncate" title="${cp.label}">${cp.label}</div>
-            <div class="text-[11px] text-slate-400 border-t border-white/[0.06] pt-1.5 flex justify-between">
-              <span>Rev: <strong class="text-cyan-300 font-semibold">${rev}</strong></span>
-              <span>Net: <strong class="text-emerald-300 font-semibold">${net}</strong></span>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function renderElbowCharts() {
-      if (!appState.elbowData) return;
-      
-      const ctxE = document.getElementById('elbowChart').getContext('2d');
-      if (appState.elbowChart) appState.elbowChart.destroy();
-      appState.elbowChart = new Chart(ctxE, {
-        type: 'line',
-        data: {
-          labels: appState.elbowData.k_range.map(k => `k=${k}`),
-          datasets: [{
-            label: 'Inertia (SSE)',
-            data: appState.elbowData.inertias,
-            borderColor: '#6366f1',
-            backgroundColor: 'rgba(99, 102, 241, 0.1)',
-            borderWidth: 2.5,
-            pointBackgroundColor: '#818cf8',
-            pointRadius: 4,
-            pointHoverRadius: 6,
-            tension: 0.25,
-            fill: true
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { 
-            legend: { labels: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 10 } } },
-            tooltip: { backgroundColor: 'rgba(11, 14, 20, 0.95)', borderColor: 'rgba(255, 255, 255, 0.15)', borderWidth: 1, bodyFont: { family: 'JetBrains Mono', size: 10 } }
-          },
-          scales: {
-            x: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 9 } } },
-            y: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 9 } } }
-          }
-        }
-      });
-
-      const ctxS = document.getElementById('silhouetteChart').getContext('2d');
-      if (appState.silhouetteChart) appState.silhouetteChart.destroy();
-      appState.silhouetteChart = new Chart(ctxS, {
-        type: 'bar',
-        data: {
-          labels: appState.elbowData.k_range.map(k => `k=${k}`),
-          datasets: [{
-            label: 'Silhouette Score',
-            data: appState.elbowData.silhouette_scores,
-            backgroundColor: '#8b5cf6',
-            borderRadius: 4
-          }]
-        },
-        options: {
-          responsive: true,
-          maintainAspectRatio: false,
-          plugins: { 
-            legend: { labels: { color: '#94a3b8', font: { family: 'JetBrains Mono', size: 10 } } },
-            tooltip: { backgroundColor: 'rgba(11, 14, 20, 0.95)', borderColor: 'rgba(255, 255, 255, 0.15)', borderWidth: 1, bodyFont: { family: 'JetBrains Mono', size: 10 } }
-          },
-          scales: {
-            x: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 9 } } },
-            y: { grid: { color: 'rgba(255, 255, 255, 0.04)' }, ticks: { color: '#64748b', font: { family: 'JetBrains Mono', size: 9 } }, min: 0, max: 0.6 }
-          }
-        }
-      });
-    }
-
-    function renderCriteriaSliders() {
-      const el = document.getElementById('criteria-sliders');
-      el.innerHTML = Object.entries(appState.criteria).map(([key, item]) => `
-        <div class="p-3.5 rounded-xl bg-black/40 border border-white/[0.08] space-y-2">
-          <div class="flex justify-between items-center text-xs font-mono">
-            <span class="font-bold text-white">${item.label}</span>
-            <span class="text-[9px] px-1.5 py-0.5 rounded font-mono font-bold uppercase ${item.type === 'benefit' ? 'bg-emerald-500/15 text-emerald-400 border border-emerald-500/25' : 'bg-amber-500/15 text-amber-400 border border-amber-500/25'}">
-              ${item.type}
-            </span>
-          </div>
-          <div class="flex items-center space-x-3">
-            <input type="range" min="0" max="60" step="1" value="${Math.round((appState.weights[key] || 0) * 100)}" 
-                   oninput="updateWeight('${key}', this.value)" 
-                   class="w-full cursor-pointer">
-            <span id="weight-val-${key}" class="text-xs font-mono text-cyan-400 font-bold w-10 text-right">${Math.round((appState.weights[key] || 0) * 100)}%</span>
-          </div>
+    <!-- Tab 0: PCA 2D Projection -->
+    <div class="pane on" id="p0">
+      <div class="row" style="margin-bottom:10px">
+        <span style="font-size:12px;color:var(--mute)">Dimensionality reduction via Principal Component Analysis</span>
+        <div class="k-selector" id="k-switcher" title="Change K-Means cluster count (k)">
+          <span style="font:600 11px var(--font-mono);padding:3px 6px;color:var(--mute)">k:</span>
+          <button class="k-btn" data-k="2">2</button>
+          <button class="k-btn active" data-k="3">3</button>
+          <button class="k-btn" data-k="4">4</button>
+          <button class="k-btn" data-k="5">5</button>
+          <button class="k-btn" data-k="6">6</button>
         </div>
-      `).join('');
+      </div>
+      <svg id="pca" viewBox="0 0 540 370" width="100%" role="img" aria-label="PCA scatter plot"></svg>
+      <div class="legend" id="leg"></div>
+      <div class="sub-row">
+        <span id="pca-variance" style="font-family:var(--font-mono);font-size:11px">Cumulative Explained Variance: --</span>
+        <span style="font-size:12px">Point size reflects TOPSIS closeness score ($V_i$)</span>
+      </div>
+    </div>
+
+    <!-- Tab 1: Criteria Weights & Presets -->
+    <div class="pane" id="p1">
+      <div style="font-size:12px;color:var(--mute);margin-bottom:8px">Portfolio Strategy Presets:</div>
+      <div class="presets" id="pre"></div>
+      <div id="sls"></div>
+      <div class="row" style="margin-top:18px">
+        <span style="color:var(--mute);font-size:12px">Normalized weights: &sum;w = 1.00</span>
+        <button class="btn" id="aud">Audit matrix <kbd style="background:var(--key);color:var(--ink);border-color:var(--line)">m</kbd></button>
+      </div>
+      <div class="callout">
+        <b>Mathematical Note:</b> TOPSIS normalizes these 4 vectors across the universe ($r_{ij} = x_{ij}/\sqrt{\sum x_{kj}^2}$), multiplies by strategy weights ($v_{ij}$), and computes Euclidean distances to the Ideal Positive ($A^+$) and Negative ($A^-$) solutions.
+      </div>
+    </div>
+
+    <!-- Tab 2: Elbow & Silhouette Diagnostics -->
+    <div class="pane" id="p2">
+      <div class="row">
+        <h2 style="font-size:15px">Elbow Method (Inertia Curve)</h2>
+        <span style="font-size:11px;font-family:var(--font-mono);color:var(--mute)">Lower is tighter</span>
+      </div>
+      <svg id="elb" viewBox="0 0 520 150" width="100%"></svg>
+
+      <div class="row" style="margin-top:16px">
+        <h2 style="font-size:15px">Silhouette Analysis (Cohesion vs Separation)</h2>
+        <span style="font-size:11px;font-family:var(--font-mono);color:var(--mute)">Higher is distinct</span>
+      </div>
+      <svg id="sil" viewBox="0 0 520 150" width="100%"></svg>
+      <p id="bk" style="color:var(--mute);margin-top:10px;font-size:12px"></p>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <span><kbd>/</kbd> search</span>
+  <span><kbd>1</kbd><kbd>2</kbd><kbd>3</kbd> switch tabs</span>
+  <span><kbd>m</kbd> audit matrix</span>
+  <span><kbd>d</kbd> toggle theme</span>
+  <span><kbd>e</kbd> export json</span>
+  <span><kbd>Esc</kbd> close / blur</span>
+  <div style="margin-left:auto;display:flex;gap:8px">
+    <button class="btn ghost sm" id="exp-csv">Export CSV</button>
+    <button class="btn ghost sm" id="exp">Export JSON</button>
+  </div>
+</footer>
+</div>
+
+<!-- Modal: TOPSIS Audit Matrix -->
+<dialog id="dlg">
+  <div class="chrome">
+    <i></i><i></i><i></i>
+    <span>topsis_audit_matrix.calc</span>
+    <button id="dlg-close" style="margin-left:auto;background:none;border:0;color:var(--mute);cursor:pointer;font-size:16px">&times;</button>
+  </div>
+  <div class="mbody" id="mb"></div>
+</dialog>
+
+<script>
+const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s), esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+
+// Dark Mode Support
+function initTheme(){
+  const saved=localStorage.getItem('theme');
+  const prefersDark=window.matchMedia('(prefers-color-scheme: dark)').matches;
+  const isDark=saved?saved==='dark':prefersDark;
+  setTheme(isDark?'dark':'light');
+}
+
+function setTheme(theme){
+  document.documentElement.setAttribute('data-theme', theme);
+  localStorage.setItem('theme', theme);
+  const isDark=theme==='dark';
+  $('#theme-icon').textContent=isDark?'☀️':'🌙';
+  $('#theme-text').textContent=isDark?'Light':'Dark';
+  // Re-draw charts with theme colors
+  scatter();
+  diag();
+}
+
+$('#theme-toggle').onclick=()=>{
+  const current=document.documentElement.getAttribute('data-theme')||'light';
+  setTheme(current==='dark'?'light':'dark');
+};
+
+const CRIT=[
+  {k:'rev',n:'Revenue growth',keys:['rev_growth','revenue_cagr','revenue_growth','rev_cagr','cagr_revenue','revenue']},
+  {k:'ni',n:'Net income growth',keys:['net_growth','net_income_cagr','net_income_growth','ni_cagr','cagr_net_income','net_income']},
+  {k:'asset',n:'Asset growth',keys:['asset_growth','asset_cagr','assets_cagr','total_assets_cagr','cagr_assets','assets']},
+  {k:'eq',n:'Equity growth',keys:['equity_growth','equity_cagr','equity_growth','cagr_equity','total_equity_cagr','equity']}
+];
+
+const PRESETS={
+  'Balanced LQ45':[25,25,25,25],
+  'Aggressive Growth':[35,40,10,15],
+  'Defensive Quality':[15,20,25,40],
+  'Asset Expansion':[15,15,55,15]
+};
+
+let W=[30,35,15,20]; // Default project weights from topsis.py
+let S=[], res=[], sel=null, ev={}, CL={}, currentK=3;
+
+const getVal=(o,keys)=>{
+  for(const k of keys){
+    for(const src of [o,o.growth,o.cagr,o.metrics]){
+      if(src&&src[k]!=null&&!isNaN(+src[k])) return +src[k];
     }
+  }
+  return NaN;
+};
 
-    function updateWeight(key, val) {
-      appState.weights[key] = parseInt(val) / 100.0;
-      document.getElementById(`weight-val-${key}`).innerText = `${val}%`;
-      const sum = Math.round(Object.values(appState.weights).reduce((a, b) => a + b, 0) * 100);
-      const sumEl = document.getElementById('weight-sum-badge');
-      if (sumEl) sumEl.innerText = `Sum: ${sum}%`;
+const list=d=>Array.isArray(d)?d:(d&&(d.data||d.stocks||d.items||d.points||d.companies))||[];
+const fetchJ=async(u,o)=>{const r=await fetch(u,o);if(!r.ok)throw new Error(u+' status '+r.status);return r.json()};
+const tk=o=>o.ticker||o.symbol||o.code||o.kode||'?';
+const fmt=v=>(v>=0?'+':'')+Number(v).toFixed(1)+'%';
+const fmtRp=v=>v!=null?'Rp '+(+v).toLocaleString('id-ID')+' B':'-';
+
+// Mathematical TOPSIS engine (executes in browser at 60fps)
+function topsis(rows,w){
+  if(!rows.length) return {out:[],Ap:[],Am:[],wn:[]};
+  const sw=w.reduce((a,b)=>a+b,0)||1, wn=w.map(x=>x/sw);
+  const m=rows.length, X=rows.map(r=>r.v);
+  const den=CRIT.map((_,j)=>Math.sqrt(X.reduce((a,r)=>a+r[j]**2,0))||1);
+  const R=X.map(r=>r.map((x,j)=>x/den[j]));
+  const V=R.map(r=>r.map((x,j)=>x*wn[j]));
+  const Ap=CRIT.map((_,j)=>Math.max(...V.map(r=>r[j])));
+  const Am=CRIT.map((_,j)=>Math.min(...V.map(r=>r[j])));
+  const out=rows.map((r,i)=>{
+    const dp=Math.hypot(...V[i].map((x,j)=>x-Ap[j]));
+    const dm=Math.hypot(...V[i].map((x,j)=>x-Am[j]));
+    const score=dm/((dp+dm)||1);
+    let recommendation="Hold / Neutral";
+    if(score>=0.65) recommendation="Strong Buy / Top Pick";
+    else if(score>=0.50) recommendation="Buy / Accumulate";
+    else if(score<0.30) recommendation="Reduce / Avoid";
+    return {...r,R:R[i],V:V[i],dp,dm,score,recommendation};
+  }).sort((a,b)=>b.score-a.score).map((r,i)=>({...r,rank:i+1}));
+  return {out,Ap,Am,wn};
+}
+
+function recalc(){
+  const t=topsis(S,W);
+  res=t.out;
+  window._t=t;
+  draw();
+}
+
+function draw(){
+  const q=$('#q').value.trim().toLowerCase();
+  const secFilter=$('#sector-filter').value;
+  const rows=res.filter(r=>{
+    const matchQ=!q||r.ticker.toLowerCase().includes(q)||r.name.toLowerCase().includes(q)||(r.sector&&r.sector.toLowerCase().includes(q));
+    const matchSec=!secFilter||r.sector===secFilter;
+    return matchQ&&matchSec;
+  });
+  
+  const mx=Math.max(...res.map(r=>r.score),.0001);
+  const tBadge=$('#table-count-badge');
+  if(tBadge){
+    if(q||secFilter){
+      tBadge.textContent=`${rows.length} dari ${res.length} Emiten`;
+    }else{
+      tBadge.textContent=`${res.length} Emiten Aktif`;
     }
+  }
 
-    function applyPreset(preset) {
-      if (preset === 'profitability') {
-        appState.weights = { rev_growth: 0.20, net_growth: 0.60, asset_growth: 0.10, equity_growth: 0.10 };
-      } else if (preset === 'topline') {
-        appState.weights = { rev_growth: 0.60, net_growth: 0.20, asset_growth: 0.10, equity_growth: 0.10 };
-      } else if (preset === 'asset_scale') {
-        appState.weights = { rev_growth: 0.20, net_growth: 0.20, asset_growth: 0.30, equity_growth: 0.30 };
-      } else if (preset === 'defensive') {
-        appState.weights = { rev_growth: 0.15, net_growth: 0.35, asset_growth: 0.15, equity_growth: 0.35 };
-      } else {
-        appState.weights = { rev_growth: 0.35, net_growth: 0.35, asset_growth: 0.15, equity_growth: 0.15 };
-      }
-      renderCriteriaSliders();
-      recalculateTopsis();
+  $('#tb').innerHTML=rows.map(r=>{
+    const clIdx=(+r.cl||0)%6;
+    const clLabel=CL.names?.[r.cl]||('Cluster '+r.cl);
+    const isSel=r.ticker===sel;
+    const barW=Math.min(100,Math.max(4,(r.score/mx*100))).toFixed(0);
+    return `<tr class="r ${isSel?'sel':''}" data-t="${esc(r.ticker)}">
+      <td>${r.rank}</td>
+      <td style="color:var(--ink);font-weight:700">${esc(r.ticker)}</td>
+      <td class="name" title="${esc(r.name)}">${esc(r.name)}</td>
+      <td><span class="tag" style="background:var(--b${clIdx});color:var(--c${clIdx})">${esc(clLabel.split(' ')[0])}</span></td>
+      <td><span class="bar-track"><span class="bar-fill" style="width:${barW}%"></span></span>${r.score.toFixed(3)}</td>
+      ${r.v.map(x=>`<td class="${x<0?'neg':''}">${fmt(x)}</td>`).join('')}
+      <td style="text-align:center">
+        <button class="btn-del" title="Hapus ${esc(r.ticker)} dari Universe" onclick="event.stopPropagation(); deleteStock('${esc(r.ticker)}')">&times;</button>
+      </td>
+    </tr>`;
+  }).join('');
+
+  scatter();
+  detail();
+}
+
+function detail(){
+  const r=res.find(x=>x.ticker===sel)||(res.length?res[0]:null);
+  const d=$('#detail');
+  if(!r){d.hidden=true;return}
+  d.hidden=false;
+
+  const avg=CRIT.map((_,j)=>S.reduce((a,s)=>a+s.v[j],0)/(S.length||1));
+  const clIdx=(+r.cl||0)%6;
+  const clFull=CL.names?.[r.cl]||('Cluster '+r.cl);
+
+  d.innerHTML=`
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;flex-wrap:wrap;gap:8px">
+      <div>
+        <b style="color:var(--ink);font-size:16px">${esc(r.ticker)}</b> 
+        <span style="color:var(--ink2);font-weight:600">${esc(r.name)}</span>
+        <span style="color:var(--mute);margin-left:6px;font-size:12px">/ ${esc(r.sector||'Non-Financial')} / Rank ${r.rank} of ${res.length}</span>
+      </div>
+      <div>
+        <span class="tag" style="background:var(--b${clIdx});color:var(--c${clIdx})">${esc(clFull)}</span>
+        <span class="tag" style="background:var(--key);color:var(--ink);margin-left:4px">${esc(r.recommendation)}</span>
+      </div>
+    </div>
+    
+    <div style="margin-top:6px;font-size:11.5px;color:var(--mute)">
+      Euclidean Separation: D+ (Ideal Best) = <span style="font-family:var(--font-mono);color:var(--ink);font-weight:600">${r.dp.toFixed(4)}</span> | D- (Ideal Worst) = <span style="font-family:var(--font-mono);color:var(--ink);font-weight:600">${r.dm.toFixed(4)}</span>
+    </div>
+
+    <div class="g">
+      ${CRIT.map((c,j)=>`
+        <div>
+          <span>${c.n}</span>
+          <b>${fmt(r.v[j])}</b>
+          <small>Univ Avg ${fmt(avg[j])}</small>
+        </div>
+      `).join('')}
+    </div>
+
+    <div class="g" style="margin-top:8px">
+      <div><span>5-Yr Avg Revenue</span><b style="font-size:13px">${fmtRp(r.raw?.avg_revenue_b)}</b></div>
+      <div><span>5-Yr Avg Net Income</span><b style="font-size:13px">${fmtRp(r.raw?.avg_net_income_b)}</b></div>
+      <div><span>5-Yr Avg Total Assets</span><b style="font-size:13px">${fmtRp(r.raw?.avg_assets_b)}</b></div>
+      <div><span>5-Yr Avg Total Equity</span><b style="font-size:13px">${fmtRp(r.raw?.avg_equity_b)}</b></div>
+    </div>
+    <div style="margin-top:12px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:8px">
+      <button class="btn ghost sm" style="color:var(--danger);border-color:rgba(220,38,38,0.35)" onclick="deleteStock('${esc(r.ticker)}')">
+        &times; Hapus ${esc(r.ticker)} dari Universe
+      </button>
+      <button class="btn ghost sm" onclick="showRawStatements('${esc(r.ticker)}')">
+        Audited Annual History (2021–2025) &rarr;
+      </button>
+    </div>
+  `;
+}
+
+function scatter(){
+  const svg=$('#pca'), P=res.filter(r=>r.x!=null);
+  if(!P.length){
+    svg.innerHTML='<text x="30" y="50" style="fill:var(--mute);font-size:12px">PCA coordinates loading from clustering engine...</text>';
+    return;
+  }
+  const xs=P.map(p=>p.x), ys=P.map(p=>p.y);
+  const [x0,x1]=[Math.min(...xs),Math.max(...xs)], [y0,y1]=[Math.min(...ys),Math.max(...ys)];
+  const padX=(x1-x0)*0.1||1, padY=(y1-y0)*0.1||1;
+  const minX=x0-padX, maxX=x1+padX, minY=y0-padY, maxY=y1+padY;
+
+  const sx=v=>50+(v-minX)/((maxX-minX)||1)*440;
+  const sy=v=>320-(v-minY)/((maxY-minY)||1)*280;
+
+  // Grid and axes
+  let h=`
+    <!-- Background grid lines -->
+    <line x1="50" y1="110" x2="510" y2="110" stroke="var(--line)" stroke-dasharray="3 3"/>
+    <line x1="50" y1="180" x2="510" y2="180" stroke="var(--line)" stroke-dasharray="3 3"/>
+    <line x1="50" y1="250" x2="510" y2="250" stroke="var(--line)" stroke-dasharray="3 3"/>
+    <line x1="160" y1="40" x2="160" y2="320" stroke="var(--line)" stroke-dasharray="3 3"/>
+    <line x1="280" y1="40" x2="280" y2="320" stroke="var(--line)" stroke-dasharray="3 3"/>
+    <line x1="400" y1="40" x2="400" y2="320" stroke="var(--line)" stroke-dasharray="3 3"/>
+
+    <!-- Main Axis lines -->
+    <line x1="50" y1="320" x2="510" y2="320" stroke="var(--line-dark)" stroke-width="1.5"/>
+    <line x1="50" y1="40" x2="50" y2="320" stroke="var(--line-dark)" stroke-width="1.5"/>
+    <text x="475" y="340" style="font-weight:700;fill:var(--ink);font-size:11px">PC1</text>
+    <text x="14" y="45" style="font-weight:700;fill:var(--ink);font-size:11px">PC2</text>
+  `;
+
+  // Plot data points
+  P.forEach(p=>{
+    const on=p.ticker===sel;
+    const clIdx=(+p.cl||0)%6;
+    const rSize=on?8:(4+p.score*5);
+    h+=`
+      <g data-t="${esc(p.ticker)}" style="cursor:pointer">
+        ${on?`<circle cx="${sx(p.x)}" cy="${sy(p.y)}" r="${(rSize+4).toFixed(1)}" fill="none" stroke="var(--ink)" stroke-width="1.5" stroke-dasharray="2 2"/>`:''}
+        <circle cx="${sx(p.x)}" cy="${sy(p.y)}" r="${rSize.toFixed(1)}" 
+          fill="var(--b${clIdx})" stroke="var(--c${clIdx})" stroke-width="${on?2.8:1.8}">
+          <title>${esc(p.ticker)} (${esc(p.name)}) - TOPSIS: ${p.score.toFixed(3)}</title>
+        </circle>
+        ${(on||p.rank<=6)?`<text x="${(sx(p.x)+8).toFixed(1)}" y="${(sy(p.y)+3).toFixed(1)}" style="fill:var(--ink);font-weight:700;font-size:10px">${esc(p.ticker)}</text>`:''}
+      </g>
+    `;
+  });
+  svg.innerHTML=h;
+
+  const clSet=[...new Set(P.map(p=>p.cl))].sort((a,b)=>a-b);
+  $('#leg').innerHTML=clSet.map(c=>`
+    <span class="tag" style="background:var(--b${c%6});color:var(--c${c%6});padding:3px 9px">
+      ${esc(CL.names?.[c]||('Cluster '+c))}
+    </span>
+  `).join('');
+}
+
+function sliders(){
+  $('#pre').innerHTML=Object.keys(PRESETS).map(n=>`
+    <button class="btn ghost sm" data-p="${n}">${n}</button>
+  `).join('');
+  
+  $('#sls').innerHTML=CRIT.map((c,j)=>`
+    <div class="sl">
+      <div>
+        ${c.n}
+        <small>C${j+1} / Benefit Criterion</small>
+      </div>
+      <input type="range" min="0" max="100" value="${W[j]}" data-j="${j}">
+      <b id="w${j}"></b>
+    </div>
+  `).join('');
+  wl();
+}
+
+function wl(){
+  const s=W.reduce((a,b)=>a+b,0)||1;
+  W.forEach((w,j)=>{
+    const el=$('#w'+j);
+    if(el) el.textContent=(w/s).toFixed(2);
+  });
+  $$('#sls input').forEach((inp,j)=>{
+    if(W[j]!=null) inp.value=W[j];
+  });
+}
+
+function pairs(v){
+  if(!v) return [];
+  if(Array.isArray(v)) return v.map((y,i)=>typeof y==='object'?[y.k??i+2,y.value??y.inertia??y.silhouette??y.score]:[i+2,y]);
+  return Object.entries(v).map(([k,y])=>[+k,+y]);
+}
+
+function bars(id,v,best,dec){
+  const p=pairs(v), svg=$(id);
+  if(!p.length){svg.innerHTML='<text x="10" y="30">Diagnostics loading...</text>';return}
+  const isDark=document.documentElement.getAttribute('data-theme')==='dark';
+  const mx=Math.max(...p.map(a=>a[1]))||1, bw=440/p.length;
+  let barsHtml=`<line x1="45" y1="120" x2="505" y2="120" stroke="var(--line-dark)" stroke-width="1.5"/>`;
+  barsHtml+=p.map(([k,y],i)=>{
+    const h=Math.max(4,y/mx*105), b=k===best;
+    const barFill=b?'var(--ink)':(isDark?'#2D3545':'#BAC6D4');
+    return `
+      <rect x="${50+i*bw+5}" y="${120-h}" width="${bw-10}" height="${h}" fill="${barFill}" rx="3"/>
+      <text x="${50+i*bw+bw/2}" y="138" text-anchor="middle" style="fill:var(--ink);font-weight:600">k=${k}</text>
+      <text x="${50+i*bw+bw/2}" y="${114-h}" text-anchor="middle" style="fill:${b?'var(--ink)':'var(--mute)'};font-weight:${b?'700':'500'}">${(+y).toFixed(dec)}</text>
+    `;
+  }).join('');
+  svg.innerHTML=barsHtml;
+}
+
+function diag(){
+  const best=ev.recommended_k??ev.best_k??ev.optimal_k??2;
+  bars('#elb',ev.inertias??ev.inertia??ev.elbow,best,1);
+  bars('#sil',ev.silhouette_scores??ev.silhouette,best,3);
+  $('#bk').textContent=best!=null?`Statistical Evaluation: Optimal k = ${best} based on peak silhouette score (${ev.silhouette_scores?.[ev.k_range?.indexOf(best)]||''}).`:'';
+}
+
+function audit(){
+  const t=window._t; if(!t)return;
+  const f=(a,d=4)=>a.map(x=>x.toFixed(d)).join(' / ');
+  const top=res.slice(0,10);
+  $('#mb').innerHTML=`
+    <h3>Normalized Criteria Weights (w)</h3>
+    <code style="display:block;background:var(--key);padding:8px 12px;border-radius:6px;font:13px var(--font-mono);border:1px solid var(--line)">w = [ ${f(t.wn,3)} ]</code>
+    
+    <h3>Ideal Solutions in Weighted Space (V)</h3>
+    <div style="background:var(--key);padding:10px 14px;border-radius:6px;font:12px var(--font-mono);border:1px solid var(--line)">
+      <b>A+ (Positive Ideal):</b> ${f(t.Ap)}<br>
+      <b>A- (Negative Ideal):</b> ${f(t.Am)}
+    </div>
+
+    <h3>Top 10 Alternatives Decision Matrix (m = ${S.length}, n = 4)</h3>
+    <div style="overflow:auto;margin-top:10px;border-top:1px solid var(--line)">
+      <table>
+        <thead>
+          <tr>
+            <th>#</th>
+            <th>Ticker</th>
+            <th>Normalized (r_ij)</th>
+            <th>Weighted (v_ij)</th>
+            <th>D+</th>
+            <th>D-</th>
+            <th>Score (V_i)</th>
+            <th>Decision</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${top.map(r=>`
+            <tr>
+              <td>${r.rank}</td>
+              <td style="font-weight:700">${esc(r.ticker)}</td>
+              <td>${f(r.R,3)}</td>
+              <td>${f(r.V,3)}</td>
+              <td>${r.dp.toFixed(4)}</td>
+              <td>${r.dm.toFixed(4)}</td>
+              <td style="color:var(--ink);font-weight:700">${r.score.toFixed(4)}</td>
+              <td><span class="tag" style="background:var(--key);color:var(--ink)">${esc(r.recommendation)}</span></td>
+            </tr>
+          `).join('')}
+        </tbody>
+      </table>
+    </div>
+
+    <div class="callout" style="margin-top:16px">
+      <b>Formulas Applied:</b><br>
+      Vector Normalization: <code>r_ij = x_ij / &radic;(&sum; x_kj&sup2;)</code><br>
+      Weighted Matrix: <code>v_ij = w_j &middot; r_ij</code><br>
+      Closeness Coefficient: <code>V_i = D_i&minus; / (D_i+ + D_i&minus;)</code>
+    </div>
+  `;
+  $('#dlg').showModal();
+}
+
+async function showRawStatements(ticker){
+  try {
+    const data = await fetchJ('/api/stocks/raw?ticker='+ticker);
+    const rows = data.data||[];
+    if(!rows.length){
+      alert('No raw statement records found for '+ticker);
+      return;
     }
+    const fmtN = n => n!=null ? Number(n).toLocaleString('id-ID') : '-';
+    $('#mb').innerHTML = `
+      <h3>Audited Financial Statements: ${esc(ticker)}</h3>
+      <p style="color:var(--mute);font-size:12px;margin-bottom:12px">
+        Extracted directly from annual report workbooks (${esc(rows[0]?.company||ticker)}).
+      </p>
+      <div style="overflow:auto">
+        <table>
+          <thead>
+            <tr>
+              <th>Year</th>
+              <th>Revenue (${esc(rows[0]?.unit||'IDR')})</th>
+              <th>Net Income</th>
+              <th>Total Assets</th>
+              <th>Total Equity</th>
+              <th>Source File</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.map(r=>`
+              <tr>
+                <td style="font-weight:700">${r.data_year}</td>
+                <td>${fmtN(r.revenue)}</td>
+                <td class="${r.net_income<0?'neg':''}">${fmtN(r.net_income)}</td>
+                <td>${fmtN(r.total_assets)}</td>
+                <td>${fmtN(r.total_equity)}</td>
+                <td style="font-size:11px;color:var(--mute)">${esc(r.source_file||'-')}</td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div class="callout" style="margin-top:14px">
+        <b>Data Integrity & Traceability:</b> Extracted using multi-sheet openpyxl parser targeting General Information (1000000), Statement of Financial Position (1210000), and Income Statement (1321000).
+      </div>
+    `;
+    $('#dlg').showModal();
+  } catch(e) {
+    alert('Failed to load raw statements: '+e.message);
+  }
+}
 
-    function renderMatrixAudit() {
-      if (!appState.topsisData) return;
-      const m = appState.topsisData.step_matrices;
-      const thead = document.getElementById('audit-thead');
-      const tbody = document.getElementById('audit-tbody');
+function tab(n){
+  $$('.tabs button').forEach((b,i)=>b.classList.toggle('on',i==n));
+  $$('.pane').forEach((p,i)=>p.classList.toggle('on',i==n));
+}
 
-      thead.innerHTML = `
-        <th class="p-3">Matrix Metric</th>
-        ${m.criteria.map(c => `<th class="p-3 text-right font-mono">${c.toUpperCase()}</th>`).join('')}
-      `;
+function exp(){
+  const blob=new Blob([JSON.stringify({
+    weights:W,
+    criteria:CRIT.map(c=>c.n),
+    ranking:res.map(({ticker,name,sector,cl,v,score,rank,dp,dm,recommendation})=>({
+      rank,ticker,name,sector,cluster:cl,cagr_metrics:v,topsis_score:score,d_plus:dp,d_minus:dm,recommendation
+    }))
+  },null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='idx_topsis_ranking.json';a.click();
+}
 
-      tbody.innerHTML = `
-        <tr>
-          <td class="p-3 font-semibold text-slate-400">Weight ($w_j$)</td>
-          ${m.criteria.map(c => `<td class="p-3 text-right text-cyan-400 font-mono font-bold">${(m.weights[c] * 100).toFixed(1)}%</td>`).join('')}
-        </tr>
-        <tr>
-          <td class="p-3 font-semibold text-slate-400">Criteria Type</td>
-          ${m.criteria.map(c => `<td class="p-3 text-right font-mono font-bold uppercase text-[9px] ${m.criteria_types[c] === 'benefit' ? 'text-emerald-400' : 'text-amber-400'}">${m.criteria_types[c]}</td>`).join('')}
-        </tr>
-        <tr>
-          <td class="p-3 font-semibold text-slate-400">Column Norm</td>
-          ${m.criteria.map(c => `<td class="p-3 text-right text-slate-300 font-mono">${m.column_norms[c]}</td>`).join('')}
-        </tr>
-        <tr class="bg-emerald-500/5">
-          <td class="p-3 font-semibold text-emerald-400">Ideal Positive ($A^+$)</td>
-          ${m.ideal_positive.map(v => `<td class="p-3 text-right text-emerald-400 font-mono font-bold">${v}</td>`).join('')}
-        </tr>
-        <tr class="bg-rose-500/5">
-          <td class="p-3 font-semibold text-rose-400">Ideal Negative ($A^-$)</td>
-          ${m.ideal_negative.map(v => `<td class="p-3 text-right text-rose-400 font-mono font-bold">${v}</td>`).join('')}
-        </tr>
-      `;
+function expCSV(){
+  const headers=["Rank","Ticker","Company","Sector","Cluster","Score","Revenue Growth (%)","Net Income Growth (%)","Asset Growth (%)","Equity Growth (%)","D+","D-","Recommendation"];
+  const rows=res.map(r=>[
+    r.rank,`"${r.ticker}"`,`"${r.name}"`,`"${r.sector||''}"`,r.cl,r.score.toFixed(4),r.v[0],r.v[1],r.v[2],r.v[3],r.dp.toFixed(4),r.dm.toFixed(4),`"${r.recommendation}"`
+  ]);
+  const csvContent="data:text/csv;charset=utf-8,"+ [headers.join(","), ...rows.map(e=>e.join(","))].join("\n");
+  const a=document.createElement('a');a.href=encodeURI(csvContent);a.download='idx_topsis_ranking.csv';a.click();
+}
+
+// Cluster loader supporting dynamic k
+async function loadClusters(k=4){
+  try{
+    currentK=k;
+    $('#active-k-badge').textContent=`K-Means (k=${k}) + TOPSIS`;
+    $$('#k-switcher button').forEach(b=>b.classList.toggle('active',+b.dataset.k===k));
+    
+    // Call clustering endpoint
+    let cd;
+    try {
+      cd = await fetchJ('/api/mining/clusters?k='+k);
+    } catch(e) {
+      cd = await fetchJ('/api/mining/cluster', {
+        method:'POST',
+        headers:{'Content-Type':'application/json'},
+        body:JSON.stringify({n_clusters:k})
+      });
     }
-
-    function exportUniverseJSON() {
-      if (!appState.topsisData) return;
-      const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState.topsisData, null, 2));
-      const dlAnchorElem = document.createElement('a');
-      dlAnchorElem.setAttribute("href", dataStr);
-      dlAnchorElem.setAttribute("download", "spk_mining_universe_audit.json");
-      dlAnchorElem.click();
-    }
-
-    // Terminal Keyboard Ergonomics & Hotkeys
-    window.addEventListener('keydown', (e) => {
-      // If typing in input or select, only intercept Escape
-      const tag = document.activeElement ? document.activeElement.tagName.toLowerCase() : '';
-      const isInput = tag === 'input' || tag === 'select' || tag === 'textarea';
-
-      if (e.key === 'Escape') {
-        closeAuditModal();
-        closeIngestModal();
-        if (isInput) document.activeElement.blur();
-        return;
-      }
-
-      if (isInput) return;
-
-      if (e.key === '/' || e.key === 's') {
-        e.preventDefault();
-        const searchInput = document.getElementById('table-search');
-        if (searchInput) {
-          searchInput.focus();
-          searchInput.select();
-        }
-      } else if (e.key === '1') {
-        switchCockpitView('pca');
-      } else if (e.key === '2') {
-        switchCockpitView('weights');
-      } else if (e.key === '3') {
-        switchCockpitView('diagnostics');
-      } else if (e.key === 'm' || e.key === 'M') {
-        openAuditModal();
-      } else if (e.key === 'e' || e.key === 'E') {
-        exportUniverseJSON();
-      }
+    
+    CL=cd||{};
+    const pts=list(cd.clustered_stocks||cd.points||cd.stocks||cd.data);
+    const m=new Map(pts.map(p=>[tk(p),p]));
+    
+    S.forEach(r=>{
+      const p=m.get(r.ticker);
+      if(!p) return;
+      r.cl=+(p.cluster??p.label??0);
+      r.x=p.pca_x??p.pc1??p.x??p.pca?.[0]??null;
+      r.y=p.pca_y??p.pc2??p.y??p.pca?.[1]??null;
     });
 
-    window.addEventListener('DOMContentLoaded', init);
-  </script>
+    if(cd.cluster_profiles){
+      CL.names={};
+      cd.cluster_profiles.forEach(cp=>{
+        CL.names[cp.cluster_id]=cp.label||('Cluster '+cp.cluster_id);
+      });
+    }
+
+    if(cd.explained_variance_2d_percent){
+      $('#pca-variance').textContent=`Explained Variance: PC1 ${cd.explained_variance_2d_percent[0]}% + PC2 ${cd.explained_variance_2d_percent[1]}% (${(cd.explained_variance_2d_percent[0]+cd.explained_variance_2d_percent[1]).toFixed(1)}% total)`;
+    }
+
+    draw();
+  }catch(e){
+    console.warn('Failed to load clusters:', e);
+  }
+}
+
+// Event Listeners
+document.addEventListener('input',e=>{
+  if(e.target.dataset.j!=null){
+    W[+e.target.dataset.j]=+e.target.value;
+    wl();
+    recalc();
+  }
+});
+
+document.addEventListener('click',e=>{
+  const t=e.target.closest('[data-t]'), p=e.target.closest('[data-p]'), k=e.target.closest('[data-k]');
+  if(e.target.closest('.tabs button')){
+    tab(e.target.closest('button').dataset.t);
+    return;
+  }
+  if(t&&(t.matches('tr')||t.matches('g'))){
+    sel=sel===t.dataset.t?null:t.dataset.t;
+    draw();
+  }
+  if(p){
+    W=[...PRESETS[p.dataset.p]];
+    wl();
+    recalc();
+  }
+  if(k){
+    loadClusters(+k.dataset.k);
+  }
+});
+
+$('#q').oninput=draw;
+$('#sector-filter').onchange=draw;
+$('#aud').onclick=audit;
+$('#exp').onclick=exp;
+$('#exp-csv').onclick=expCSV;
+$('#dlg-close').onclick=()=>$('#dlg').close();
+
+// Chips quick-fill
+$$('[data-chip]').forEach(btn=>{
+  btn.onclick=()=>{
+    $('#custom-tickers-input').value=btn.dataset.chip;
+  };
+});
+
+// Custom Scraper with Financial Sector Rejection
+$('#btn-scrape-custom').onclick=async()=>{
+  const q=$('#custom-tickers-input').value.trim();
+  if(!q){alert('Please enter at least one IDX ticker (e.g. BUMI, ELTY, TRUE)');return}
+  
+  const st=$('#scrape-status'), fb=$('#scrape-feedback');
+  st.textContent='Scraping and analyzing tickers...';
+  fb.style.display='block';
+  fb.innerHTML='<span style="font-size:12px;color:var(--mute)">Connecting to IDX database and evaluating sector constraints...</span>';
+  
+  try{
+    const res=await fetchJ('/api/data/scrape',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({query:q})
+    });
+    
+    st.textContent=res.message||'Scrape selesai';
+    
+    let html='';
+    if(res.accepted&&res.accepted.length){
+      html+=`<div style="margin-bottom:10px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--success)"></span>
+          <b style="font-size:12px;color:var(--success)">Berhasil Di-scrape & Ditambahkan (${res.accepted.length} Emiten Non-Finansial):</b>
+        </div>
+        <div style="display:flex;gap:6px;flex-wrap:wrap">
+          ${res.accepted.map(a=>`<span class="tag" style="background:var(--b2);color:var(--success);border:1px solid rgba(46,204,113,0.3)"><b>${esc(a.ticker)}</b> &mdash; ${esc(a.name)} <small style="opacity:0.8">(${esc(a.sector)})</small></span>`).join('')}
+        </div>
+      </div>`;
+    }
+    
+    const skippedList = res.skipped || res.rejected || [];
+    if(skippedList.length){
+      html+=`<div style="margin-top:10px">
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px">
+          <span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--danger)"></span>
+          <b style="font-size:12px;color:var(--danger)">Dilewati / Skipped Otomatis (${skippedList.length} Emiten Sektor Keuangan IDX-IC):</b>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:6px">
+          ${skippedList.map(r=>`
+            <div style="font-size:11.5px;padding:8px 10px;background:var(--b0);border-radius:6px;border:1px solid rgba(255,107,107,0.25);line-height:1.4">
+              <div style="display:flex;justify-content:space-between;margin-bottom:2px">
+                <b style="color:var(--danger)">${esc(r.ticker)} (${esc(r.name)})</b>
+                <span class="tag" style="font-size:10px;background:rgba(255,107,107,0.15);color:var(--danger);border:1px solid rgba(255,107,107,0.3)">IDX-IC Sektor Keuangan (IDXFINANCE)</span>
+              </div>
+              <div style="color:var(--ink2);margin-top:2px">${esc(r.reason)}</div>
+            </div>
+          `).join('')}
+        </div>
+      </div>`;
+    }
+    
+    fb.innerHTML=html;
+    await reloadDataset();
+  }catch(err){
+    st.textContent='Failed: '+err.message;
+    fb.innerHTML=`<span style="color:var(--danger);font-size:12px">Error: ${esc(err.message)}</span>`;
+  }
+};
+
+// Reset Universe back to default 30
+$('#btn-reset-universe').onclick=async()=>{
+  if(!confirm('Reset stock universe back to default 30 non-financial companies?')) return;
+  const st=$('#scrape-status'), fb=$('#scrape-feedback');
+  st.textContent='Resetting universe...';
+  try{
+    const res=await fetchJ('/api/data/reset-universe',{method:'POST'});
+    st.textContent=res.message;
+    fb.style.display='none';
+    $('#custom-tickers-input').value='';
+    await reloadDataset();
+  }catch(err){
+    st.textContent='Reset failed: '+err.message;
+  }
+};
+
+async function deleteStock(ticker){
+  if(!confirm(`Hapus emiten ${ticker} dari universe evaluasi?`)) return;
+  try {
+    const res = await fetchJ('/api/stocks/' + encodeURIComponent(ticker), {method: 'DELETE'});
+    if(sel === ticker) {
+      sel = null;
+      $('#detail').hidden = true;
+    }
+    await reloadDataset();
+  } catch(err) {
+    alert('Gagal menghapus emiten: ' + err.message);
+  }
+}
+
+function renderUniverseChips(){
+  const chipsContainer = $('#active-stocks-chips');
+  if(!chipsContainer) return;
+  chipsContainer.innerHTML = S.map(s=>`
+    <span class="stock-chip" title="${esc(s.name)} (${esc(s.sector||'')})">
+      <span>${esc(s.ticker)}</span>
+      <span class="chip-del" title="Hapus ${esc(s.ticker)} dari Universe" onclick="deleteStock('${esc(s.ticker)}')">&times;</span>
+    </span>
+  `).join('');
+  const mBadge = $('#manage-count-badge');
+  if(mBadge) mBadge.textContent = `${S.length} Aktif`;
+}
+
+async function reloadDataset(){
+  const stockResp=await fetchJ('/api/stocks');
+  const sd=list(stockResp);
+  
+  const secSelect=$('#sector-filter');
+  const curSec=secSelect.value;
+  secSelect.innerHTML='<option value="">All Sectors</option>';
+  if(stockResp.sectors){
+    stockResp.sectors.sort().forEach(sec=>{
+      const opt=document.createElement('option');
+      opt.value=sec; opt.textContent=sec;
+      secSelect.appendChild(opt);
+    });
+  }
+  secSelect.value=curSec;
+
+  let rows=sd.map(o=>({
+    ticker:tk(o),
+    name:o.name||o.company||tk(o),
+    sector:o.sector||'',
+    v:CRIT.map(c=>getVal(o,c.keys)),
+    cl:0,
+    raw:o
+  })).filter(r=>r.v.every(x=>!isNaN(x)));
+
+  if(Math.max(...rows.flatMap(r=>r.v.map(Math.abs)))<5){
+    rows.forEach(r=>r.v=r.v.map(x=>x*100));
+  }
+  S=rows;
+  
+  const uBadge=$('#universe-badge');
+  if(uBadge) uBadge.textContent=`${S.length} Companies`;
+  const mainH1=$('header h1');
+  if(mainH1) mainH1.textContent=`${S.length} listed companies, grouped by behavior and ranked by trade-off.`;
+
+  renderUniverseChips();
+  await loadClusters(currentK);
+  recalc();
+}
+
+$('#btn-upload').onclick=async()=>{
+  const fileInput=$('#file-upload'), st=$('#upload-status');
+  if(!fileInput.files.length){alert('Please select an .xlsx or .zip file first.');return}
+  st.textContent='Uploading and parsing...';
+  const formData=new FormData();
+  formData.append('file',fileInput.files[0]);
+  try{
+    const res=await fetchJ('/api/data/upload',{method:'POST',body:formData});
+    st.textContent='Upload processed: '+(res.message||'Success');
+    setTimeout(()=>location.reload(), 1500);
+  }catch(err){
+    st.textContent='Upload failed: '+err.message;
+  }
+};
+
+// Keyboard Shortcuts
+document.addEventListener('keydown',e=>{
+  if(e.metaKey||e.ctrlKey||e.altKey) return;
+  const typing=e.target.matches('input')||e.target.matches('select');
+  if(e.key==='Escape'){
+    if($('#dlg').open) $('#dlg').close();
+    if(typing) e.target.blur();
+    return;
+  }
+  if(typing) return;
+  if(e.key==='/'||e.key==='s'){e.preventDefault();$('#q').focus()}
+  else if('123'.includes(e.key)&&e.key) tab(+e.key-1);
+  else if(e.key==='m') audit();
+  else if(e.key==='d') {
+    const cur=document.documentElement.getAttribute('data-theme')||'light';
+    setTheme(cur==='dark'?'light':'dark');
+  }
+  else if(e.key==='e') exp();
+});
+
+// Initialization
+(async()=>{
+  initTheme();
+  const err=m=>{const b=$('#err');b.style.display='block';b.textContent=m};
+  try{
+    const stockResp=await fetchJ('/api/stocks');
+    const sd=list(stockResp);
+    
+    // Populate sectors dropdown
+    if(stockResp.sectors){
+      const secSelect=$('#sector-filter');
+      stockResp.sectors.sort().forEach(sec=>{
+        const opt=document.createElement('option');
+        opt.value=sec; opt.textContent=sec;
+        secSelect.appendChild(opt);
+      });
+    }
+
+    let rows=sd.map(o=>({
+      ticker:tk(o),
+      name:o.name||o.company||o.company_name||tk(o),
+      sector:o.sector||'',
+      v:CRIT.map(c=>getVal(o,c.keys)),
+      cl:0,
+      raw:o
+    })).filter(r=>r.v.every(x=>!isNaN(x)));
+
+    if(!rows.length) throw new Error('No growth metrics parsed from /api/stocks.');
+    
+    // Convert decimal to percent if needed
+    if(Math.max(...rows.flatMap(r=>r.v.map(Math.abs)))<5){
+      rows.forEach(r=>r.v=r.v.map(x=>x*100));
+    }
+    
+    S=rows;
+
+    const uBadge=$('#universe-badge');
+    if(uBadge) uBadge.textContent=`${S.length} Companies`;
+    const mainH1=$('header h1');
+    if(mainH1) mainH1.textContent=`${S.length} listed companies, grouped by behavior and ranked by trade-off.`;
+    renderUniverseChips();
+
+    // Load Clusters and PCA
+    await loadClusters(currentK);
+
+    // Load Diagnostics (Elbow and Silhouette)
+    try{
+      ev=await fetchJ('/api/mining/elbow');
+    }catch(e){
+      try{ ev=await fetchJ('/api/mining/evaluation'); }catch(e2){}
+    }
+    diag();
+
+    sliders();
+    recalc();
+
+  }catch(e){
+    err('Could not load data from backend API. Please start the server with: uvicorn backend.main:app --reload. ('+e.message+')');
+    sliders();
+  }
+})();
+</script>
 </body>
 </html>

@@ -101,6 +101,68 @@ class TestSPKDataMiningSuite(unittest.TestCase):
         self.assertEqual(res_upload.status_code, 200)
         self.assertIn("extracted_files", res_upload.json())
 
+        # Raw financial statements endpoint test
+        res_raw = client.get("/api/stocks/raw?ticker=ACES")
+        self.assertEqual(res_raw.status_code, 200)
+        self.assertIn("data", res_raw.json())
+        self.assertGreater(len(res_raw.json()["data"]), 0)
+
+    def test_custom_stock_scraping_and_financial_rejection(self):
+        from fastapi.testclient import TestClient
+        from backend.api.routes import app
+
+        client = TestClient(app)
+
+        # 1. Validation test: Non-financial vs Financial
+        res_val = client.get("/api/stocks/validate?query=BUMI, ELTY, TRUE, BBCA, BMRI")
+        self.assertEqual(res_val.status_code, 200)
+        results = {r["ticker"]: r for r in res_val.json()["results"]}
+        self.assertEqual(results["BUMI"]["status"], "ACCEPTED")
+        self.assertEqual(results["ELTY"]["status"], "ACCEPTED")
+        self.assertEqual(results["TRUE"]["status"], "ACCEPTED")
+        self.assertEqual(results["BBCA"]["status"], "REJECTED")
+        self.assertEqual(results["BMRI"]["status"], "REJECTED")
+        self.assertIn("Sektor Keuangan", results["BBCA"]["reason"])
+
+        # 2. Scrape test: expands universe with mixed non-financial and financial tickers
+        res_scrape = client.post("/api/data/scrape", json={"query": "BUMI, BBCA, ELTY, BMRI, TRUE"})
+        self.assertEqual(res_scrape.status_code, 200)
+        scrape_json = res_scrape.json()
+        accepted_tickers = [x["ticker"] for x in scrape_json["accepted"]]
+        rejected_tickers = [x["ticker"] for x in scrape_json["rejected"]]
+        skipped_tickers = [x["ticker"] for x in scrape_json["skipped"]]
+        self.assertIn("BUMI", accepted_tickers)
+        self.assertIn("ELTY", accepted_tickers)
+        self.assertIn("TRUE", accepted_tickers)
+        self.assertIn("BBCA", rejected_tickers)
+        self.assertIn("BMRI", rejected_tickers)
+        self.assertIn("BBCA", skipped_tickers)
+        self.assertIn("BMRI", skipped_tickers)
+        self.assertEqual(scrape_json["accepted_count"], 3)
+        self.assertEqual(scrape_json["skipped_count"], 2)
+        self.assertGreaterEqual(scrape_json["universe_count"], 33)
+
+        # 3. Individual stock deletion test (DELETE and POST)
+        res_del1 = client.delete("/api/stocks/TRUE")
+        self.assertEqual(res_del1.status_code, 200)
+        self.assertEqual(res_del1.json()["deleted_ticker"], "TRUE")
+        
+        res_del2 = client.post("/api/stocks/delete", json={"ticker": "ELTY"})
+        self.assertEqual(res_del2.status_code, 200)
+        self.assertEqual(res_del2.json()["deleted_ticker"], "ELTY")
+
+        res_check = client.get("/api/stocks")
+        tickers_now = [s["ticker"] for s in res_check.json()["data"]]
+        self.assertNotIn("TRUE", tickers_now)
+        self.assertNotIn("ELTY", tickers_now)
+        self.assertIn("BUMI", tickers_now)
+
+        # 4. Reset universe test
+        res_reset = client.post("/api/data/reset-universe")
+        self.assertEqual(res_reset.status_code, 200)
+        res_stocks = client.get("/api/stocks")
+        self.assertEqual(res_stocks.json()["count"], 30)
+
 
 if __name__ == "__main__":
     unittest.main()
