@@ -58,7 +58,7 @@ def create_logbook_docx():
     # Info Box / Meta
     p_meta = doc.add_paragraph()
     p_meta.paragraph_format.space_after = Pt(16)
-    r_meta = p_meta.add_run("Nama Pengembang: Mitaz (Tazume)  |  Dataset: 30 Emiten Non-Keuangan IDX (CR, DER, ROE, PER, PBV, EPS)  |  Metode: K-Means & TOPSIS")
+    r_meta = p_meta.add_run("Nama Pengembang: Mitaz (Tazume)  |  Dataset: 30 Emiten Non-Keuangan IDX (Revenue, Net Income, Assets, Equity)  |  Metode: K-Means & TOPSIS")
     r_meta.font.name = "Arial"
     r_meta.font.size = Pt(9)
     r_meta.font.color.rgb = MUTED
@@ -69,56 +69,56 @@ def create_logbook_docx():
         {
             "num": "1",
             "title": "Creating Workspace & Mempelajari Langkah2 Pengerjaan",
-            "kendala": "Adanya perbedaan fundamental pada struktur neraca keuangan antara sektor perbankan/finansial dengan sektor riil (non-keuangan). Pada sektor perbankan, simpanan nasabah dicatat sebagai liabilitas, sehingga rasio DER (Debt to Equity Ratio) dan CR (Current Ratio) bernilai sangat ekstrem (outlier) yang berisiko merusak normalisasi matriks dan akurasi klastering.",
-            "catatan": "Menetapkan batasan masalah penelitian secara ketat (cohort selection): mengeksklusikan sektor perbankan dan memfokuskan analisis hanya pada 30 emiten sektor non-keuangan di BEI periode 2020–2024 agar perbandingan rasio keuangan bersifat setara (apple-to-apple comparison). Menginisialisasi workspace proyek dengan arsitektur modular (FastAPI backend dan Modern Web UI).",
+            "kendala": "Adanya perbedaan fundamental pada struktur neraca keuangan antara sektor perbankan/finansial dengan sektor riil (non-keuangan). Pada sektor perbankan, simpanan nasabah dicatat sebagai liabilitas, serta rasio utang/leverage operasionalnya wajar mencapai 6x–10x ekuitas. Memasukkan emiten perbankan bersamaan dengan sektor riil akan menyebabkan extreme outlier yang mendistorsi standardisasi varians Z-Score K-Means dan menarik vektor Solusi Ideal Positif (A+) TOPSIS secara tidak realistis.",
+            "catatan": "Menetapkan batasan masalah penelitian secara ketat (cohort selection) mengacu pada klasifikasi resmi Bursa Efek Indonesia IDX-IC (Sektor Keuangan / IDXFINANCE): mengeksklusikan perbankan/lembaga keuangan dan memfokuskan analisis hanya pada 30 emiten sektor non-keuangan di BEI periode 2020–2024 agar perbandingan kinerja bersifat setara (apples-to-apples comparison). Menginisialisasi arsitektur proyek modular berbasis FastAPI backend dan High-Density Web Terminal UI.",
             "pencapaian": "Terbentuknya rumusan masalah yang matang, batasan dataset 30 emiten non-keuangan, serta struktur repositori proyek yang siap untuk integrasi data mining dan SPK.",
-            "tools": "Python 3.12, VS Code, Git, Google Sheets",
+            "tools": "Python 3.10+, VS Code, Git, FastAPI",
             "hasil": "Workspace Terstruktur & Dokumen Batasan Masalah"
         },
         {
             "num": "2",
             "title": "Mencari Dataset (Data Acquisition)",
-            "kendala": "Layanan direct API komersial penyedia data pasar modal historis (seperti Bloomberg, Refinitiv, atau Financial Modeling Prep) mengenakan biaya langganan berbayar yang mahal untuk akses laporan keuangan multi-tahun (2020–2024). Pengunduhan manual satu per satu juga sangat tidak efisien dan rentan human error.",
-            "catatan": "Membangun modul automated web scraping dan ingestion engine mandiri (backend/data/idx_scraper.py) yang berinteraksi langsung dengan portal resmi Bursa Efek Indonesia (idx.co.id). Sistem mengunduh laporan keuangan tahunan teraudit berformat .xlsx secara otomatis dan legal tanpa biaya API pihak ketiga.",
-            "pencapaian": "Berhasil mengumpulkan 150 file laporan keuangan tahunan teraudit (30 emiten x 5 tahun: 2020–2024) langsung dari sumber data primer BEI.",
-            "tools": "Python Scraper (Requests, BeautifulSoup), idx.co.id",
-            "hasil": "150 File Excel (.xlsx) Laporan Keuangan IDX"
+            "kendala": "Layanan direct API komersial penyedia data pasar modal historis mengenakan biaya langganan berbayar yang mahal untuk akses laporan keuangan multi-tahun (2020–2024). Pengunduhan manual satu per satu juga sangat tidak efisien dan rentan human error, serta portal BEI (idx.co.id) dilindungi sistem WAF/Cloudflare yang membatasi bot otomatis.",
+            "catatan": "Membangun modul automated web scraping berbasis Playwright headless Edge (backend/data/download.py) dan ingestion engine (backend/data/idx_scraper.py) yang berinteraksi langsung dengan endpoint resmi Bursa Efek Indonesia. Sistem mampu menangani session cookies, memverifikasi ketersediaan laporan tahunan teraudit (Audited Annual Statements / TW4), dan mengunduh file .xlsx secara otomatis tanpa biaya API pihak ketiga.",
+            "pencapaian": "Berhasil mengumpulkan 150+ file laporan keuangan tahunan teraudit (30 emiten x 5 periode data: 2020–2024) langsung dari sumber data primer BEI ke folder data/raw_reports/.",
+            "tools": "Playwright (Headless Edge), Asyncio, idx.co.id API",
+            "hasil": "150+ File Excel (.xlsx) Laporan Keuangan Audited IDX"
         },
         {
             "num": "3",
             "title": "Pre-Processing Data & Feature Extraction",
-            "kendala": "Format pelaporan baris dan istilah akun akuntansi pada file Excel laporan keuangan IDX memiliki variasi penamaan antar emiten. Terdapat pula potensi nilai hilang (missing values) atau nilai ekstrem sementara akibat dampak fluktuasi pasar satu tahun tertentu.",
-            "catatan": "Mengembangkan parser otomatis (idx_parser.py) dengan pemetaan regex untuk mengekstrak 6 rasio fundamental utama: Current Ratio (CR), Debt to Equity Ratio (DER), Return on Equity (ROE), Price to Earnings Ratio (PER), Price to Book Value (PBV), dan Earning Per Share (EPS). Melakukan agregasi nilai rata-rata 5 tahun (2020–2024) untuk mencerminkan stabilitas kinerja jangka panjang.",
-            "pencapaian": "Dataset final 30 emiten non-keuangan dengan 6 fitur rasio fundamental yang bersih, terverifikasi tanpa missing value, dan tersimpan dalam struktur matriks siap olah.",
-            "tools": "Pandas, NumPy, OpenPyXL, Regex",
-            "hasil": "Dataset Bersih (Cleaned 30 Emiten x 6 Rasio)"
+            "kendala": "Format pelaporan baris dan istilah akun akuntansi pada file Excel laporan keuangan IDX memiliki variasi penamaan antar emiten. Selain itu, satuan pelaporan sangat beragam (satuan penuh, ribuan, jutaan, miliaran rupiah, dan USD), serta terdapat potensi anomali nilai negatif saat laba bersih bertransisi dari rugi ke untung (negative base).",
+            "catatan": "Mengembangkan parser otomatis berbasis OpenPyXL (backend/data/extract.py & idx_parser.py) yang secara presisi menyasar lembar resmi XBRL/Excel BEI: Sheet [1000000] General Information (deteksi mata uang IDR/USD dan pembulatan), Sheet [1210000] Balance Sheet (Total Aset dan Total Ekuitas), dan Sheet [1321000] Income Statement (Revenue dan Net Income). Melakukan normalisasi ke basis seragam IDR Billion (Miliar Rupiah), menangani kasus negative base secara matematis, serta menghitung rata-rata pertumbuhan tahunan (YoY Growth Rate) 4 variabel: Revenue Growth (C1), Net Income Growth (C2), Asset Growth (C3), dan Equity Growth (C4).",
+            "pencapaian": "Dataset final 30 emiten non-keuangan yang bersih dan terverifikasi tanpa missing value (financial_raw.csv, financial_raw.xlsx, kmeans_dataset_yoy.csv), dilengkapi laporan audit mutu data CRISP-DM Tahap 3 (data_quality_report.csv).",
+            "tools": "Pandas, NumPy, OpenPyXL, Scikit-Learn",
+            "hasil": "Dataset Bersih (Cleaned 30 Emiten x 4 Indikator Pertumbuhan)"
         },
         {
             "num": "4",
-            "title": "Implementasi Algoritma Data Mining (K-Means Clustering)",
-            "kendala": "Skala satuan antar rasio memiliki rentang yang sangat berbeda (misalnya EPS dalam ratusan/ribuan rupiah, sedangkan PBV dan ROE dalam desimal), sehingga algoritma berbasis jarak Euclidean berisiko didominasi oleh fitur berskala besar. Penentuan jumlah klaster (k) secara subjektif juga dapat menurunkan validitas segmentasi.",
-            "catatan": "Menerapkan standarisasi data menggunakan StandardScaler (z-score). Untuk menentukan jumlah klaster k secara objektif dan matematis, diimplementasikan pengujian kombinasi metode Elbow Method (Inertia/WCSS) dan Silhouette Score Analysis.",
-            "pencapaian": "Terbentuknya 3 klaster emiten yang jelas karakteristiknya (Cluster 0: Moderate/Stable Growth, Cluster 1: High Undervalued/Growth Potential, Cluster 2: High Leverage/Volatile) dengan validasi nilai Silhouette Score optimal pada k=3.",
-            "tools": "Scikit-Learn (KMeans, StandardScaler, Silhouette Score)",
-            "hasil": "Segmentasi Klaster Saham (k=3) & Grafik Evaluasi"
+            "title": "Implementasi Algoritma Data Mining (K-Means Clustering & PCA)",
+            "kendala": "Skala pertumbuhan antar indikator memiliki sebaran varians yang berbeda, sehingga algoritma berbasis jarak Euclidean berisiko didominasi oleh fitur berskala besar jika tidak distandarisasi. Penentuan jumlah klaster (k) secara subjektif juga dapat menurunkan validitas segmentasi.",
+            "catatan": "Menerapkan standarisasi data menggunakan StandardScaler (z-score, mu=0, sigma=1). Menguji kombinasi Elbow Method (Inertia/WCSS) dan Silhouette Score Analysis pada backend/mining/clustering.py yang membuktikan secara objektif bahwa k=3 adalah titik optimal (Inersia 30.72 dan skor Silhouette tertinggi s=0.4368). Mengintegrasikan Principal Component Analysis (PCA) 2D (PC1 dan PC2) yang mempertahankan 98.04% total varians terjelaskan.",
+            "pencapaian": "Terbentuknya 3 profil klaster emiten yang jelas karakteristiknya: Klaster 0 (Steady Compounder & Value Creator), Klaster 1 (Aggressive High-Growth Expansion), dan Klaster 2 (Mature / Defensive Low-Growth).",
+            "tools": "Scikit-Learn (KMeans, StandardScaler, PCA, Silhouette Score)",
+            "hasil": "Segmentasi Klaster Saham (k=3), Koordinat PCA 2D, & Grafik Evaluasi"
         },
         {
             "num": "5",
             "title": "Implementasi Sistem Pendukung Keputusan (Metode TOPSIS)",
-            "kendala": "Klasifikasi sifat kriteria yang berlawanan (benefit vs cost): kriteria seperti ROE, EPS, dan CR diharapkan maksimal (benefit), sedangkan PER, PBV, dan DER idealnya lebih rendah atau terkontrol (cost). Pemilihan alternatif terbaik dari klaster unggulan membutuhkan pembobotan yang objektif dan konsisten.",
-            "catatan": "Membangun kalkulator TOPSIS matematis (topsis.py): menghitung matriks ternormalisasi (r_ij), matriks ternormalisasi terbobot (y_ij), menentukan Solusi Ideal Positif (A+) dan Solusi Ideal Negatif (A-), serta menghitung jarak Euclidean (D_i+, D_i-) untuk mendapatkan nilai preferensi relatif (V_i).",
-            "pencapaian": "Dihasilkannya skor preferensi V_i (skala 0 hingga 1) dan peringkat urutan saham terbaik yang paling mendekati solusi ideal positif dan terjauh dari solusi ideal negatif.",
+            "kendala": "Dalam pengambilan keputusan investasi saham, analis memiliki preferensi strategi yang dinamis (misal strategi agresif berfokus pada laba vs strategi defensif berfokus pada ekuitas). Diperlukan mesin pengambil keputusan multi-kriteria yang adil, matematis, dan dapat disimulasikan secara interaktif.",
+            "catatan": "Membangun kalkulator TOPSIS matematis (backend/spk/topsis.py): menetapkan ke-4 kriteria pertumbuhan sebagai Benefit Criteria (semakin tinggi laju pertumbuhan omzet, laba bersih, aset, dan ekuitas, semakin baik performa emiten). Menghitung matriks normalisasi vektor (r_ij), matriks normalisasi terbobot (v_ij), menentukan Solusi Ideal Positif (A+) dan Solusi Ideal Negatif (A-), serta menghitung jarak Euclidean (D_i+, D_i-) untuk menghasilkan skor preferensi kedekatan relatif (V_i).",
+            "pencapaian": "Dihasilkannya skor preferensi V_i (skala 0 hingga 1.000) dan peringkat rekomendasi bertingkat (Strong Buy / Top Pick, Buy / Accumulate, Reduce / Avoid) secara deterministik.",
             "tools": "NumPy, SciPy, Custom Python TOPSIS Engine",
             "hasil": "Scoreboard & Peringkat Rekomendasi Saham TOPSIS"
         },
         {
             "num": "6",
-            "title": "Integrasi Sistem & Pembuatan Web Dashboard Studio",
-            "kendala": "Hasil perhitungan klastering dan perankingan yang berupa matriks angka mentah sulit dipahami oleh pengambil keputusan atau pengguna awam jika disajikan tanpa visualisasi interaktif.",
-            "catatan": "Membangun antarmuka web interaktif dengan FastAPI dan Modern Web UI (Chart.js) yang menyajikan visualisasi grafik Scatter Plot Clustering, kurva evaluasi Elbow/Silhouette, tabel matriks normalisasi TOPSIS, serta scoreboard peringkat rekomendasi saham secara real-time.",
-            "pencapaian": "Sistem aplikasi web SPK x Data Mining terintegrasi penuh, responsive, mampu menjalankan simulasi perubahan bobot kriteria, dan siap didemonstrasikan untuk pengujian akademik.",
-            "tools": "FastAPI, Uvicorn, Chart.js, Vanilla CSS/JS Modern",
-            "hasil": "Web Dashboard Interaktif & API Endpoint"
+            "title": "Integrasi Sistem & Pembuatan Web Dashboard Terminal",
+            "kendala": "Hasil perhitungan klastering dan perankingan yang berupa matriks angka mentah sulit dipahami oleh pengambil keputusan jika disajikan statis. Selain itu, penggunaan library grafik pihak ketiga yang berat (seperti Chart.js/Plotly CDN) dapat memperlambat rendering antarmuka dan menimbulkan dependensi eksternal.",
+            "catatan": "Membangun antarmuka web interaktif berbasis FastAPI dan Native Modern CSS/SVG (frontend/static/index.html): menggunakan visualisasi Native High-Precision SVG untuk grafik PCA Scatter Plot, kurva Elbow, dan diagram Silhouette. Menyediakan Tactile Weight Mixer (slider bobot live), Audit Matrix Modal (Hotkey 'm'), Audited Financial Statements Viewer, opsi hapus emiten, serta tema High-Contrast (Light/Dark Mode, Hotkey 'd') dengan tipografi Plus Jakarta Sans dan JetBrains Mono.",
+            "pencapaian": "Sistem aplikasi web SPK x Data Mining terintegrasi penuh, responsive, berkinerja instan (< 2 ms di memori browser), lulus 100% unit test (pytest), dan siap didemonstrasikan untuk pengujian akademik.",
+            "tools": "FastAPI, Uvicorn, Native Modern SVG/CSS/JS, Plus Jakarta Sans",
+            "hasil": "Web Terminal Interaktif & REST API Endpoints"
         }
     ]
 
