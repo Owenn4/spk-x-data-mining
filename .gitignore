@@ -34,7 +34,7 @@ ENV/
 *.swo
 
 # Project internal cache/checkpoints
-.luna/checkpoints/
+.luna/
 data/migration_checkpoints/
 data/raw_reports/
 data/active_stock_universe.json
