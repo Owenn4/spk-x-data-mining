@@ -101,6 +101,10 @@ SPK X Data Mining/
 ├── frontend/
 │   └── static/
 │       └── index.html           # Single-page terminal cockpit (Plus Jakarta Sans, Light/Dark)
+├── docs/                        # Dokumen laporan tugas & fase CRISP-DM (.pdf)
+│   ├── Business Understanding.pdf
+│   ├── Data Understanding.pdf
+│   └── Week 3 - Data Preparation.pdf
 ├── data/
 │   ├── financial_raw.csv        # 151 baris data laporan keuangan 5 tahun audited
 │   ├── financial_raw.xlsx       # Workbook data mentah audited
